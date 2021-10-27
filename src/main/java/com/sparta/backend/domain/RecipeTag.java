@@ -27,4 +27,9 @@ public class RecipeTag extends BaseEntity {
     @JsonManagedReference
     @JoinColumn(name = "tag_id")
     private Tag tag;
+
+    public RecipeTag(Recipe recipe, Tag tag){
+        this.recipe = recipe;
+        this.tag = tag;
+    }
 }

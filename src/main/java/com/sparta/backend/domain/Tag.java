@@ -23,7 +23,7 @@ public class Tag extends BaseEntity {
 
     @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL)
     @JsonBackReference
-    private List<RecipeTag> recipeList;
+    private List<RecipeTag> recipeTagList;
 
     public Tag(String name){
         this.name = name;

@@ -4,6 +4,7 @@ import com.sparta.backend.domain.Recipe;
 import com.sparta.backend.domain.Tag;
 import com.sparta.backend.dto.request.recipes.PostRecipeRequestDto;
 import com.sparta.backend.dto.response.CustomResponseDto;
+import com.sparta.backend.service.RecipeTagService;
 import com.sparta.backend.service.RecipesService;
 import com.sparta.backend.service.TagService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import java.util.List;
 public class RecipesController {
     private final RecipesService recipeService;
     private final TagService tagService;
+    private final RecipeTagService recipeTagService;
 
     @PostMapping("/recipes")
     public CustomResponseDto postRecipe(PostRecipeRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails){
@@ -28,11 +30,9 @@ public class RecipesController {
         //todo: imgae S3에 등록
 
         List<Tag> savedTagList = tagService.saveTags(requestDto.getTag());
-        Recipe recipe = recipeService.saveRecipe(requestDto);
-
-
-
-//        for
+        log.info("savedTagList = {}",savedTagList);
+        Recipe savedRecipe = recipeService.saveRecipe(requestDto);
+        recipeTagService.saveRecipeTag(savedRecipe,savedTagList);
 
         return new CustomResponseDto(1,"레시피 등록 성공","");
     }
