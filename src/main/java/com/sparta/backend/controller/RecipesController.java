@@ -27,10 +27,12 @@ public class RecipesController {
         //todo: checkLogin
         //todo: imgae S3에 등록
 
-        List<Tag> tag = recipeService.saveTags(requestDto.getTag());
+        List<Tag> savedTagList = tagService.saveTags(requestDto.getTag());
         Recipe recipe = recipeService.saveRecipe(requestDto);
 
-        for
+
+
+//        for
 
         return new CustomResponseDto(1,"레시피 등록 성공","");
     }
