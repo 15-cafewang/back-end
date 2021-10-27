@@ -1,5 +1,7 @@
 package com.sparta.backend.controller;
 
+import com.sparta.backend.domain.Recipe;
+import com.sparta.backend.domain.Tag;
 import com.sparta.backend.dto.request.recipes.PostRecipeRequestDto;
 import com.sparta.backend.dto.response.CustomResponseDto;
 import com.sparta.backend.service.RecipesService;
@@ -21,9 +23,13 @@ public class RecipesController {
     @PostMapping("/recipes")
     public CustomResponseDto postRecipe(PostRecipeRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails){
         //todo: checkLogin
-//        String imageUrl =
-        List<String> tags = requestDto.getTag();
-        log.info("tag = {}",tags);
+        //todo: imgae S3에 등록
+
+        List<Tag> tag = recipeService.saveTags(requestDto.getTag());
+        Recipe recipe = recipeService.saveRecipe(requestDto);
+
+        for
+
         return new CustomResponseDto(1,"레시피 등록 성공","");
     }
 }
