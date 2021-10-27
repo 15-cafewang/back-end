@@ -5,6 +5,7 @@ import com.sparta.backend.domain.Tag;
 import com.sparta.backend.dto.request.recipes.PostRecipeRequestDto;
 import com.sparta.backend.dto.response.CustomResponseDto;
 import com.sparta.backend.service.RecipesService;
+import com.sparta.backend.service.TagService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RecipesController {
     private final RecipesService recipeService;
+    private final TagService tagService;
 
     @PostMapping("/recipes")
     public CustomResponseDto postRecipe(PostRecipeRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails){
