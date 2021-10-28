@@ -25,15 +25,17 @@ public class RecipesController {
     private final RecipeTagService recipeTagService;
 
     @PostMapping("/recipes")
-    public CustomResponseDto postRecipe(PostRecipeRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails){
+    public CustomResponseDto<?> postRecipe(PostRecipeRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails){
         //todo: checkLogin
         //todo: imgae S3에 등록
 
+        //레시피, 태그, 레시피태그 등록
         List<Tag> savedTagList = tagService.saveTags(requestDto.getTag());
-        log.info("savedTagList = {}",savedTagList);
         Recipe savedRecipe = recipeService.saveRecipe(requestDto);
         recipeTagService.saveRecipeTag(savedRecipe,savedTagList);
 
-        return new CustomResponseDto(1,"레시피 등록 성공","");
+        return new CustomResponseDto<>(1,"성공","");
     }
+
+
 }
