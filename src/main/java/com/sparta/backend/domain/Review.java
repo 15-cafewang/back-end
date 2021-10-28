@@ -19,6 +19,9 @@ public class Review extends BaseEntity {
     private Long id;
 
     @Column(nullable = false)
+    private String title;
+
+    @Column(nullable = false)
     private String content;
 
     private String image;
@@ -35,10 +38,11 @@ public class Review extends BaseEntity {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    public Review(PostReviewRequestDto requestDto, Product product, User user) {
+    public Review(PostReviewRequestDto requestDto, Product product) { //todo: 파라미터 User user 추가
+        this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
         this.image = requestDto.getImage();
         this.product = product;
-        this.user = user;
+        //this.user = user;     //todo: user 추가
     }
 }

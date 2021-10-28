@@ -20,9 +20,9 @@ public class ProductServiceImpl implements ProductService{
 
     //제품 등록
     @Transactional
-    public Long createProduct(PostProductRequestDto requestDto, UserDetailsImpl userDetails) {
+    public Long createProduct(PostProductRequestDto requestDto) { //todo: 매개변수 userDetails 추가
         Product product = null;
-        if(userDetails != null) {   //로그인했을 경우
+//        if(userDetails != null) {   //로그인했을 경우 //todo: 매개변수 userDetails 추가시 주석 해제
             Long brandId = requestDto.getBrandId(); //브랜드 아이디
 
             //DB에 Insert 되어있는 브랜드 이름 가져오기
@@ -34,9 +34,9 @@ public class ProductServiceImpl implements ProductService{
             product = new Product(requestDto, brand);
             productRepository.save(product);
 
-        } else {    //로그인 되어있지 않은 경우
-            throw new NullPointerException("로그인이 필요합니다.");
-        }
+//        } else {    //로그인 되어있지 않은 경우
+//            throw new NullPointerException("로그인이 필요합니다."); //todo: 매개변수 userDetails 추가시 주석 해제
+//        }
 
         //DB에 Insert한 제품 번호 리턴
         return product.getId();
