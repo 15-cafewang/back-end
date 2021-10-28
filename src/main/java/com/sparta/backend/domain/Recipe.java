@@ -53,4 +53,11 @@ public class Recipe extends BaseEntity {
         this.content = content;
         this.image = image;
     }
+    public Recipe updateRecipe(String title, String content, String image) {
+        this.title = title;
+        this.content = content;
+        this.image = image;
+
+        return this;
+    }
 }

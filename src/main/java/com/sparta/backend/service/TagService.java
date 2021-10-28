@@ -26,4 +26,13 @@ public class TagService {
         return tagRepository.saveAll(tmp_tagList);
     }
 
+
+    @Transactional
+    public List<Tag> updateTags(List<String> tagList, Recipe updatedRecipe) {
+        //기존 태그 삭제
+        tagRepository.deleteAllByRecipe(updatedRecipe);
+
+        //새 태그 저장
+        return saveTags(tagList, updatedRecipe);
+    }
 }
