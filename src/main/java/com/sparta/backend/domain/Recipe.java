@@ -32,9 +32,13 @@ public class Recipe extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "recipe",cascade = CascadeType.ALL)
     @JsonBackReference
-    private List<RecipeTag> recipeTagList;
+    private List<Tag> tagList;
+
+//    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
+//    @JsonBackReference
+//    private List<RecipeTag> recipeTagList;
 
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
     @JsonBackReference

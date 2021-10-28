@@ -4,7 +4,6 @@ import com.sparta.backend.domain.Recipe;
 import com.sparta.backend.domain.Tag;
 import com.sparta.backend.dto.request.recipes.PostRecipeRequestDto;
 import com.sparta.backend.dto.response.CustomResponseDto;
-import com.sparta.backend.service.RecipeTagService;
 import com.sparta.backend.service.RecipesService;
 import com.sparta.backend.service.TagService;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -22,7 +22,6 @@ import java.util.List;
 public class RecipesController {
     private final RecipesService recipeService;
     private final TagService tagService;
-    private final RecipeTagService recipeTagService;
 
     @PostMapping("/recipes")
     public CustomResponseDto<?> postRecipe(PostRecipeRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails){
@@ -30,12 +29,21 @@ public class RecipesController {
         //todo: imgae S3에 등록
 
         //레시피, 태그, 레시피태그 등록
-        List<Tag> savedTagList = tagService.saveTags(requestDto.getTag());
+        //레시피 먼저 생성, 등록
         Recipe savedRecipe = recipeService.saveRecipe(requestDto);
-        recipeTagService.saveRecipeTag(savedRecipe,savedTagList);
-
+        //태그 등록할때 저장한 레시피객체도 넣어줌
+        tagService.saveTags(requestDto.getTag(), savedRecipe);
+        
         return new CustomResponseDto<>(1,"성공","");
     }
+
+//    @PutMapping("/recipes/{recipeId}")
+//    public CustomResponseDto<?> updateRecipe(PostRecipeRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails){
+//
+//
+//    }
+
+
 
 
 }

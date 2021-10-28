@@ -15,6 +15,7 @@ public class RecipesService {
 
     private final RecipesRepository recipesRepository;
 
+    //todo: user정보도 넣어줘야 함
     public Recipe saveRecipe(PostRecipeRequestDto requestDto) {
         Recipe recipe = new Recipe(requestDto.getTitle(),requestDto.getContent(),"fakeURL");
         return recipesRepository.save(recipe);

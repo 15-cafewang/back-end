@@ -1,5 +1,6 @@
 package com.sparta.backend.service;
 
+import com.sparta.backend.domain.Recipe;
 import com.sparta.backend.domain.Tag;
 import com.sparta.backend.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,11 +16,11 @@ public class TagService {
     private final TagRepository tagRepository;
 
     @Transactional
-    public List<Tag> saveTags(List<String> tagList){
+    public List<Tag> saveTags(List<String> tagList, Recipe recipe){
         List<Tag> tmp_tagList = new ArrayList<>();
-        for(String tag : tagList){
-            Tag tagObj = new Tag(tag);
-            tmp_tagList.add(tagObj);
+        for(String tagName : tagList){
+            Tag tag = new Tag(tagName, recipe);
+            tmp_tagList.add(tag);
         }
 
         return tagRepository.saveAll(tmp_tagList);
