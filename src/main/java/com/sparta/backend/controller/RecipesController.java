@@ -15,6 +15,7 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -25,10 +26,9 @@ public class RecipesController {
     private final TagService tagService;
 
     @PostMapping("/recipes")
-    public CustomResponseDto<?> postRecipe(PostRecipeRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails) {
+    public CustomResponseDto<?> postRecipe(PostRecipeRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails) throws IOException {
+        //todo:IOException처리
         //todo: checkLogin
-        //todo: imgae S3에 등록
-
         //레시피 먼저 생성, 등록
         Recipe savedRecipe = recipeService.saveRecipe(requestDto);
         //태그 등록할때 저장한 레시피객체도 넣어줌

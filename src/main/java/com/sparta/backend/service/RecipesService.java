@@ -1,5 +1,6 @@
 package com.sparta.backend.service;
 
+import com.sparta.backend.awsS3.S3Uploader;
 import com.sparta.backend.domain.Recipe;
 import com.sparta.backend.domain.Tag;
 import com.sparta.backend.domain.User;
@@ -12,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -19,10 +21,12 @@ import java.util.List;
 public class RecipesService {
 
     private final RecipesRepository recipesRepository;
+    private final S3Uploader s3Uploader;
 
     //todo: user정보도 넣어줘야 함
-    public Recipe saveRecipe(PostRecipeRequestDto requestDto) {
-        Recipe recipe = new Recipe(requestDto.getTitle(),requestDto.getContent(),"fakeURL");
+    public Recipe saveRecipe(PostRecipeRequestDto requestDto) throws IOException {
+        String saveImage = s3Uploader.upload(requestDto.getImage(),"recipeImage");
+        Recipe recipe = new Recipe(requestDto.getTitle(),requestDto.getContent(),saveImage);
         return recipesRepository.save(recipe);
     }
 
