@@ -36,10 +36,6 @@ public class Recipe extends BaseEntity {
     @JsonBackReference
     private List<Tag> tagList;
 
-//    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
-//    @JsonBackReference
-//    private List<RecipeTag> recipeTagList;
-
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
     @JsonBackReference
     private List<Comment> commentList;
