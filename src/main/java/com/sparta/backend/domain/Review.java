@@ -1,6 +1,7 @@
 package com.sparta.backend.domain;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.sparta.backend.dto.request.review.PostReviewRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -33,4 +34,11 @@ public class Review extends BaseEntity {
     @JsonManagedReference
     @JoinColumn(name = "product_id")
     private Product product;
+
+    public Review(PostReviewRequestDto requestDto, Product product, User user) {
+        this.content = requestDto.getContent();
+        this.image = requestDto.getImage();
+        this.product = product;
+        this.user = user;
+    }
 }
