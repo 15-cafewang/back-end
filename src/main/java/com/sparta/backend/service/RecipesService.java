@@ -1,5 +1,7 @@
 package com.sparta.backend.service;
 
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.sparta.backend.awsS3.S3Uploader;
 import com.sparta.backend.domain.Recipe;
 import com.sparta.backend.domain.Tag;
@@ -12,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -22,6 +26,8 @@ public class RecipesService {
 
     private final RecipesRepository recipesRepository;
     private final S3Uploader s3Uploader;
+    private final AmazonS3Client amazonS3Client;
+    private final String bucket = "99final";
 
     //todo: user정보도 넣어줘야 함
     public Recipe saveRecipe(PostRecipeRequestDto requestDto) throws IOException {
@@ -36,10 +42,11 @@ public class RecipesService {
         );
         recipesRepository.deleteById(recipeId);
         //todo:S3서버의 이미지도 지우기
+        deleteS3(recipe.getImage());
     }
 
     @Transactional
-    public Recipe updateRecipe(Long recipeId,PostRecipeRequestDto requestDto, UserDetailsImpl userDetails) {
+    public Recipe updateRecipe(Long recipeId,PostRecipeRequestDto requestDto, UserDetailsImpl userDetails) throws IOException {
         //게시글 존재여부확인
         Recipe recipe = recipesRepository.findById(recipeId).orElseThrow(()->new CustomErrorException("해당 게시물을 찾을 수 없습니다"));
 
@@ -49,9 +56,28 @@ public class RecipesService {
         String content = requestDto.getContent();
 
         //todo: 게시글에 저장되어있는 사용자의 username과 현재 사용자의 username 비교하기
-        //todo: S3에 있는 사진 삭제하고 다시 업로드
 
-        //게시글 업데이트
-        return recipe.updateRecipe(title, content, "this is mock Image URL");
+        //S3에 있는 사진 삭제하고 다시 업로드
+        if(requestDto.getImage() != null){
+            Recipe foundRecipe = recipesRepository.findById(recipeId).orElseThrow(()->
+                    new CustomErrorException("해당 게시물을 찾을 수 없습니다"));
+            deleteS3(foundRecipe.getImage());
+            imageUrl = s3Uploader.upload(requestDto.getImage(),"recipeImage");
+            if(imageUrl == null) throw new CustomErrorException("이미지 업르드에 실패하였습니다");
+        }
+
+        //게시글 업데이트 todo: user생기면 user정보도 넣어줘야 한다.
+        return recipe.updateRecipe(title, content, imageUrl);
+    }
+
+    public void deleteS3(@RequestParam String imageName){
+        //https://S3 버킷 URL/버킷에 생성한 폴더명/이미지이름
+        String keyName = imageName.split("/")[4]; // 이미지이름만 추출
+
+        try {amazonS3Client.deleteObject(bucket + "/recipeImage", keyName);
+        }catch (AmazonServiceException e){
+            e.printStackTrace();
+            throw new AmazonServiceException(e.getMessage());
+        }
     }
 }

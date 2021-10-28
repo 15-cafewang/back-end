@@ -1,8 +1,6 @@
 package com.sparta.backend.controller;
 
 import com.sparta.backend.domain.Recipe;
-import com.sparta.backend.domain.Tag;
-import com.sparta.backend.domain.User;
 import com.sparta.backend.dto.request.recipes.PostRecipeRequestDto;
 import com.sparta.backend.dto.response.CustomResponseDto;
 import com.sparta.backend.security.UserDetailsImpl;
@@ -26,7 +24,7 @@ public class RecipesController {
     private final TagService tagService;
 
     @PostMapping("/recipes")
-    public CustomResponseDto<?> postRecipe(PostRecipeRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails) throws IOException {
+    public CustomResponseDto<?> postRecipe(PostRecipeRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         //todo:IOException처리
         //todo: checkLogin
         //레시피 먼저 생성, 등록
@@ -38,8 +36,10 @@ public class RecipesController {
     }
 
     @PutMapping("/recipes/{recipeId}")
-    public CustomResponseDto<?> updateRecipe(@PathVariable Long recipeId, PostRecipeRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    public CustomResponseDto<?> updateRecipe(@PathVariable Long recipeId, PostRecipeRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        //todo:IOException처리
         //todo: checkLogin
+
         //레시피 업데이트
         Recipe updatedRecipe = recipeService.updateRecipe(recipeId,requestDto,userDetails);
         //태그 업데이트
