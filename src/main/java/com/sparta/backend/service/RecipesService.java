@@ -7,6 +7,7 @@ import com.sparta.backend.domain.Recipe;
 import com.sparta.backend.domain.Tag;
 import com.sparta.backend.domain.User;
 import com.sparta.backend.dto.request.recipes.PostRecipeRequestDto;
+import com.sparta.backend.dto.response.recipes.RecipeDetailResponsetDto;
 import com.sparta.backend.exception.CustomErrorException;
 import com.sparta.backend.repository.RecipesRepository;
 import com.sparta.backend.security.UserDetailsImpl;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -79,5 +82,27 @@ public class RecipesService {
             e.printStackTrace();
             throw new AmazonServiceException(e.getMessage());
         }
+    }
+
+    public RecipeDetailResponsetDto getRecipeDetail(Long recipeId, UserDetailsImpl userDetails) {
+        Recipe recipe = recipesRepository.findById(recipeId).orElseThrow(()->
+                new CustomErrorException("해당 게시물이 존재하지 않습니다"));
+        Long foudnRecipeId = recipe.getId();
+        //todo:nickname가져오기
+//        String nickname = recipe.getUser().getNickname();
+        String title = recipe.getTitle();
+        String content = recipe.getContent();
+        LocalDateTime regDate = recipe.getRegDate();
+        int likeCount = recipe.getLikesList().size();
+        //todo:likeStatus 좋아요 기능 추가 후에 작업해야 함.
+
+        String image = recipe.getImage();
+        List<String> tagNames = new ArrayList<>();
+        recipe.getTagList().stream().map((tag)->tagNames.add(tag.getName()));
+
+        RecipeDetailResponsetDto responsetDto = new RecipeDetailResponsetDto(
+                recipeId, "mock nickname", title, content, regDate, likeCount, true, image, tagNames);
+
+        return responsetDto;
     }
 }

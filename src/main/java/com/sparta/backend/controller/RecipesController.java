@@ -3,6 +3,7 @@ package com.sparta.backend.controller;
 import com.sparta.backend.domain.Recipe;
 import com.sparta.backend.dto.request.recipes.PostRecipeRequestDto;
 import com.sparta.backend.dto.response.CustomResponseDto;
+import com.sparta.backend.dto.response.recipes.RecipeDetailResponsetDto;
 import com.sparta.backend.security.UserDetailsImpl;
 import com.sparta.backend.service.RecipesService;
 import com.sparta.backend.service.TagService;
@@ -50,11 +51,17 @@ public class RecipesController {
     }
 
     @DeleteMapping("recipes/{recipeId}")
-    public CustomResponseDto<?> deleteRecipe(@PathVariable Long recipeId, @AuthenticationPrincipal UserDetails userDetails) {
+    public CustomResponseDto<?> deleteRecipe(@PathVariable Long recipeId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         //todo: checkLogin
 
         recipeService.deleteRecipe(recipeId);
         return new CustomResponseDto<>(1, "레시피 삭제 성공", "");
+    }
+
+    @GetMapping("recipes/{recipeId}")
+    public CustomResponseDto<?> getRecipeDetail(@PathVariable Long recipeId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        RecipeDetailResponsetDto recipeDetailResponsetDto = recipeService.getRecipeDetail(recipeId, userDetails);
+        return new CustomResponseDto<>(1, "마이페이지 조회 성공", recipeDetailResponsetDto);
     }
 
 
