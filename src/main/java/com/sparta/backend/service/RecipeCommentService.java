@@ -26,8 +26,8 @@ public class RecipeCommentService {
     private final RecipeCommentRepository commentRepository;
     private final RecipesRepository recipesRepository;
 
+    //댓글 저장
     public void saveComment(PostCommentRequestDto requestDto, UserDetailsImpl userDetails) {
-
         Recipe recipe = recipesRepository.findById(requestDto.getRecipeId()).orElseThrow(()->
                 new CustomErrorException("해당 댓글의 레시피가 존재하지 않습니다."));
         //todo: User도 넣어줘야 함.
@@ -35,6 +35,7 @@ public class RecipeCommentService {
         commentRepository.save(comment);
     }
 
+    //레시피에 대한 댓글들 조회
     public List<RecipeCommentResponseDto> getComment(Long recipeId, UserDetailsImpl userDetails){
         List<Comment> commentList = commentRepository.findAllByRecipeIdOrderByRegDateDesc(recipeId);
         List<RecipeCommentResponseDto> responseDtoList = new ArrayList<>();

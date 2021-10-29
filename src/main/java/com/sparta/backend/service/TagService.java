@@ -15,6 +15,7 @@ import java.util.List;
 public class TagService {
     private final TagRepository tagRepository;
 
+    //태그저장
     @Transactional
     public List<Tag> saveTags(List<String> tagList, Recipe recipe){
         List<Tag> tmp_tagList = new ArrayList<>();
@@ -26,7 +27,7 @@ public class TagService {
         return tagRepository.saveAll(tmp_tagList);
     }
 
-
+    //태그 업데이트
     @Transactional
     public List<Tag> updateTags(List<String> tagList, Recipe updatedRecipe) {
         //기존 태그 삭제

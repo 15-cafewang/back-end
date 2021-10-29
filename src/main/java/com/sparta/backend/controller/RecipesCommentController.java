@@ -20,6 +20,7 @@ public class RecipesCommentController {
 
     private final RecipeCommentService commentService;
 
+    //댓글 입력
     @PostMapping("/recipes/comment")
     public CustomResponseDto<?> postComment(@RequestBody PostCommentRequestDto requestDto,
                                             @AuthenticationPrincipal UserDetailsImpl userDetails){
@@ -28,6 +29,7 @@ public class RecipesCommentController {
         return new CustomResponseDto<>(1, "댓글 등록 성공!", "");
     }
 
+    //댓글들 조회
     @GetMapping("/recipes/comment/{recipeId}")
     public CustomResponseDto<?> getComment(@PathVariable Long recipeId,
                                            @AuthenticationPrincipal UserDetailsImpl userDetails){
@@ -35,7 +37,8 @@ public class RecipesCommentController {
         List<RecipeCommentResponseDto> responseDtoList = commentService.getComment(recipeId, userDetails);
         return new CustomResponseDto<>(1,"댓글 조회 성공!",responseDtoList);
     }
-    
+
+    //댓글 삭제
     @DeleteMapping("/recipes/comment/{commentId}")
     public CustomResponseDto<?> deleteComment(@PathVariable Long commentId,
                                               @AuthenticationPrincipal UserDetailsImpl userDetails){

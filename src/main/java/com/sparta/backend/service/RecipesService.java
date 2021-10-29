@@ -32,6 +32,7 @@ public class RecipesService {
     private final AmazonS3Client amazonS3Client;
     private final String bucket = "99final";
 
+    //레시피 저장
     //todo: user정보도 넣어줘야 함
     public Recipe saveRecipe(PostRecipeRequestDto requestDto) throws IOException {
         String saveImage = s3Uploader.upload(requestDto.getImage(),"recipeImage");
@@ -39,6 +40,7 @@ public class RecipesService {
         return recipesRepository.save(recipe);
     }
 
+    //레시피 삭제
     public void deleteRecipe(Long recipeId) {
         Recipe recipe = recipesRepository.findById(recipeId).orElseThrow(()->
                 new CustomErrorException("해당 아이디가 존재하지 않습니다")
@@ -48,6 +50,7 @@ public class RecipesService {
         deleteS3(recipe.getImage());
     }
 
+    //레시피 수정
     @Transactional
     public Recipe updateRecipe(Long recipeId,PostRecipeRequestDto requestDto, UserDetailsImpl userDetails) throws IOException {
         //게시글 존재여부확인
@@ -73,6 +76,7 @@ public class RecipesService {
         return recipe.updateRecipe(title, content, imageUrl);
     }
 
+    //S3 이미지 삭제
     public void deleteS3(@RequestParam String imageName){
         //https://S3 버킷 URL/버킷에 생성한 폴더명/이미지이름
         String keyName = imageName.split("/")[4]; // 이미지이름만 추출
@@ -84,6 +88,7 @@ public class RecipesService {
         }
     }
 
+    //레시피 상세조회
     public RecipeDetailResponsetDto getRecipeDetail(Long recipeId, UserDetailsImpl userDetails) {
         Recipe recipe = recipesRepository.findById(recipeId).orElseThrow(()->
                 new CustomErrorException("해당 게시물이 존재하지 않습니다"));

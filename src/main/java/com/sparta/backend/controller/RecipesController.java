@@ -24,6 +24,7 @@ public class RecipesController {
     private final RecipesService recipeService;
     private final TagService tagService;
 
+    //레시피 등록
     @PostMapping("/recipes")
     public CustomResponseDto<?> postRecipe(PostRecipeRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         //todo:IOException처리
@@ -36,6 +37,7 @@ public class RecipesController {
         return new CustomResponseDto<>(1, "레시피 등록 성공", "");
     }
 
+    //레시피 수정
     @PutMapping("/recipes/{recipeId}")
     public CustomResponseDto<?> updateRecipe(@PathVariable Long recipeId, PostRecipeRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         //todo:IOException처리
@@ -50,6 +52,7 @@ public class RecipesController {
         return new CustomResponseDto<>(1, "레시피 수정 성공", "");
     }
 
+    //레시피 삭제
     @DeleteMapping("recipes/{recipeId}")
     public CustomResponseDto<?> deleteRecipe(@PathVariable Long recipeId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         //todo: checkLogin
@@ -58,6 +61,7 @@ public class RecipesController {
         return new CustomResponseDto<>(1, "레시피 삭제 성공", "");
     }
 
+    //레시피 상세조회
     @GetMapping("recipes/{recipeId}")
     public CustomResponseDto<?> getRecipeDetail(@PathVariable Long recipeId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         RecipeDetailResponsetDto recipeDetailResponsetDto = recipeService.getRecipeDetail(recipeId, userDetails);
