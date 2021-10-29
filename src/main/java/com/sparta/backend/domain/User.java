@@ -26,6 +26,9 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String nickname;
 
+    @Column(unique = true)
+    private Long kakaoId;
+
     private String image;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
@@ -63,4 +66,10 @@ public class User extends BaseEntity {
         this.nickname = nickname;
     }
 
+    public User(String email, String password, String nickname, Long kakaoId) {
+        this.email = email;
+        this.password = password;
+        this.nickname = nickname;
+        this.kakaoId = kakaoId;
+    }
 }
