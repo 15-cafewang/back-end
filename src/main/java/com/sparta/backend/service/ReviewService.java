@@ -15,4 +15,7 @@ public interface ReviewService {
 
     //해당 제품에 대한 전체 리뷰 조회
     public List<GetReviewResponseDto> getReviews(Long productId);
+
+    //해당 제품에 대한 상세 리뷰 조회
+    public GetReviewResponseDto getDetailReview(Long reviewId);
 }

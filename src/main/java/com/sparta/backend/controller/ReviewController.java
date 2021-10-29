@@ -41,4 +41,15 @@ public class ReviewController {
         }
     }
 
+    //해당 제품에 대한 상세 리뷰 조회
+    @GetMapping("/products/reviews/detail/{reviewId}")
+    public CustomResponseDto<?> getDetailReview(@PathVariable Long reviewId) {
+        GetReviewResponseDto reviewResponseDto = reviewService.getDetailReview(reviewId);
+
+        if(reviewResponseDto != null) {
+            return new CustomResponseDto<>(1, "리뷰 상세 조회 성공", reviewResponseDto);
+        } else {
+            return new CustomResponseDto<>(-1, "리뷰 상세 조회 실패", "");
+        }
+    }
 }

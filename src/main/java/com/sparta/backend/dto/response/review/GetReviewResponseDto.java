@@ -14,6 +14,6 @@ public class GetReviewResponseDto {
     private String title;           //제목
     private String nickname;        //작성자
     private String content;         //리뷰내용
-    private int star;            //별점
+    private int star;               //별점
     private LocalDateTime regDate;  //작성시간
 }

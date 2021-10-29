@@ -82,4 +82,26 @@ public class ReviewServiceImpl implements ReviewService {
 
         return responseDtoList;
    }
+
+   //해당 제품에 대한 상세 리뷰 조회
+   public GetReviewResponseDto getDetailReview(Long reviewId) {
+
+       Review review = reviewRepository.findById(reviewId).orElseThrow(
+               () -> new NullPointerException("해당 게시물을 찾을 수 없습니다.")
+       );
+
+       String title = review.getTitle();
+//       String nickname = review.getUser().getNickname(); //todo: 로그인 추가 시 주석 해제
+       String nickname = "aaa"; //todo: 로그인 추가 시 삭제
+       String content = review.getContent();
+       int star = review.getStar();
+       LocalDateTime regDate = review.getRegDate();
+
+       GetReviewResponseDto responseDto =
+               new GetReviewResponseDto(reviewId, title, nickname, content, star, regDate);
+
+       return responseDto;
+   }
+
+
 }
