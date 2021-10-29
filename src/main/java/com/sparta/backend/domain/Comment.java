@@ -35,4 +35,8 @@ public class Comment extends BaseEntity {
         this.user = user;
         this.recipe = recipe;
     }
+
+    public void updateComment(String content){
+        this.content = content;
+    }
 }

@@ -4,6 +4,7 @@ import com.sparta.backend.domain.Comment;
 import com.sparta.backend.domain.Recipe;
 import com.sparta.backend.domain.User;
 import com.sparta.backend.dto.request.recipes.PostCommentRequestDto;
+import com.sparta.backend.dto.request.recipes.RecipeCommentUpdateRequestDto;
 import com.sparta.backend.dto.response.CustomResponseDto;
 import com.sparta.backend.dto.response.recipes.RecipeCommentResponseDto;
 import com.sparta.backend.exception.CustomErrorException;
@@ -12,6 +13,7 @@ import com.sparta.backend.repository.RecipesRepository;
 import com.sparta.backend.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +21,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class RecipeCommentService {
     private final RecipeCommentRepository commentRepository;
     private final RecipesRepository recipesRepository;
@@ -51,5 +54,14 @@ public class RecipeCommentService {
     //댓글 삭제
     public void deleteComment(Long commentId, UserDetailsImpl userDetails) {
         commentRepository.deleteById(commentId);
+    }
+
+    //댓글 수정
+    public void updateComment(Long commentId, RecipeCommentUpdateRequestDto updateRequestDto, UserDetailsImpl userDetails) {
+        //todo: 해당 댓글이 로그인 한 사람의 댓글인지 확인
+
+        Comment comment = commentRepository.findById(commentId).orElseThrow(()->
+                new CustomErrorException("해당 댓글이 존재하지 않습니다"));
+        comment.updateComment(updateRequestDto.getContent());
     }
 }
