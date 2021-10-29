@@ -16,7 +16,7 @@ public class BrandController {
     private final BrandService brandService;
 
     //브랜드 등록
-    @PostMapping("/brands")
+    @PostMapping("/admin/brands")
     public CustomResponseDto<String> createBrand(@RequestBody PostBrandRequestDto requestDto) { //todo: 매개변수 userDetails 추가
 
         CustomResponseDto<String> responseDto = null;

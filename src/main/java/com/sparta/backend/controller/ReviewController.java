@@ -29,7 +29,7 @@ public class ReviewController {
         }
     }
 
-    //리뷰 조회
+    //해당 제품에 대한 전체 리뷰 조회
     @GetMapping("/products/reviews/{productId}")
     public CustomResponseDto<?> getReviews(@PathVariable Long productId) {
         List<GetReviewResponseDto> reviewList = reviewService.getReviews(productId);

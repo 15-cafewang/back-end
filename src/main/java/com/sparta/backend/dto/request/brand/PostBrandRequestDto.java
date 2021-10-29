@@ -9,4 +9,5 @@ import lombok.NoArgsConstructor;
 @Getter
 public class PostBrandRequestDto {
     private String name;    //브랜드명
+    private String image;   //브랜드 이미지
 }

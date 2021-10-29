@@ -52,7 +52,7 @@ public class ReviewServiceImpl implements ReviewService {
         return responseDto;
     }
 
-    //리뷰 조회
+    //리뷰 전체 조회
    public List<GetReviewResponseDto> getReviews(Long productId) {
 
         Product product = productRepository.findById(productId).orElseThrow(
@@ -81,7 +81,5 @@ public class ReviewServiceImpl implements ReviewService {
         }
 
         return responseDtoList;
-    }
-
-
+   }
 }
