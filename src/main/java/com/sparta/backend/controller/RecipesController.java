@@ -61,7 +61,7 @@ public class RecipesController {
     @GetMapping("recipes/{recipeId}")
     public CustomResponseDto<?> getRecipeDetail(@PathVariable Long recipeId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         RecipeDetailResponsetDto recipeDetailResponsetDto = recipeService.getRecipeDetail(recipeId, userDetails);
-        return new CustomResponseDto<>(1, "마이페이지 조회 성공", recipeDetailResponsetDto);
+        return new CustomResponseDto<>(1, "레시피 조회 성공", recipeDetailResponsetDto);
     }
 
 
