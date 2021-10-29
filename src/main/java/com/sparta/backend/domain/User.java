@@ -1,7 +1,6 @@
 package com.sparta.backend.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.sparta.backend.domain.constant.UserRole;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -18,7 +17,7 @@ public class User extends BaseEntity {
     @Column(name = "user_id")
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
@@ -26,10 +25,6 @@ public class User extends BaseEntity {
 
     @Column(nullable = false)
     private String nickname;
-
-    @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private UserRole role;
 
     private String image;
 
@@ -62,11 +57,10 @@ public class User extends BaseEntity {
     }
 
     @Builder
-    public User(String email, String password, String nickname, UserRole role) {
+    public User(String email, String password, String nickname) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
-        this.role = role;
     }
 
 }
