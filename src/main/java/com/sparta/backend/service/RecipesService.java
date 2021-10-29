@@ -58,7 +58,7 @@ public class RecipesService {
         String title = requestDto.getTitle();
         String content = requestDto.getContent();
 
-        //todo: 게시글에 저장되어있는 사용자의 username과 현재 사용자의 username 비교하기
+        //todo: 게시글에 저장되어있는 사용자의 nickname과 현재 사용자의 nickname 비교하기
 
         //S3에 있는 사진 삭제하고 다시 업로드
         if(requestDto.getImage() != null){

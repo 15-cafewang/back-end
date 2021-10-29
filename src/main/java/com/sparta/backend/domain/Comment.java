@@ -29,4 +29,10 @@ public class Comment extends BaseEntity {
     @JsonManagedReference
     @JoinColumn(name = "recipe_id")
     private Recipe recipe;
+
+    public Comment(String content, User user, Recipe recipe) {
+        this.content = content;
+        this.user = user;
+        this.recipe = recipe;
+    }
 }

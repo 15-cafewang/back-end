@@ -53,7 +53,7 @@ public class RecipesController {
     @DeleteMapping("recipes/{recipeId}")
     public CustomResponseDto<?> deleteRecipe(@PathVariable Long recipeId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         //todo: checkLogin
-
+        //todo: 글쓴사람이 로그인한사람인지 체크
         recipeService.deleteRecipe(recipeId);
         return new CustomResponseDto<>(1, "레시피 삭제 성공", "");
     }
