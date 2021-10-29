@@ -28,7 +28,15 @@ public class RecipesCommentController {
 
     @GetMapping("/recipes/comment/{recipeId}")
     public CustomResponseDto<?> getComment(@PathVariable Long recipeId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        //todo:checkLogin
         List<RecipeCommentResponseDto> responseDtoList = commentService.getComment(recipeId, userDetails);
         return new CustomResponseDto<>(1,"댓글 조회 성공!",responseDtoList);
+    }
+
+    @DeleteMapping("/recipes/comment/{commentId}")
+    public CustomResponseDto<?> deleteComment(@PathVariable Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        //todo:checkLogin
+        commentService.deleteComment(commentId, userDetails);
+        return new CustomResponseDto<>(1,"댓글 삭제 성공!", "");
     }
 }

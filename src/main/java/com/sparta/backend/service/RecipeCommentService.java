@@ -47,4 +47,9 @@ public class RecipeCommentService {
                         )));
         return responseDtoList;
     }
+
+    //댓글 삭제
+    public void deleteComment(Long commentId, UserDetailsImpl userDetails) {
+        commentRepository.deleteById(commentId);
+    }
 }
