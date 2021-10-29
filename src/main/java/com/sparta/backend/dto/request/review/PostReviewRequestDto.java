@@ -12,4 +12,5 @@ public class PostReviewRequestDto {
     private String title;       //제목
     private String content;     //리뷰 내용
     private String image;       //사진
+    private int star;        //별점
 }

@@ -42,6 +42,7 @@ public class Review extends BaseEntity {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
         this.image = requestDto.getImage();
+        this.star = requestDto.getStar();
         this.product = product;
         //this.user = user;     //todo: user 추가
     }
