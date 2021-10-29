@@ -3,6 +3,7 @@ package com.sparta.backend.service;
 import com.sparta.backend.domain.Product;
 import com.sparta.backend.domain.Review;
 import com.sparta.backend.domain.User;
+import com.sparta.backend.dto.response.review.GetReviewResponseDto;
 import com.sparta.backend.repository.ProductRepository;
 import com.sparta.backend.repository.ReviewRepository;
 import com.sparta.backend.dto.request.review.PostReviewRequestDto;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -47,5 +50,36 @@ public class ReviewServiceImpl implements ReviewService {
 
         return responseDto;
     }
+
+    //리뷰 조회
+   public List<GetReviewResponseDto> getReviews(Long productId) {
+
+        Product product = productRepository.findById(productId).orElseThrow(
+                () -> new NullPointerException("찾는 제품이 없습니다.")
+        );
+
+       List<GetReviewResponseDto> responseDtoList = new ArrayList<>();
+
+        if(product != null) {
+            List<Review> reviewList = product.getReviewList();
+
+            for(Review review: reviewList) {
+                Long reviewId = review.getId();
+                String title = review.getTitle();
+                String nickname = "aaa"; //todo: 로그인 기능 추가 시 삭제
+//                String nickname = review.getUser().getNickname(); //todo: 로그인 기능 추가 시 주석 해제
+                String content = review.getContent();
+                LocalDateTime regdate = review.getRegDate();
+
+                GetReviewResponseDto responseDto =
+                        new GetReviewResponseDto(reviewId, title, nickname, content, regdate);
+
+                responseDtoList.add(responseDto);
+            }
+        }
+
+        return responseDtoList;
+    }
+
 
 }
