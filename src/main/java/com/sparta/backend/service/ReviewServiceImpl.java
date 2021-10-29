@@ -69,12 +69,13 @@ public class ReviewServiceImpl implements ReviewService {
                 String title = review.getTitle();
                 String nickname = "aaa"; //todo: 로그인 기능 추가 시 삭제
 //                String nickname = review.getUser().getNickname(); //todo: 로그인 기능 추가 시 주석 해제
+                String image = review.getImage();
                 String content = review.getContent();
                 int star = review.getStar();
                 LocalDateTime regdate = review.getRegDate();
 
                 GetReviewResponseDto responseDto =
-                        new GetReviewResponseDto(reviewId, title, nickname, content, star, regdate);
+                        new GetReviewResponseDto(reviewId, title, nickname, image, content, star, regdate);
 
                 responseDtoList.add(responseDto);
             }
@@ -93,12 +94,13 @@ public class ReviewServiceImpl implements ReviewService {
        String title = review.getTitle();
 //       String nickname = review.getUser().getNickname(); //todo: 로그인 추가 시 주석 해제
        String nickname = "aaa"; //todo: 로그인 추가 시 삭제
+       String image = review.getImage();
        String content = review.getContent();
        int star = review.getStar();
        LocalDateTime regDate = review.getRegDate();
 
        GetReviewResponseDto responseDto =
-               new GetReviewResponseDto(reviewId, title, nickname, content, star, regDate);
+               new GetReviewResponseDto(reviewId, title, nickname, image, content, star, regDate);
 
        return responseDto;
    }
