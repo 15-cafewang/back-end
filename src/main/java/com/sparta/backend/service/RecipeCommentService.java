@@ -12,6 +12,10 @@ import com.sparta.backend.repository.RecipeCommentRepository;
 import com.sparta.backend.repository.RecipesRepository;
 import com.sparta.backend.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +39,7 @@ public class RecipeCommentService {
         commentRepository.save(comment);
     }
 
-    //레시피에 대한 댓글들 조회
+    //레시피에 대한 댓글들 조회- 리스트로 리턴
     public List<RecipeCommentResponseDto> getComment(Long recipeId, UserDetailsImpl userDetails){
         List<Comment> commentList = commentRepository.findAllByRecipeIdOrderByRegDateDesc(recipeId);
         List<RecipeCommentResponseDto> responseDtoList = new ArrayList<>();
@@ -51,6 +55,20 @@ public class RecipeCommentService {
                         )));
         return responseDtoList;
     }
+
+    //레시피에 대한 댓글들 조회- 페이지로 리턴
+    public Page<RecipeCommentResponseDto> getCommentByPage(Long recipeId, int page, int size, boolean isAsc,UserDetailsImpl userDetails){
+        //todo:checklogin
+        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, "regDate");
+        Pageable pageable = PageRequest.of(page,size,sort);
+        Page<Comment> comments = commentRepository.findAllByRecipeId(recipeId,pageable);
+
+        //필요한 정보만 리턴
+        Page<RecipeCommentResponseDto> responseDtos = comments.map(RecipeCommentResponseDto::new);
+        return responseDtos;
+    }
+
 
     //댓글 삭제
     public void deleteComment(Long commentId, UserDetailsImpl userDetails) {

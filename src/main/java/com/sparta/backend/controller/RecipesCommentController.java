@@ -9,6 +9,7 @@ import com.sparta.backend.security.UserDetailsImpl;
 import com.sparta.backend.service.RecipeCommentService;
 import com.sparta.backend.service.RecipesService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,11 +31,24 @@ public class RecipesCommentController {
     }
 
     //댓글들 조회
+//    @GetMapping("/recipes/comment/{recipeId}")
+//    public CustomResponseDto<?> getComment(@PathVariable Long recipeId,
+//                                           @AuthenticationPrincipal UserDetailsImpl userDetails){
+//        //todo:checkLogin
+//        List<RecipeCommentResponseDto> responseDtoList = commentService.getComment(recipeId, userDetails);
+//        return new CustomResponseDto<>(1,"댓글 조회 성공!",responseDtoList);
+//    }
+
+    //댓글들 페이지로 조회
     @GetMapping("/recipes/comment/{recipeId}")
     public CustomResponseDto<?> getComment(@PathVariable Long recipeId,
+                                           @RequestParam("page") int page,
+                                           @RequestParam("size") int size,
+                                           @RequestParam("isAsc") boolean isAsc,
                                            @AuthenticationPrincipal UserDetailsImpl userDetails){
         //todo:checkLogin
-        List<RecipeCommentResponseDto> responseDtoList = commentService.getComment(recipeId, userDetails);
+        page = page-1;
+        Page<RecipeCommentResponseDto> responseDtoList = commentService.getCommentByPage(recipeId, page, size, isAsc, userDetails);
         return new CustomResponseDto<>(1,"댓글 조회 성공!",responseDtoList);
     }
 
