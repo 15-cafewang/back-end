@@ -21,7 +21,12 @@ public class Tag extends BaseEntity {
     @Column(nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL)
-    @JsonBackReference
-    private List<RecipeTag> recipeList;
+    @ManyToOne
+    @JoinColumn(name = "recipe_id")
+    private Recipe recipe;
+
+    public Tag(String name, Recipe recipe){
+        this.name = name;
+        this.recipe = recipe;
+    }
 }
