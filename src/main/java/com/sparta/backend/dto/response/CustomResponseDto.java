@@ -1,12 +1,12 @@
 package com.sparta.backend.dto.response;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
 public class CustomResponseDto<T> {
     private int code;
     private String message;

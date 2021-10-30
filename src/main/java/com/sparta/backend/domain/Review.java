@@ -1,6 +1,8 @@
 package com.sparta.backend.domain;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.sparta.backend.dto.request.review.PostReviewRequestDto;
+import com.sparta.backend.dto.request.review.PutReviewRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -18,6 +20,9 @@ public class Review extends BaseEntity {
     private Long id;
 
     @Column(nullable = false)
+    private String title;
+
+    @Column(nullable = false)
     private String content;
 
     private String image;
@@ -33,4 +38,26 @@ public class Review extends BaseEntity {
     @JsonManagedReference
     @JoinColumn(name = "product_id")
     private Product product;
+
+    public Review(PostReviewRequestDto requestDto, Product product) { //todo: 파라미터 User user 추가
+        this.title = requestDto.getTitle();
+        this.content = requestDto.getContent();
+        this.image = requestDto.getImage();
+        this.star = requestDto.getStar();
+        this.product = product;
+        //this.user = user;     //todo: user 추가
+    }
+
+    public void update(PutReviewRequestDto requestDto) {
+        this.title = requestDto.getTitle();
+        this.content = requestDto.getContent();
+        this.image = requestDto.getImage();
+        this.star = requestDto.getStar();
+    }
+
+    public void updateWithoutImage(PutReviewRequestDto requestDto) {
+        this.title = requestDto.getTitle();
+        this.content = requestDto.getContent();
+        this.star = requestDto.getStar();
+    }
 }
