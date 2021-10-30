@@ -7,7 +7,7 @@ import lombok.ToString;
 
 import javax.persistence.*;
 
-@ToString
+@ToString(exclude = {"user", "product"})
 @Getter
 @NoArgsConstructor
 @Entity
