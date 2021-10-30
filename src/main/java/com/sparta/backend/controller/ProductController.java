@@ -18,7 +18,7 @@ public class ProductController {
     private final ProductService productService;
 
     //제품 등록
-    @PostMapping("/products")
+    @PostMapping("/admin/products")
     public CustomResponseDto<String>  createProduct(@RequestBody PostProductRequestDto requestDto) { //todo: 매개변수 userDetails 추가
 
         CustomResponseDto<String> responseDto = null;

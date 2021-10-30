@@ -2,6 +2,7 @@ package com.sparta.backend.service;
 
 import com.sparta.backend.domain.Review;
 import com.sparta.backend.dto.request.review.PostReviewRequestDto;
+import com.sparta.backend.dto.request.review.PutReviewRequestDto;
 import com.sparta.backend.dto.response.review.GetReviewResponseDto;
 import com.sparta.backend.dto.response.review.PostReviewResponseDto;
 import com.sparta.backend.security.UserDetailsImpl;
@@ -18,4 +19,7 @@ public interface ReviewService {
 
     //해당 제품에 대한 상세 리뷰 조회
     public GetReviewResponseDto getDetailReview(Long reviewId);
+
+    //리뷰 수정
+    public Long updateReview(Long reviewId, PutReviewRequestDto requestDto, UserDetailsImpl userDetails);
 }

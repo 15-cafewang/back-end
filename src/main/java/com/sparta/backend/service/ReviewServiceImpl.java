@@ -3,6 +3,7 @@ package com.sparta.backend.service;
 import com.sparta.backend.domain.Product;
 import com.sparta.backend.domain.Review;
 import com.sparta.backend.domain.User;
+import com.sparta.backend.dto.request.review.PutReviewRequestDto;
 import com.sparta.backend.dto.response.review.GetReviewResponseDto;
 import com.sparta.backend.repository.ProductRepository;
 import com.sparta.backend.repository.ReviewRepository;
@@ -104,6 +105,33 @@ public class ReviewServiceImpl implements ReviewService {
 
        return responseDto;
    }
+
+    //리뷰 수정
+    @Transactional
+    public Long updateReview(Long reviewId, PutReviewRequestDto requestDto,
+                             UserDetailsImpl userDetails) {
+
+        Review review = reviewRepository.findById(reviewId).orElseThrow(
+                () -> new NullPointerException("찾는 리뷰가 없습니다.")
+        );
+
+        //게시물을 쓴 사용자 아이디와 현재 로그인한 사용자 아이디가 일치할 때
+//        if(review.getUser().getEmail().equals(userDetails.getUser().getEmail())) { //todo: 로그인 추가 시 주석 해제
+            String title = requestDto.getTitle();
+            String content = requestDto.getContent();
+            String image = requestDto.getImage();
+
+            //이미지 이름이 다르면 update
+            if(!review.getImage().equals(image)) {
+                review.update(requestDto);
+            } else { //이미지 이름이 같으면 이미지 수정은 안 하기
+                review.updateWithoutImage(requestDto);
+            }
+//        } else { //todo: 로그인 추가 시 주석 해제
+//            throw new IllegalArgumentException("해당 게시물을 작성한 사용자만 수정 가능합니다.");
+//        }
+        return review.getId();
+    }
 
 
 }

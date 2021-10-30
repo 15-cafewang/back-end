@@ -1,11 +1,14 @@
 package com.sparta.backend.controller;
 
+import com.sparta.backend.dto.request.review.PutReviewRequestDto;
 import com.sparta.backend.dto.response.review.GetReviewResponseDto;
 import com.sparta.backend.dto.request.review.PostReviewRequestDto;
 import com.sparta.backend.dto.response.CustomResponseDto;
 import com.sparta.backend.dto.response.review.PostReviewResponseDto;
+import com.sparta.backend.security.UserDetailsImpl;
 import com.sparta.backend.service.ReviewService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -52,4 +55,18 @@ public class ReviewController {
             return new CustomResponseDto<>(-1, "리뷰 상세 조회 실패", "");
         }
     }
+
+    //리뷰 수정
+    @PutMapping("/products/reviews/{reviewId}")
+    public CustomResponseDto<?> updateReview(@PathVariable Long reviewId, @RequestBody PutReviewRequestDto requestDto,
+                             @AuthenticationPrincipal UserDetailsImpl userDetails) { //todo: userDetails 추가
+        Long id = reviewService.updateReview(reviewId, requestDto, userDetails); //todo: userDetails 추가
+
+        if(id != null) {
+            return new CustomResponseDto<>(1, "리뷰 수정 성공", "");
+        } else {
+            return new CustomResponseDto<>(-1, "리뷰 수정 실패", "");
+        }
+    }
+
 }
