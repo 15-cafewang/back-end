@@ -37,11 +37,11 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonBackReference
-    private List<Comment> commentList;
+    private List<RecipeComment> recipeCommentList;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonBackReference
-    private List<Likes> likesList;
+    private List<RecipeLikes> recipeLikesList;
 
     @OneToMany(mappedBy = "fromUser", cascade = CascadeType.ALL)
     @JsonBackReference

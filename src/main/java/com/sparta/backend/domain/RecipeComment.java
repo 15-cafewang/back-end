@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 @Entity
-public class Comment extends BaseEntity {
+public class RecipeComment extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id")
@@ -30,7 +30,7 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "recipe_id")
     private Recipe recipe;
 
-    public Comment(String content, User user, Recipe recipe) {
+    public RecipeComment(String content, User user, Recipe recipe) {
         this.content = content;
         this.user = user;
         this.recipe = recipe;

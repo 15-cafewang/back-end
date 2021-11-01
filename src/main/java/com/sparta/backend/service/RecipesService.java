@@ -4,19 +4,15 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.sparta.backend.awsS3.S3Uploader;
 import com.sparta.backend.domain.Recipe;
-import com.sparta.backend.domain.Tag;
-import com.sparta.backend.domain.User;
 import com.sparta.backend.dto.request.recipes.PostRecipeRequestDto;
 import com.sparta.backend.dto.response.recipes.RecipeDetailResponsetDto;
 import com.sparta.backend.exception.CustomErrorException;
 import com.sparta.backend.repository.RecipesRepository;
 import com.sparta.backend.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -99,7 +95,7 @@ public class RecipesService {
         String title = recipe.getTitle();
         String content = recipe.getContent();
         LocalDateTime regDate = recipe.getRegDate();
-        int likeCount = recipe.getLikesList().size();
+        int likeCount = recipe.getRecipeLikesList().size();
         //todo:likeStatus 좋아요 기능 추가 후에 작업해야 함.
 
         String image = recipe.getImage();

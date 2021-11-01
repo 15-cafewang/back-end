@@ -1,6 +1,6 @@
 package com.sparta.backend.dto.response.recipes;
 
-import com.sparta.backend.domain.Comment;
+import com.sparta.backend.domain.RecipeComment;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -14,12 +14,12 @@ public class RecipeCommentResponseDto {
     private String content;
     private LocalDateTime regdate;
 
-    public RecipeCommentResponseDto(Comment comment){
-        this.commentId = comment.getId();
+    public RecipeCommentResponseDto(RecipeComment recipeComment){
+        this.commentId = recipeComment.getId();
         //todo: user이름으로 해야 함
 //        this.nickname = comment.getUser().getNickname();
         this.nickname = "this is mock name";
-        this.content = comment.getContent();
-        this.regdate = comment.getRegDate();
+        this.content = recipeComment.getContent();
+        this.regdate = recipeComment.getRegDate();
     }
 }
