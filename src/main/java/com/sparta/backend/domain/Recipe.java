@@ -27,6 +27,8 @@ public class Recipe extends BaseEntity {
 
     private String image;
 
+    private int price;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonManagedReference
     @JoinColumn(name = "user_id")
@@ -44,14 +46,16 @@ public class Recipe extends BaseEntity {
     @JsonBackReference
     private List<Likes> likesList;
 
-    public Recipe(String title, String content, String image){
+    public Recipe(String title, String content, int price, String image){
         this.title = title;
         this.content = content;
+        this.price = price;
         this.image = image;
     }
-    public Recipe updateRecipe(String title, String content, String image) {
+    public Recipe updateRecipe(String title, String content, int price,String image) {
         this.title = title;
         this.content = content;
+        this.price = price;
         this.image = image;
 
         return this;

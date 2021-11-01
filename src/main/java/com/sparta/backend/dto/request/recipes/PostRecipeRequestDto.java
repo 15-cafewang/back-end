@@ -10,5 +10,6 @@ public class PostRecipeRequestDto {
     private String title;
     private String content;
     private MultipartFile image;
+    private int price;
     private List<String> tag;
 }

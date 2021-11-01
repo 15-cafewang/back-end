@@ -36,7 +36,7 @@ public class RecipesService {
     //todo: user정보도 넣어줘야 함
     public Recipe saveRecipe(PostRecipeRequestDto requestDto) throws IOException {
         String saveImage = s3Uploader.upload(requestDto.getImage(),"recipeImage");
-        Recipe recipe = new Recipe(requestDto.getTitle(),requestDto.getContent(),saveImage);
+        Recipe recipe = new Recipe(requestDto.getTitle(),requestDto.getContent(),requestDto.getPrice(),saveImage);
         return recipesRepository.save(recipe);
     }
 
@@ -59,6 +59,7 @@ public class RecipesService {
         String imageUrl = recipe.getImage();//사진은 일단 기존 포스트의 URL(사진은 업데이트 안 했을 경우 대비)
 //        User user = userDetails.getUser();
         String title = requestDto.getTitle();
+        int price = requestDto.getPrice();
         String content = requestDto.getContent();
 
         //todo: 게시글에 저장되어있는 사용자의 nickname과 현재 사용자의 nickname 비교하기
@@ -73,7 +74,7 @@ public class RecipesService {
         }
 
         //게시글 업데이트 todo: user생기면 user정보도 넣어줘야 한다.
-        return recipe.updateRecipe(title, content, imageUrl);
+        return recipe.updateRecipe(title, content, price,imageUrl);
     }
 
     //S3 이미지 삭제
