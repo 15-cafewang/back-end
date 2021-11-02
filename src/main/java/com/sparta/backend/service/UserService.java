@@ -57,12 +57,14 @@ public class UserService {
         userRepository.save(user);
     }
 
-
+    // 로그인
     public List<Map<String, String>> login(SignupRequestDto requestDto) {
 
         User user = userRepository.findByEmail(requestDto.getEmail()).orElseThrow(
                 () -> new IllegalArgumentException("아이디를 찾을수 없습니다")
         );
+
+        if (user.getStatus().equals("N")) throw new NullPointerException("존재하지 않는 회원입니다");
 
         if (!passwordEncoder.matches(requestDto.getPassword(),user.getPassword())) {
             throw new IllegalArgumentException("비밀번호 불일치");
