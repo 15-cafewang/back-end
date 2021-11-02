@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.sparta.backend.awsS3.S3Uploader;
 import com.sparta.backend.domain.User;
 import com.sparta.backend.domain.UserRole;
+import com.sparta.backend.dto.request.user.DeleteUserRequestDto;
 import com.sparta.backend.dto.request.user.SignupRequestDto;
 import com.sparta.backend.dto.request.user.UpdateRequestDto;
 import com.sparta.backend.repository.UserRepository;
@@ -101,6 +102,20 @@ public class UserService {
         }
 
         user.changeProfile(requestDto.getNickname(), imageUrl);
+    }
+
+    // 회원 탈퇴
+    public void deleteUser(Long userId, DeleteUserRequestDto requestDto) {
+
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new NullPointerException("존재하지 않는 회원입니다")
+        );
+
+        if (!passwordEncoder.matches(requestDto.getPassword(),user.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
+        }
+
+        user.deleteUser("N");
     }
 
     //S3 이미지 삭제

@@ -91,4 +91,9 @@ public class User extends BaseEntity {
         this.nickname = nickname;
         this.image = image;
     }
+
+    // 회원 삭제
+    public void deleteUser(String status) {
+        this.status = status;
+    }
 }

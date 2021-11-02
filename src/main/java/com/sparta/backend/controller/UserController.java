@@ -1,6 +1,7 @@
 package com.sparta.backend.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.sparta.backend.dto.request.user.DeleteUserRequestDto;
 import com.sparta.backend.dto.request.user.SignupRequestDto;
 import com.sparta.backend.dto.request.user.UpdateRequestDto;
 import com.sparta.backend.dto.response.CustomResponseDto;
@@ -64,6 +65,17 @@ public class UserController {
         userService.updateUser(userId, requestDto);
 
         return new CustomResponseDto<>(1, "회원 정보 수정 성공", "");
+    }
+
+    // 회원 탈퇴
+    @PutMapping("/user/delete")
+    public CustomResponseDto<?> deleteUser(@AuthenticationPrincipal UserDetailsImpl userDetails, DeleteUserRequestDto requestDto) {
+
+        Long userId = userDetails.getUser().getId();
+
+        userService.deleteUser(userId, requestDto);
+
+        return new CustomResponseDto<>(1, "회원 탈퇴 성공", "");
     }
 
 }
