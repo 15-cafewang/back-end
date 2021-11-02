@@ -85,4 +85,10 @@ public class User extends BaseEntity {
         this.kakaoId = kakaoId;
         this.status = status;
     }
+
+    // 정보 수정
+    public void changeProfile(String nickname, String image) {
+        this.nickname = nickname;
+        this.image = image;
+    }
 }

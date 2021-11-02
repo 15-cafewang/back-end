@@ -2,14 +2,19 @@ package com.sparta.backend.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.backend.dto.request.user.SignupRequestDto;
+import com.sparta.backend.dto.request.user.UpdateRequestDto;
 import com.sparta.backend.dto.response.CustomResponseDto;
+import com.sparta.backend.security.UserDetailsImpl;
 import com.sparta.backend.service.KakaoUserService;
 import com.sparta.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -48,6 +53,17 @@ public class UserController {
         kakaoUserService.kakaoLogin(code);
 
         return new CustomResponseDto<>(1, "로그인 성공", "");
+    }
+
+    // 회원 정보 수정
+    @PutMapping("/user/info")
+    public CustomResponseDto<?> updateUser(@AuthenticationPrincipal UserDetailsImpl userDetails, UpdateRequestDto requestDto) throws IOException {
+
+        Long userId = userDetails.getUser().getId();
+
+        userService.updateUser(userId, requestDto);
+
+        return new CustomResponseDto<>(1, "회원 정보 수정 성공", "");
     }
 
 }
