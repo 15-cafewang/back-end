@@ -2,6 +2,7 @@ package com.sparta.backend.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.sparta.backend.dto.request.board.PostBoardRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -41,4 +42,10 @@ public class Board extends BaseEntity {
     @JsonBackReference
     private List<BoardLikes> boardLikesList;
 
+    public Board(PostBoardRequestDto requestDto, String image, User user) {
+        this.title = requestDto.getTitle();
+        this.content = requestDto.getContent();
+        this.image = image;
+        this.user = user;
+    }
 }
