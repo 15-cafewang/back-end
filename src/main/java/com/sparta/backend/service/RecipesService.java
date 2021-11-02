@@ -4,11 +4,13 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.sparta.backend.awsS3.S3Uploader;
 import com.sparta.backend.domain.Recipe;
+import com.sparta.backend.domain.RecipeLikes;
 import com.sparta.backend.dto.request.recipes.PostRecipeRequestDto;
 import com.sparta.backend.dto.response.recipes.RecipeCommentResponseDto;
 import com.sparta.backend.dto.response.recipes.RecipeDetailResponsetDto;
 import com.sparta.backend.dto.response.recipes.RecipeListResponseDto;
 import com.sparta.backend.exception.CustomErrorException;
+import com.sparta.backend.repository.RecipeLikesRepository;
 import com.sparta.backend.repository.RecipesRepository;
 import com.sparta.backend.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -20,16 +22,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
 public class RecipesService {
 
     private final RecipesRepository recipesRepository;
+    private final RecipeLikesRepository recipeLikesRepository;
     private final S3Uploader s3Uploader;
     private final AmazonS3Client amazonS3Client;
     private final String bucket = "99final";
@@ -123,5 +128,22 @@ public class RecipesService {
         Page<RecipeListResponseDto> responseDtos = recipes.map(RecipeListResponseDto::new);
 
         return responseDtos;
+    }
+
+    public String likeRecipe(Long postId, UserDetailsImpl userDetails) {
+        Recipe recipe = recipesRepository.findById(postId).orElseThrow(()->
+                new CustomErrorException("해당 게시물이 존재하지 않아요"));
+        //이미 좋아요누른 건지 확인하기
+        Optional<RecipeLikes> foundRecipeLike = recipeLikesRepository.findByRecipeIdAndUserId(recipe.getId(),userDetails.getUser().getId());
+        if(foundRecipeLike.isPresent()){
+            //이미 좋아요를 눌렀으면 좋아요취소
+            recipeLikesRepository.delete(foundRecipeLike.get());
+            return "좋아요 취소 성공";
+        }else{
+            RecipeLikes recipeLikes = new RecipeLikes(userDetails.getUser(), recipe);
+            recipeLikesRepository.save(recipeLikes);
+            return "좋아요 등록 성공";
+        }
+
     }
 }

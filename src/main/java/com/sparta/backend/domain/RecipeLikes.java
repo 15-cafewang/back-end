@@ -27,4 +27,9 @@ public class RecipeLikes extends BaseEntity {
     @JsonManagedReference
     @JoinColumn(name = "recipe_id")
     private Recipe recipe;
+
+    public RecipeLikes(User user, Recipe recipe){
+        this.recipe = recipe;
+        this.user = user;
+    }
 }

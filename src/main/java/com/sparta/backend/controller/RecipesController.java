@@ -84,5 +84,12 @@ public class RecipesController {
         return new CustomResponseDto<>(1, "레시피 리스트 성공", recipesByPage);
     }
 
+    @GetMapping("recipes/likes/{postId}")
+    public CustomResponseDto<?> likeRecipe(@PathVariable Long postId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        //todo: checkLogin
+        String resultMessage = recipeService.likeRecipe(postId, userDetails);
+        return new CustomResponseDto<>(1, resultMessage,"");
+    }
+
 
 }
