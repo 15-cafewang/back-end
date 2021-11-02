@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.backend.domain.User;
+import com.sparta.backend.domain.UserRole;
 import com.sparta.backend.dto.request.user.KakaoUserInfoDto;
 import com.sparta.backend.repository.UserRepository;
 import com.sparta.backend.security.UserDetailsImpl;
@@ -129,7 +130,7 @@ public class KakaoUserService {
             // role: 일반 사용자
 //            UserRoleEnum role = UserRoleEnum.USER;
 
-            kakaoUser = new User(email, encodedPassword, nickname, kakaoId);
+            kakaoUser = new User(email, encodedPassword, nickname, UserRole.USER, kakaoId);
             userRepository.save(kakaoUser);
         }
         return kakaoUser;

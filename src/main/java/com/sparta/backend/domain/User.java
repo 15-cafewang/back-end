@@ -26,6 +26,10 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String nickname;
 
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private UserRole role;
+
     @Column(unique = true)
     private Long kakaoId;
 
@@ -60,16 +64,18 @@ public class User extends BaseEntity {
     }
 
     @Builder
-    public User(String email, String password, String nickname) {
+    public User(String email, String password, String nickname, UserRole role) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
+        this.role = role;
     }
 
-    public User(String email, String password, String nickname, Long kakaoId) {
+    public User(String email, String password, String nickname, UserRole role, Long kakaoId) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
+        this.role = role;
         this.kakaoId = kakaoId;
     }
 }

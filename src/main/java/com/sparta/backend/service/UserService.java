@@ -1,6 +1,7 @@
 package com.sparta.backend.service;
 
 import com.sparta.backend.domain.User;
+import com.sparta.backend.domain.UserRole;
 import com.sparta.backend.dto.request.user.SignupRequestDto;
 import com.sparta.backend.repository.UserRepository;
 import com.sparta.backend.security.JwtTokenProvider;
@@ -45,7 +46,7 @@ public class UserService {
 
         String nickname = requestDto.getNickname();
 
-        User user = new User(email, password, nickname);
+        User user = new User(email, password, nickname, UserRole.USER);
 
         userRepository.save(user);
     }
