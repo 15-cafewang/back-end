@@ -42,7 +42,7 @@ public class UserService {
 
         String password = requestDto.getPassword();
 
-        String passwordCheck =requestDto.getPasswordCheck();
+        String passwordCheck = requestDto.getPasswordCheck();
 
         if( !passwordCheck.equals(password)){
             throw new IllegalArgumentException ("비밀번호가 일치하지 않습니다.");
@@ -52,6 +52,7 @@ public class UserService {
 
         String nickname = requestDto.getNickname();
 
+        // TODO: 회원 가입시 기본 이미지 업로드 추가
         User user = new User(email, password, nickname, null, UserRole.USER, "Y");
 
         userRepository.save(user);
