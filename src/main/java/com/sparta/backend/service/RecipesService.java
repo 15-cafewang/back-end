@@ -5,11 +5,17 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.sparta.backend.awsS3.S3Uploader;
 import com.sparta.backend.domain.Recipe;
 import com.sparta.backend.dto.request.recipes.PostRecipeRequestDto;
+import com.sparta.backend.dto.response.recipes.RecipeCommentResponseDto;
 import com.sparta.backend.dto.response.recipes.RecipeDetailResponsetDto;
+import com.sparta.backend.dto.response.recipes.RecipeListResponseDto;
 import com.sparta.backend.exception.CustomErrorException;
 import com.sparta.backend.repository.RecipesRepository;
 import com.sparta.backend.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -106,5 +112,16 @@ public class RecipesService {
                 recipeId, "mock nickname", title, content, regDate, likeCount, true, image, tagNames);
 
         return responsetDto;
+    }
+
+    public Page<RecipeListResponseDto> getRecipesByPage(int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails) {
+        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, sortBy);
+        Pageable pageable = PageRequest.of(page,size,sort);
+        Page<Recipe> recipes = recipesRepository.findAll(pageable);
+
+        Page<RecipeListResponseDto> responseDtos = recipes.map(RecipeListResponseDto::new);
+
+        return responseDtos;
     }
 }

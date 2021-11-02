@@ -55,7 +55,7 @@ public class RecipeCommentService {
 
     //레시피에 대한 댓글들 조회- 페이지로 리턴
     public Page<RecipeCommentResponseDto> getCommentByPage(Long recipeId, int page, int size, boolean isAsc,UserDetailsImpl userDetails){
-        //todo:checklogin
+
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(direction, "regDate");
         Pageable pageable = PageRequest.of(page,size,sort);

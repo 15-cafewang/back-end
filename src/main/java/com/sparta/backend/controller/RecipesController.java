@@ -4,11 +4,13 @@ import com.sparta.backend.domain.Recipe;
 import com.sparta.backend.dto.request.recipes.PostRecipeRequestDto;
 import com.sparta.backend.dto.response.CustomResponseDto;
 import com.sparta.backend.dto.response.recipes.RecipeDetailResponsetDto;
+import com.sparta.backend.dto.response.recipes.RecipeListResponseDto;
 import com.sparta.backend.security.UserDetailsImpl;
 import com.sparta.backend.service.RecipesService;
 import com.sparta.backend.service.TagService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -64,8 +66,22 @@ public class RecipesController {
     //레시피 상세조회
     @GetMapping("recipes/{recipeId}")
     public CustomResponseDto<?> getRecipeDetail(@PathVariable Long recipeId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        //todo: checkLogin
         RecipeDetailResponsetDto recipeDetailResponsetDto = recipeService.getRecipeDetail(recipeId, userDetails);
         return new CustomResponseDto<>(1, "레시피 조회 성공", recipeDetailResponsetDto);
+    }
+
+    //레시피 목록조회
+    @GetMapping("recipes/list")
+    public CustomResponseDto<?> getRecipes(@RequestParam("page") int page,
+                                           @RequestParam("size") int size,
+                                           @RequestParam("isAsc") boolean isAsc,
+                                           @RequestParam("sortBy") String sortBy,
+                                           @AuthenticationPrincipal UserDetailsImpl userDetails){
+        //todo: checkLogin
+        page = page-1;
+        Page<RecipeListResponseDto> recipesByPage = recipeService.getRecipesByPage(page, size, isAsc, sortBy, userDetails);
+        return new CustomResponseDto<>(1, "레시피 리스트 성공", recipesByPage);
     }
 
 
