@@ -1,7 +1,6 @@
 package com.sparta.backend.domain;
 
 import com.sparta.backend.domain.User;
-import com.sparta.backend.domain.constant.UserRole;
 import com.sparta.backend.repository.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
@@ -35,6 +34,7 @@ public class UserTest {
                         .password("1234")
                         .nickname("tester")
                         .role(UserRole.USER)
+                        .status("Y")
                         .build()
         );
 
@@ -47,6 +47,7 @@ public class UserTest {
         assertThat(user.getPassword()).isEqualTo("1234");
         assertThat(user.getNickname()).isEqualTo("tester");
         assertThat(user.getRole()).isEqualTo(UserRole.USER);
+        assertThat(user.getStatus()).isEqualTo("Y");
     }
 
 }

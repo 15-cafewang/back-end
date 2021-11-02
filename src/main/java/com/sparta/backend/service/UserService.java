@@ -46,7 +46,7 @@ public class UserService {
 
         String nickname = requestDto.getNickname();
 
-        User user = new User(email, password, nickname, UserRole.USER);
+        User user = new User(email, password, nickname, UserRole.USER, "Y");
 
         userRepository.save(user);
     }
