@@ -19,18 +19,24 @@ public class RecipeListResponseDto {
     private Long recipeId;
     private String nickname;
     private String content;
+    private String image;
     private LocalDateTime regdate;
+    private int commentCount;
     private int likeCount;
     private boolean likeStatus;
+
 
     public RecipeListResponseDto(Recipe recipe, UserDetailsImpl userDetails, RecipeLikesRepository recipeLikesRepository){
         this.recipeId = recipe.getId();
         //todo: user이름으로 해야 함
-        this.nickname = recipe.getUser().getNickname();
+//        this.nickname = recipe.getUser().getNickname();
+        this.nickname = "mock name";
         this.content = recipe.getTitle();
         this.regdate = recipe.getRegDate();
+        this.commentCount = recipe.getRecipeCommentList().size();
+        this.image = recipe.getImage();
         this.likeCount = recipe.getRecipeLikesList().size();
-        
+
         Optional<RecipeLikes> foundRecipeLike = recipeLikesRepository.findByRecipeIdAndUserId(recipe.getId(),userDetails.getUser().getId());
         this.likeStatus = foundRecipeLike.isPresent();
     }
