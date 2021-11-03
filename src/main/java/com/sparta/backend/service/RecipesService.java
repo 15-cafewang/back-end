@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.sparta.backend.awsS3.S3Uploader;
 import com.sparta.backend.domain.Recipe.Recipe;
 import com.sparta.backend.domain.Recipe.RecipeLikes;
+import com.sparta.backend.domain.User;
 import com.sparta.backend.dto.request.recipes.PostRecipeRequestDto;
 import com.sparta.backend.dto.response.recipes.RecipeDetailResponsetDto;
 import com.sparta.backend.dto.response.recipes.RecipeListResponseDto;
@@ -130,17 +131,17 @@ public class RecipesService {
         return responseDtos;
     }
 
-    public String likeRecipe(Long postId, UserDetailsImpl userDetails) {
+    public String likeRecipe(Long postId, User user) {
         Recipe recipe = recipesRepository.findById(postId).orElseThrow(()->
                 new CustomErrorException("해당 게시물이 존재하지 않아요"));
         //이미 좋아요누른 건지 확인하기
-        Optional<RecipeLikes> foundRecipeLike = recipeLikesRepository.findByRecipeIdAndUserId(recipe.getId(),userDetails.getUser().getId());
+        Optional<RecipeLikes> foundRecipeLike = recipeLikesRepository.findByRecipeIdAndUserId(recipe.getId(),user.getId());
         if(foundRecipeLike.isPresent()){
             //이미 좋아요를 눌렀으면 좋아요취소
             recipeLikesRepository.delete(foundRecipeLike.get());
             return "좋아요 취소 성공";
         }else{
-            RecipeLikes recipeLikes = new RecipeLikes(userDetails.getUser(), recipe);
+            RecipeLikes recipeLikes = new RecipeLikes(user, recipe);
             recipeLikesRepository.save(recipeLikes);
             return "좋아요 등록 성공";
         }

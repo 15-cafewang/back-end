@@ -4,38 +4,31 @@ package com.sparta.backend.testdata;
 import com.sparta.backend.domain.Recipe.Recipe;
 import com.sparta.backend.domain.Recipe.RecipeComment;
 import com.sparta.backend.domain.User;
-import com.sparta.backend.dto.request.recipes.PostRecipeRequestDto;
 import com.sparta.backend.repository.RecipeCommentRepository;
 import com.sparta.backend.repository.RecipesRepository;
 import com.sparta.backend.repository.UserRepository;
-import com.sparta.backend.security.UserDetailsImpl;
+import com.sparta.backend.service.RecipesService;
 import com.sparta.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.thymeleaf.context.IContext;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 
 @Component
 public class TestDataRunner implements ApplicationRunner {
     @Autowired
     PasswordEncoder passwordEncoder;
-
     @Autowired
     UserRepository userRepository;
-
     @Autowired
     UserService userService;
-
     @Autowired
     RecipesRepository recipesRepository;
     @Autowired
     RecipeCommentRepository recipeCommentRepository;
+    @Autowired
+    RecipesService recipesService;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -56,6 +49,15 @@ public class TestDataRunner implements ApplicationRunner {
             더미레시피올리기("더미"+(i+1)+"의 제목","bbb의 내용입니다 하하하하",10000,"s3://99final/recipeImage/ff162957-df02-471a-bb78-69a78e8447e0puppy.jpg",user2,user2,user3);
             더미레시피올리기("더미"+(i+2)+"의 제목","ccc의 내용입니다 쿄쿄쿄쿄",20000,"",user3,user2,user3);
         }
+
+        //좋아요 등록
+        recipesService.likeRecipe(1L, user2);
+        recipesService.likeRecipe(1L, user3);
+        recipesService.likeRecipe(3L, user1);
+        recipesService.likeRecipe(4L, user3);
+        recipesService.likeRecipe(4L, user2);
+        recipesService.likeRecipe(5L, user1);
+
 
 
     }

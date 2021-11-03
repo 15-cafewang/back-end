@@ -85,7 +85,7 @@ public class RecipesController {
     @GetMapping("recipes/likes/{postId}")
     public CustomResponseDto<?> likeRecipe(@PathVariable Long postId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         //todo: checkLogin
-        String resultMessage = recipeService.likeRecipe(postId, userDetails);
+        String resultMessage = recipeService.likeRecipe(postId, userDetails.getUser());
         return new CustomResponseDto<>(1, resultMessage,"");
     }
 }
