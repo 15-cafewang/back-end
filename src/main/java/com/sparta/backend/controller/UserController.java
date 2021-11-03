@@ -38,9 +38,10 @@ public class UserController {
     }
 
     // 이메일 중복 체크
-    public CustomResponseDto<?> vaildCheckEmail(String email) {
+    @PostMapping("/user/signup/email")
+    public CustomResponseDto<?> validCheckEmail(String email) {
 
-        int result = userService.vaildCheckEmail(email);
+        int result = userService.validCheckEmail(email);
 
         if (result > 0) {
             return new CustomResponseDto<>(-1, "이미 존재하는 이메일입니다", "");

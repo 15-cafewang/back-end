@@ -30,7 +30,7 @@ public class UserService {
     private final String bucket = "99final";
 
     // 이메일 중복 체크
-    public int vaildCheckEmail(String email) {
+    public int validCheckEmail(String email) {
 
         Optional<User> found = userRepository.findByEmail(email);
 
