@@ -7,7 +7,7 @@ import com.sparta.backend.domain.User;
 import com.sparta.backend.domain.UserRole;
 import com.sparta.backend.dto.request.user.DeleteUserRequestDto;
 import com.sparta.backend.dto.request.user.SignupRequestDto;
-import com.sparta.backend.dto.request.user.UpdateRequestDto;
+import com.sparta.backend.dto.request.user.UpdateUserRequestDto;
 import com.sparta.backend.repository.UserRepository;
 import com.sparta.backend.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -83,7 +83,7 @@ public class UserService {
     }
 
     // 회원 정보 수정
-    public void updateUser(Long userId, UpdateRequestDto requestDto) throws IOException {
+    public void updateUser(Long userId, UpdateUserRequestDto requestDto) throws IOException {
 
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new NullPointerException("존재하지 않는 회원입니다")

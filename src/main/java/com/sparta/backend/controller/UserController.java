@@ -3,14 +3,13 @@ package com.sparta.backend.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.backend.dto.request.user.DeleteUserRequestDto;
 import com.sparta.backend.dto.request.user.SignupRequestDto;
-import com.sparta.backend.dto.request.user.UpdateRequestDto;
+import com.sparta.backend.dto.request.user.UpdateUserRequestDto;
 import com.sparta.backend.dto.response.CustomResponseDto;
 import com.sparta.backend.security.UserDetailsImpl;
 import com.sparta.backend.service.KakaoUserService;
 import com.sparta.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +37,11 @@ public class UserController {
         return new CustomResponseDto<>(1, "회원가입 성공", "");
     }
 
+    // 이메일 중복 체크
+    public CustomResponseDto<?> vaildCheckEmail(String email) {
+
+    }
+
     // 로그인 요청
     @PostMapping("/user/login")
     public CustomResponseDto<?> login(@RequestBody SignupRequestDto requestDto) {
@@ -58,7 +62,7 @@ public class UserController {
 
     // 회원 정보 수정
     @PutMapping("/user/info")
-    public CustomResponseDto<?> updateUser(@AuthenticationPrincipal UserDetailsImpl userDetails, UpdateRequestDto requestDto) throws IOException {
+    public CustomResponseDto<?> updateUser(@AuthenticationPrincipal UserDetailsImpl userDetails, UpdateUserRequestDto requestDto) throws IOException {
 
         Long userId = userDetails.getUser().getId();
 

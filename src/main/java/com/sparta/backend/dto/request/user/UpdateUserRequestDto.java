@@ -4,7 +4,7 @@ import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
 
 @Getter
-public class UpdateRequestDto {
+public class UpdateUserRequestDto {
 
     private String nickname;
     private MultipartFile image;
