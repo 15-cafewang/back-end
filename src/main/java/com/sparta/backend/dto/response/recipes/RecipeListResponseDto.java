@@ -18,6 +18,7 @@ import java.util.Optional;
 public class RecipeListResponseDto {
     private Long recipeId;
     private String nickname;
+    private String title;
     private String content;
     private String image;
     private LocalDateTime regdate;
@@ -31,7 +32,8 @@ public class RecipeListResponseDto {
         //todo: user이름으로 해야 함
 //        this.nickname = recipe.getUser().getNickname();
         this.nickname = "mock name";
-        this.content = recipe.getTitle();
+        this.title = recipe.getTitle();
+        this.content = recipe.getContent();
         this.regdate = recipe.getRegDate();
         this.commentCount = recipe.getRecipeCommentList().size();
         this.image = recipe.getImage();
