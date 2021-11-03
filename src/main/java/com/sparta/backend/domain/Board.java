@@ -18,7 +18,7 @@ public class Board extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "recipe_id")
+    @Column(name = "board_id")
     private Long id;
 
     @Column(nullable = false)
