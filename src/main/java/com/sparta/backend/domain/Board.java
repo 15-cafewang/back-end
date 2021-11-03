@@ -3,6 +3,7 @@ package com.sparta.backend.domain;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sparta.backend.dto.request.board.PostBoardRequestDto;
+import com.sparta.backend.dto.request.board.PutBoardRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -47,5 +48,13 @@ public class Board extends BaseEntity {
         this.content = requestDto.getContent();
         this.image = image;
         this.user = user;
+    }
+
+    public Board update(String title, String content, String imageUrl) {
+        this.title = title;
+        this.content = content;
+        this.image = imageUrl;
+
+        return this;
     }
 }

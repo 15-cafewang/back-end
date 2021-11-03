@@ -6,11 +6,11 @@ import com.sparta.backend.awsS3.S3Uploader;
 import com.sparta.backend.domain.Board;
 import com.sparta.backend.domain.User;
 import com.sparta.backend.dto.request.board.PostBoardRequestDto;
+import com.sparta.backend.dto.request.board.PutBoardRequestDto;
 import com.sparta.backend.repository.BoardRepository;
 import com.sparta.backend.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
@@ -44,6 +44,41 @@ public class BoardService {
         }
 
         return boardId;
+    }
+
+    //게시물 수정
+    @Transactional
+    public Board updateBoard(Long id, PutBoardRequestDto requestDto, UserDetailsImpl userDetails) throws IOException {
+        Board board = null;
+        String title = requestDto.getTitle();
+        String content = requestDto.getContent();
+        String imageUrl = "";
+
+        if(userDetails != null) {   //로그인 했을 때
+            String currentLoginEmail = userDetails.getUser().getEmail();
+            board = boardRepository.findById(id).orElseThrow(
+                    () -> new NullPointerException("찾는 게시물이 없습니다.")
+            );
+            imageUrl = board.getImage();    //수정 전 이미지 URL
+            String writterEmail = board.getUser().getEmail();
+
+            if(currentLoginEmail.equals(writterEmail)) {    //작성자가 현재 로그인한 사용자일 때
+                if(requestDto.getImage() != null) {     //수정할 이미지가 있을 떄
+                    deleteS3(board.getImage());     //기존에 등록되어있던 이미지 삭제
+                    MultipartFile image = requestDto.getImage();
+                    imageUrl = s3Uploader.upload(image, "boardImage");  //새 이미지 등록. return 이미지 URL
+                    System.out.println("수정한 이미지 URL: " + imageUrl);
+                    if(imageUrl == null)    //이미지 업로드에 실패했을 때
+                        throw new NullPointerException("이미지 업로드에 실패하였습니다.");
+                }
+            } else {    //작성자와 현재 로그인한 사용자가 다를 때
+                throw new IllegalArgumentException("게시물을 작성한 사용자만 수정 가능합니다.");
+            }
+        } else {    //로그인 안 했을 때
+            throw new NullPointerException("로그인이 필요합니다.");
+        }
+
+        return board.update(title, content, imageUrl);
     }
 
     //게시물 삭제
