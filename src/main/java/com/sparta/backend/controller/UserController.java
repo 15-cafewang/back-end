@@ -1,10 +1,7 @@
 package com.sparta.backend.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.sparta.backend.dto.request.user.DeleteUserRequestDto;
-import com.sparta.backend.dto.request.user.SignupRequestDto;
-import com.sparta.backend.dto.request.user.UpdateUserRequestDto;
-import com.sparta.backend.dto.request.user.ValidEmailRequestDto;
+import com.sparta.backend.dto.request.user.*;
 import com.sparta.backend.dto.response.CustomResponseDto;
 import com.sparta.backend.security.UserDetailsImpl;
 import com.sparta.backend.service.KakaoUserService;
@@ -55,9 +52,11 @@ public class UserController {
 
     // 닉네임 중복 체크
     @PostMapping("/user/signup/nickname")
-    public CustomResponseDto<?> validCheckNickname(String nickname) {
+    public CustomResponseDto<?> validCheckNickname(@RequestBody ValidNicknameRequestDto requestDto) {
 
-        int result = userService.validCheckNickname(nickname);
+        log.info("nickname = {}", requestDto.getNickname());
+
+        int result = userService.validCheckNickname(requestDto.getNickname());
 
         if (result > 0) {
             return new CustomResponseDto<>(-1, "이미 존재하는 닉네임입니다", "");
