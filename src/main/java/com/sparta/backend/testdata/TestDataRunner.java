@@ -51,10 +51,10 @@ public class TestDataRunner implements ApplicationRunner {
 
 
         //레시피 등록
-        for(int i=1; i<300; i++){
+        for(int i=1; i<300; i+=3){
             더미레시피올리기("더미"+i+"의 제목","aaa의 내용입니다 울루루루",5000,"s3://99final/recipeImage/ff162957-df02-471a-bb78-69a78e8447e0puppy.jpg",user1,user2,user3);
-            더미레시피올리기("더미"+i+"의 제목","bbb의 내용입니다 하하하하",10000,"s3://99final/recipeImage/ff162957-df02-471a-bb78-69a78e8447e0puppy.jpg",user2,user2,user3);
-            더미레시피올리기("더미"+i+"의 제목","ccc의 내용입니다 쿄쿄쿄쿄",20000,"",user3,user2,user3);
+            더미레시피올리기("더미"+(i+1)+"의 제목","bbb의 내용입니다 하하하하",10000,"s3://99final/recipeImage/ff162957-df02-471a-bb78-69a78e8447e0puppy.jpg",user2,user2,user3);
+            더미레시피올리기("더미"+(i+2)+"의 제목","ccc의 내용입니다 쿄쿄쿄쿄",20000,"",user3,user2,user3);
         }
 
 

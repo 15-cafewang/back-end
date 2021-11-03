@@ -29,9 +29,7 @@ public class RecipeListResponseDto {
 
     public RecipeListResponseDto(Recipe recipe, UserDetailsImpl userDetails, RecipeLikesRepository recipeLikesRepository){
         this.recipeId = recipe.getId();
-        //todo: user이름으로 해야 함
-//        this.nickname = recipe.getUser().getNickname();
-        this.nickname = "mock name";
+        this.nickname = recipe.getUser().getNickname();
         this.title = recipe.getTitle();
         this.content = recipe.getContent();
         this.regdate = recipe.getRegDate();
