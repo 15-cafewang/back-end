@@ -84,20 +84,24 @@ public class BoardService {
     //게시물 삭제
     @Transactional
     public Long deleteBoard(Long id, UserDetailsImpl userDetails) {
-        String currentLoginEmail = userDetails.getUser().getEmail();
-        Board board = boardRepository.findById(id).orElseThrow(
-                () -> new NullPointerException("찾는 게시물이 없습니다.")
-        );
-        String writerEmail = board.getUser().getEmail();
+        if(userDetails != null) {   //로그인 했을 경우
+            String currentLoginEmail = userDetails.getUser().getEmail();
+            Board board = boardRepository.findById(id).orElseThrow(
+                    () -> new NullPointerException("찾는 게시물이 없습니다.")
+            );
+            String writerEmail = board.getUser().getEmail();
 
-        if(writerEmail.equals(currentLoginEmail)) {
-            deleteS3(board.getImage());
-            boardRepository.deleteById(id);
-        } else {
-            throw new IllegalArgumentException("게시물을 작성한 사용자만 삭제 가능합니다.");
+            if(writerEmail.equals(currentLoginEmail)) { //작성자와 현재 로그인한 사용자 계정이 동일할 때
+                deleteS3(board.getImage());
+                boardRepository.deleteById(id);
+            } else { //현재 로그인한 사용자 계정이 작성자가 아닐 때
+                throw new IllegalArgumentException("게시물을 작성한 사용자만 삭제 가능합니다.");
+            }
+        } else {    //로그인 안 했을 경우
+            throw new NullPointerException("로그인이 필요합니다.");
         }
 
-        return board.getId();
+        return id;
     }
 
     //S3 이미지 삭제
