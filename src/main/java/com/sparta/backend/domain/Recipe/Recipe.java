@@ -1,7 +1,10 @@
-package com.sparta.backend.domain;
+package com.sparta.backend.domain.Recipe;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.sparta.backend.domain.BaseEntity;
+import com.sparta.backend.domain.Tag;
+import com.sparta.backend.domain.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;

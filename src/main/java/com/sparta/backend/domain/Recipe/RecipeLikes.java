@@ -1,6 +1,8 @@
-package com.sparta.backend.domain;
+package com.sparta.backend.domain.Recipe;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.sparta.backend.domain.BaseEntity;
+import com.sparta.backend.domain.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -11,14 +13,12 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 @Entity
-public class RecipeComment extends BaseEntity {
+public class RecipeLikes extends BaseEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "comment_id")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "likes_id")
     private Long id;
-
-    @Column(nullable = false)
-    private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonManagedReference
@@ -30,13 +30,8 @@ public class RecipeComment extends BaseEntity {
     @JoinColumn(name = "recipe_id")
     private Recipe recipe;
 
-    public RecipeComment(String content, User user, Recipe recipe) {
-        this.content = content;
-        this.user = user;
+    public RecipeLikes(User user, Recipe recipe){
         this.recipe = recipe;
-    }
-
-    public void updateComment(String content){
-        this.content = content;
+        this.user = user;
     }
 }

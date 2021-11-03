@@ -1,6 +1,6 @@
 package com.sparta.backend.service;
 
-import com.sparta.backend.domain.Recipe;
+import com.sparta.backend.domain.Recipe.Recipe;
 import com.sparta.backend.domain.Tag;
 import com.sparta.backend.repository.TagRepository;
 import lombok.RequiredArgsConstructor;

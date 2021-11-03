@@ -1,6 +1,6 @@
 package com.sparta.backend.repository;
 
-import com.sparta.backend.domain.RecipeComment;
+import com.sparta.backend.domain.Recipe.RecipeComment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,6 +1,6 @@
 package com.sparta.backend.controller;
 
-import com.sparta.backend.domain.Recipe;
+import com.sparta.backend.domain.Recipe.Recipe;
 import com.sparta.backend.dto.request.recipes.PostRecipeRequestDto;
 import com.sparta.backend.dto.response.CustomResponseDto;
 import com.sparta.backend.dto.response.recipes.RecipeDetailResponsetDto;
@@ -12,12 +12,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.parameters.P;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -90,6 +87,4 @@ public class RecipesController {
         String resultMessage = recipeService.likeRecipe(postId, userDetails);
         return new CustomResponseDto<>(1, resultMessage,"");
     }
-
-
 }

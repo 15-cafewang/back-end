@@ -1,6 +1,6 @@
 package com.sparta.backend.dto.response.recipes;
 
-import com.sparta.backend.domain.RecipeComment;
+import com.sparta.backend.domain.Recipe.RecipeComment;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

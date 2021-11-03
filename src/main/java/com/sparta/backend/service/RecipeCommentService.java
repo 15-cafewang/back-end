@@ -1,7 +1,7 @@
 package com.sparta.backend.service;
 
-import com.sparta.backend.domain.RecipeComment;
-import com.sparta.backend.domain.Recipe;
+import com.sparta.backend.domain.Recipe.RecipeComment;
+import com.sparta.backend.domain.Recipe.Recipe;
 import com.sparta.backend.dto.request.recipes.PostCommentRequestDto;
 import com.sparta.backend.dto.request.recipes.RecipeCommentUpdateRequestDto;
 import com.sparta.backend.dto.response.recipes.RecipeCommentResponseDto;
