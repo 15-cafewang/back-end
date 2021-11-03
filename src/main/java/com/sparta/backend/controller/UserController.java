@@ -4,11 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.backend.dto.request.user.DeleteUserRequestDto;
 import com.sparta.backend.dto.request.user.SignupRequestDto;
 import com.sparta.backend.dto.request.user.UpdateUserRequestDto;
+import com.sparta.backend.dto.request.user.ValidEmailRequestDto;
 import com.sparta.backend.dto.response.CustomResponseDto;
 import com.sparta.backend.security.UserDetailsImpl;
 import com.sparta.backend.service.KakaoUserService;
 import com.sparta.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 public class UserController {
@@ -39,9 +42,9 @@ public class UserController {
 
     // 이메일 중복 체크
     @PostMapping("/user/signup/email")
-    public CustomResponseDto<?> validCheckEmail(String email) {
+    public CustomResponseDto<?> validCheckEmail(@RequestBody ValidEmailRequestDto requestDto) {
 
-        int result = userService.validCheckEmail(email);
+        int result = userService.validCheckEmail(requestDto.getEmail());
 
         if (result > 0) {
             return new CustomResponseDto<>(-1, "이미 존재하는 이메일입니다", "");
