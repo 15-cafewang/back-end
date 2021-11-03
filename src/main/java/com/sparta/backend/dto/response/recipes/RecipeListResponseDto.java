@@ -1,12 +1,19 @@
 package com.sparta.backend.dto.response.recipes;
 
 import com.sparta.backend.domain.Recipe.Recipe;
+import com.sparta.backend.domain.Recipe.RecipeLikes;
+import com.sparta.backend.repository.RecipeLikesRepository;
+import com.sparta.backend.security.UserDetailsImpl;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
-@Data
+@Getter
 @AllArgsConstructor
 public class RecipeListResponseDto {
     private Long recipeId;
@@ -16,16 +23,15 @@ public class RecipeListResponseDto {
     private int likeCount;
     private boolean likeStatus;
 
-    public RecipeListResponseDto(Recipe recipe){
+    public RecipeListResponseDto(Recipe recipe, UserDetailsImpl userDetails, RecipeLikesRepository recipeLikesRepository){
         this.recipeId = recipe.getId();
         //todo: user이름으로 해야 함
-//        this.nickname = comment.getUser().getNickname();
-        this.nickname = "this is mock name";
+        this.nickname = recipe.getUser().getNickname();
         this.content = recipe.getTitle();
         this.regdate = recipe.getRegDate();
-
-        //todo:likeCount, likeStatus구하는 코드 구해서 likeCount에 대입.현재 임시 값임.
-        this.likeCount = 200;
-        this.likeStatus = true;
+        this.likeCount = recipe.getRecipeLikesList().size();
+        
+        Optional<RecipeLikes> foundRecipeLike = recipeLikesRepository.findByRecipeIdAndUserId(recipe.getId(),userDetails.getUser().getId());
+        this.likeStatus = foundRecipeLike.isPresent();
     }
 }

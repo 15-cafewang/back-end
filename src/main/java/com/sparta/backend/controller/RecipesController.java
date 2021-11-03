@@ -81,6 +81,7 @@ public class RecipesController {
         return new CustomResponseDto<>(1, "레시피 리스트 성공", recipesByPage);
     }
 
+    //레시피 좋아요 등록/취소
     @GetMapping("recipes/likes/{postId}")
     public CustomResponseDto<?> likeRecipe(@PathVariable Long postId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         //todo: checkLogin

@@ -123,7 +123,7 @@ public class RecipesService {
         Pageable pageable = PageRequest.of(page,size,sort);
         Page<Recipe> recipes = recipesRepository.findAll(pageable);
 
-        Page<RecipeListResponseDto> responseDtos = recipes.map(RecipeListResponseDto::new);
+        Page<RecipeListResponseDto> responseDtos = recipes.map((recipe)->new RecipeListResponseDto(recipe, userDetails,recipeLikesRepository));
 
         return responseDtos;
     }
