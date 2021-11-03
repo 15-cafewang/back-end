@@ -3,6 +3,7 @@ package com.sparta.backend.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.backend.dto.request.user.*;
 import com.sparta.backend.dto.response.CustomResponseDto;
+import com.sparta.backend.dto.response.user.UserInfoResponseDto;
 import com.sparta.backend.security.UserDetailsImpl;
 import com.sparta.backend.service.KakaoUserService;
 import com.sparta.backend.service.UserService;
@@ -82,6 +83,15 @@ public class UserController {
         kakaoUserService.kakaoLogin(code);
 
         return new CustomResponseDto<>(1, "로그인 성공", "");
+    }
+
+    // 회원 정보 조회
+    @GetMapping("/user/info")
+    public CustomResponseDto<?> userInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        UserInfoResponseDto responseDto = new UserInfoResponseDto(userDetails.getUser().getNickname(), userDetails.getUser().getImage());
+
+        return new CustomResponseDto<>(1, "회원 정보 조회 성공", responseDto);
     }
 
     // 회원 정보 수정
