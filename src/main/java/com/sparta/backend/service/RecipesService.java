@@ -20,6 +20,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -40,7 +41,8 @@ public class RecipesService {
     //레시피 저장
     //todo: user정보도 넣어줘야 함
     public Recipe saveRecipe(PostRecipeRequestDto requestDto) throws IOException {
-        String saveImage = s3Uploader.upload(requestDto.getImage(),"recipeImage");
+        String saveImage = "";
+        if(requestDto.getImage() != null) saveImage = s3Uploader.upload(requestDto.getImage(),"recipeImage");
         Recipe recipe = new Recipe(requestDto.getTitle(),requestDto.getContent(),requestDto.getPrice(),saveImage);
         return recipesRepository.save(recipe);
     }
