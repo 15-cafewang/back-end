@@ -80,13 +80,13 @@ public class UserService {
     public List<Map<String, String>> login(SignupRequestDto requestDto) {
 
         User user = userRepository.findByEmail(requestDto.getEmail()).orElseThrow(
-                () -> new IllegalArgumentException("아이디를 찾을수 없습니다")
+                () -> new NullPointerException("아이디를 찾을수 없습니다")
         );
 
         if (user.getStatus().equals("N")) throw new NullPointerException("존재하지 않는 회원입니다");
 
         if (!passwordEncoder.matches(requestDto.getPassword(),user.getPassword())) {
-            throw new IllegalArgumentException("비밀번호 불일치");
+            throw new IllegalArgumentException("비밀번호가 맞지 않습니다");
         }
 
         Map<String, String> nickname = new HashMap<>();
@@ -141,6 +141,7 @@ public class UserService {
 
     //S3 이미지 삭제
     public void deleteS3(@RequestParam String imageName){
+
         //https://S3 버킷 URL/버킷에 생성한 폴더명/이미지이름
         String keyName = imageName.split("/")[4]; // 이미지이름만 추출
 
