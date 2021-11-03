@@ -62,7 +62,7 @@ public class RecipeService {
         Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(()->new CustomErrorException("해당 게시물을 찾을 수 없습니다"));
 
         String imageUrl = recipe.getImage();//사진은 일단 기존 포스트의 URL(사진은 업데이트 안 했을 경우 대비)
-//        User user = userDetails.getUser();
+        User user = userDetails.getUser();
         String title = requestDto.getTitle();
         int price = requestDto.getPrice();
         String content = requestDto.getContent();
@@ -76,7 +76,7 @@ public class RecipeService {
             if(imageUrl == null) throw new CustomErrorException("이미지 업르드에 실패하였습니다");
         }
 
-        return recipe.updateRecipe(title, content, price,imageUrl,userDetails.getUser());
+        return recipe.updateRecipe(title, content, price,imageUrl,user);
     }
 
     //S3 이미지 삭제

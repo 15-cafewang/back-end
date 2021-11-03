@@ -50,6 +50,10 @@ public class Recipe extends BaseEntity {
     @JsonBackReference
     private List<RecipeLikes> recipeLikesList;
 
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
+    @JsonBackReference
+    private List<RecipeImage> recipeImagesList;
+
     public Recipe(String title, String content, int price, String image, User user){
         this.title = title;
         this.content = content;

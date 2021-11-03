@@ -12,4 +12,7 @@ public class PostRecipeRequestDto {
     private MultipartFile image;
     private int price;
     private List<String> tag;
+    private MultipartFile image2;
+    private MultipartFile image3;
+    private MultipartFile image4;
 }
