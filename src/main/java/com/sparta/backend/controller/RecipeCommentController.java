@@ -6,7 +6,7 @@ import com.sparta.backend.dto.response.CustomResponseDto;
 import com.sparta.backend.dto.response.recipes.RecipeCommentResponseDto;
 import com.sparta.backend.exception.CustomErrorException;
 import com.sparta.backend.security.UserDetailsImpl;
-import com.sparta.backend.service.RecipeCommentService;
+import com.sparta.backend.service.Recipe.RecipeCommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-public class RecipesCommentController {
+public class RecipeCommentController {
 
     private final RecipeCommentService commentService;
 

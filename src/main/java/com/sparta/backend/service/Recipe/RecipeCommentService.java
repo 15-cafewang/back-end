@@ -1,4 +1,4 @@
-package com.sparta.backend.service;
+package com.sparta.backend.service.Recipe;
 
 import com.sparta.backend.domain.Recipe.RecipeComment;
 import com.sparta.backend.domain.Recipe.Recipe;
@@ -7,7 +7,7 @@ import com.sparta.backend.dto.request.recipes.RecipeCommentUpdateRequestDto;
 import com.sparta.backend.dto.response.recipes.RecipeCommentResponseDto;
 import com.sparta.backend.exception.CustomErrorException;
 import com.sparta.backend.repository.RecipeCommentRepository;
-import com.sparta.backend.repository.RecipesRepository;
+import com.sparta.backend.repository.RecipeRepository;
 import com.sparta.backend.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,11 +25,11 @@ import java.util.List;
 @Transactional
 public class RecipeCommentService {
     private final RecipeCommentRepository commentRepository;
-    private final RecipesRepository recipesRepository;
+    private final RecipeRepository recipeRepository;
 
     //댓글 저장
     public void saveComment(PostCommentRequestDto requestDto, UserDetailsImpl userDetails) {
-        Recipe recipe = recipesRepository.findById(requestDto.getRecipeId()).orElseThrow(()->
+        Recipe recipe = recipeRepository.findById(requestDto.getRecipeId()).orElseThrow(()->
                 new CustomErrorException("해당 댓글의 레시피가 존재하지 않습니다."));
         //todo: User도 넣어줘야 함.
         RecipeComment recipeComment = new RecipeComment(requestDto.getContent(),null, recipe);

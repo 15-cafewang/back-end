@@ -5,9 +5,9 @@ import com.sparta.backend.domain.Recipe.Recipe;
 import com.sparta.backend.domain.Recipe.RecipeComment;
 import com.sparta.backend.domain.User;
 import com.sparta.backend.repository.RecipeCommentRepository;
-import com.sparta.backend.repository.RecipesRepository;
+import com.sparta.backend.repository.RecipeRepository;
 import com.sparta.backend.repository.UserRepository;
-import com.sparta.backend.service.RecipesService;
+import com.sparta.backend.service.Recipe.RecipeService;
 import com.sparta.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -24,11 +24,11 @@ public class TestDataRunner implements ApplicationRunner {
     @Autowired
     UserService userService;
     @Autowired
-    RecipesRepository recipesRepository;
+    RecipeRepository recipeRepository;
     @Autowired
     RecipeCommentRepository recipeCommentRepository;
     @Autowired
-    RecipesService recipesService;
+    RecipeService recipeService;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -51,12 +51,12 @@ public class TestDataRunner implements ApplicationRunner {
         }
 
         //좋아요 등록
-        recipesService.likeRecipe(1L, user2);
-        recipesService.likeRecipe(1L, user3);
-        recipesService.likeRecipe(3L, user1);
-        recipesService.likeRecipe(4L, user3);
-        recipesService.likeRecipe(4L, user2);
-        recipesService.likeRecipe(5L, user1);
+        recipeService.likeRecipe(1L, user2);
+        recipeService.likeRecipe(1L, user3);
+        recipeService.likeRecipe(3L, user1);
+        recipeService.likeRecipe(4L, user3);
+        recipeService.likeRecipe(4L, user2);
+        recipeService.likeRecipe(5L, user1);
 
 
 
@@ -65,7 +65,7 @@ public class TestDataRunner implements ApplicationRunner {
 
     private void 더미레시피올리기(String title, String content, int price, String image, User user, User commentWriter1, User commentWriter2) {
         Recipe recipe = new Recipe(title, content, price, image, user);
-        recipesRepository.save(recipe);
+        recipeRepository.save(recipe);
         //1번유저가 댓글달기
         if(user.getNickname().equals("aaa")){
             for(int i=0; i<6; i++){

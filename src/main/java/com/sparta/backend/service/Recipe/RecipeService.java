@@ -1,4 +1,4 @@
-package com.sparta.backend.service;
+package com.sparta.backend.service.Recipe;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3Client;
@@ -11,7 +11,7 @@ import com.sparta.backend.dto.response.recipes.RecipeDetailResponsetDto;
 import com.sparta.backend.dto.response.recipes.RecipeListResponseDto;
 import com.sparta.backend.exception.CustomErrorException;
 import com.sparta.backend.repository.RecipeLikesRepository;
-import com.sparta.backend.repository.RecipesRepository;
+import com.sparta.backend.repository.RecipeRepository;
 import com.sparta.backend.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -30,9 +30,9 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
-public class RecipesService {
+public class RecipeService {
 
-    private final RecipesRepository recipesRepository;
+    private final RecipeRepository recipeRepository;
     private final RecipeLikesRepository recipeLikesRepository;
     private final S3Uploader s3Uploader;
     private final AmazonS3Client amazonS3Client;
@@ -44,15 +44,15 @@ public class RecipesService {
         String saveImage = "";
         if(requestDto.getImage() != null) saveImage = s3Uploader.upload(requestDto.getImage(),"recipeImage");
         Recipe recipe = new Recipe(requestDto.getTitle(),requestDto.getContent(),requestDto.getPrice(),saveImage,userDetails.getUser());
-        return recipesRepository.save(recipe);
+        return recipeRepository.save(recipe);
     }
 
     //레시피 삭제
     public void deleteRecipe(Long recipeId) {
-        Recipe recipe = recipesRepository.findById(recipeId).orElseThrow(()->
+        Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(()->
                 new CustomErrorException("해당 아이디가 존재하지 않습니다")
         );
-        recipesRepository.deleteById(recipeId);
+        recipeRepository.deleteById(recipeId);
         //todo:S3서버의 이미지도 지우기
         deleteS3(recipe.getImage());
     }
@@ -61,7 +61,7 @@ public class RecipesService {
     @Transactional
     public Recipe updateRecipe(Long recipeId,PostRecipeRequestDto requestDto, UserDetailsImpl userDetails) throws IOException {
         //게시글 존재여부확인
-        Recipe recipe = recipesRepository.findById(recipeId).orElseThrow(()->new CustomErrorException("해당 게시물을 찾을 수 없습니다"));
+        Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(()->new CustomErrorException("해당 게시물을 찾을 수 없습니다"));
 
         String imageUrl = recipe.getImage();//사진은 일단 기존 포스트의 URL(사진은 업데이트 안 했을 경우 대비)
 //        User user = userDetails.getUser();
@@ -73,7 +73,7 @@ public class RecipesService {
 
         //S3에 있는 사진 삭제하고 다시 업로드
         if(requestDto.getImage() != null){
-            Recipe foundRecipe = recipesRepository.findById(recipeId).orElseThrow(()->
+            Recipe foundRecipe = recipeRepository.findById(recipeId).orElseThrow(()->
                     new CustomErrorException("해당 게시물을 찾을 수 없습니다"));
             deleteS3(foundRecipe.getImage());
             imageUrl = s3Uploader.upload(requestDto.getImage(),"recipeImage");
@@ -98,7 +98,7 @@ public class RecipesService {
 
     //레시피 상세조회
     public RecipeDetailResponsetDto getRecipeDetail(Long recipeId, UserDetailsImpl userDetails) {
-        Recipe recipe = recipesRepository.findById(recipeId).orElseThrow(()->
+        Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(()->
                 new CustomErrorException("해당 게시물이 존재하지 않습니다"));
         Long foudnRecipeId = recipe.getId();
         //todo:nickname가져오기
@@ -123,7 +123,7 @@ public class RecipesService {
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(direction, sortBy);
         Pageable pageable = PageRequest.of(page,size,sort);
-        Page<Recipe> recipes = recipesRepository.findAll(pageable);
+        Page<Recipe> recipes = recipeRepository.findAll(pageable);
 
         Page<RecipeListResponseDto> responseDtos = recipes.map((recipe)->new RecipeListResponseDto(recipe, userDetails,recipeLikesRepository));
 
@@ -131,7 +131,7 @@ public class RecipesService {
     }
 
     public String likeRecipe(Long postId, User user) {
-        Recipe recipe = recipesRepository.findById(postId).orElseThrow(()->
+        Recipe recipe = recipeRepository.findById(postId).orElseThrow(()->
                 new CustomErrorException("해당 게시물이 존재하지 않아요"));
         //이미 좋아요누른 건지 확인하기
         Optional<RecipeLikes> foundRecipeLike = recipeLikesRepository.findByRecipeIdAndUserId(recipe.getId(),user.getId());
@@ -148,6 +148,6 @@ public class RecipesService {
     }
 
     public Optional<Recipe> findById(Long recipeId) {
-        return recipesRepository.findById(recipeId);
+        return recipeRepository.findById(recipeId);
     }
 }

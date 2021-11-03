@@ -7,7 +7,7 @@ import com.sparta.backend.dto.response.recipes.RecipeDetailResponsetDto;
 import com.sparta.backend.dto.response.recipes.RecipeListResponseDto;
 import com.sparta.backend.exception.CustomErrorException;
 import com.sparta.backend.security.UserDetailsImpl;
-import com.sparta.backend.service.RecipesService;
+import com.sparta.backend.service.Recipe.RecipeService;
 import com.sparta.backend.service.TagService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,8 +21,8 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-public class RecipesController {
-    private final RecipesService recipeService;
+public class RecipeController {
+    private final RecipeService recipeService;
     private final TagService tagService;
 
     //레시피 등록
