@@ -58,12 +58,6 @@ public class UserService {
 
         String email = requestDto.getEmail();
 
-        Optional<User> found = userRepository.findByEmail(email);
-
-        if (found.isPresent()) {
-            throw new IllegalArgumentException("중복된 이메일이 존재합니다");
-        }
-
         String password = requestDto.getPassword();
 
         String passwordCheck = requestDto.getPasswordCheck();
