@@ -21,7 +21,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -146,5 +145,9 @@ public class RecipesService {
             return "좋아요 등록 성공";
         }
 
+    }
+
+    public Optional<Recipe> findById(Long recipeId) {
+        return recipesRepository.findById(recipeId);
     }
 }
