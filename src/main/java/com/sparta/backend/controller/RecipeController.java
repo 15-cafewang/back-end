@@ -8,7 +8,7 @@ import com.sparta.backend.dto.response.recipes.RecipeListResponseDto;
 import com.sparta.backend.exception.CustomErrorException;
 import com.sparta.backend.security.UserDetailsImpl;
 import com.sparta.backend.service.Recipe.RecipeService;
-import com.sparta.backend.service.TagService;
+import com.sparta.backend.service.Recipe.TagService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -33,6 +33,7 @@ public class RecipeController {
         //레시피 먼저 생성, 등록
         Recipe savedRecipe = recipeService.saveRecipe(requestDto, userDetails);
         //태그 등록할때 저장한 레시피객체도 넣어줌
+//        System.out.println(requestDto.getTag());
         tagService.saveTags(requestDto.getTag(), savedRecipe);
 
         return new CustomResponseDto<>(1, "레시피 등록 성공", "");
@@ -48,7 +49,6 @@ public class RecipeController {
         //레시피 업데이트
         Recipe updatedRecipe = recipeService.updateRecipe(recipeId,requestDto,userDetails);
         //태그 업데이트
-        //todo: 태그가 업데이트 되지 않았다면 걍 패스하는 코드 추가
         tagService.updateTags(requestDto.getTag(),updatedRecipe);
 
         return new CustomResponseDto<>(1, "레시피 수정 성공", "");
@@ -102,6 +102,5 @@ public class RecipeController {
     private void checkOwnership(Long recipeId, UserDetailsImpl userDetails){
         Optional<Recipe> recipe = recipeService.findById(recipeId);
         if(!recipe.get().getUser().getEmail().equals(userDetails.getUser().getEmail())) throw new CustomErrorException("본인의 게시물만 수정,삭제 가능합니다.");
-
     }
 }

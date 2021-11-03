@@ -1,4 +1,4 @@
-package com.sparta.backend.service;
+package com.sparta.backend.service.Recipe;
 
 import com.sparta.backend.domain.Recipe.Recipe;
 import com.sparta.backend.domain.Tag;

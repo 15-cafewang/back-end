@@ -1,5 +1,6 @@
 package com.sparta.backend.controller;
 
+import com.sparta.backend.domain.Recipe.RecipeComment;
 import com.sparta.backend.dto.request.recipes.PostCommentRequestDto;
 import com.sparta.backend.dto.request.recipes.RecipeCommentUpdateRequestDto;
 import com.sparta.backend.dto.response.CustomResponseDto;
@@ -11,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -53,6 +56,7 @@ public class RecipeCommentController {
     public CustomResponseDto<?> deleteComment(@PathVariable Long commentId,
                                               @AuthenticationPrincipal UserDetailsImpl userDetails){
         checkLogin(userDetails);
+        checkOwnership(commentId,userDetails);
         commentService.deleteComment(commentId, userDetails);
         return new CustomResponseDto<>(1,"댓글 삭제 성공!", "");
     }
@@ -63,6 +67,7 @@ public class RecipeCommentController {
                                               @RequestBody RecipeCommentUpdateRequestDto updateRequestDto,
                                               @AuthenticationPrincipal UserDetailsImpl userDetails){
         checkLogin(userDetails);
+        checkOwnership(commentId,userDetails);
         commentService.updateComment(commentId, updateRequestDto, userDetails);
         return new CustomResponseDto<>(1,"댓글 수정 성공","");
    }
@@ -71,5 +76,9 @@ public class RecipeCommentController {
         if (userDetails == null) {
             throw new CustomErrorException("로그인된 유저만 사용가능한 기능입니다.");
         }
+    }
+    private void checkOwnership(Long commentId, UserDetailsImpl userDetails){
+        Optional<RecipeComment> recipe = commentService.findById(commentId);
+        if(!recipe.get().getUser().getEmail().equals(userDetails.getUser().getEmail())) throw new CustomErrorException("본인의 게시물만 수정,삭제 가능합니다.");
     }
 }

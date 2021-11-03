@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,8 +32,7 @@ public class RecipeCommentService {
     public void saveComment(PostCommentRequestDto requestDto, UserDetailsImpl userDetails) {
         Recipe recipe = recipeRepository.findById(requestDto.getRecipeId()).orElseThrow(()->
                 new CustomErrorException("해당 댓글의 레시피가 존재하지 않습니다."));
-        //todo: User도 넣어줘야 함.
-        RecipeComment recipeComment = new RecipeComment(requestDto.getContent(),null, recipe);
+        RecipeComment recipeComment = new RecipeComment(requestDto.getContent(),userDetails.getUser(), recipe);
         commentRepository.save(recipeComment);
     }
 
@@ -41,12 +41,10 @@ public class RecipeCommentService {
         List<RecipeComment> recipeCommentList = commentRepository.findAllByRecipeIdOrderByRegDateDesc(recipeId);
         List<RecipeCommentResponseDto> responseDtoList = new ArrayList<>();
 
-        //todo: User완성되면 진짜 nickname 넣어주기
         recipeCommentList.forEach(comment ->
                 responseDtoList.add(new RecipeCommentResponseDto(
                         comment.getId(),
-//                        comment.getUser().getNickname(),
-                        "mock nickname",
+                        comment.getUser().getNickname(),
                         comment.getContent(),
                         comment.getRegDate()
                         )));
@@ -74,10 +72,12 @@ public class RecipeCommentService {
 
     //댓글 수정
     public void updateComment(Long commentId, RecipeCommentUpdateRequestDto updateRequestDto, UserDetailsImpl userDetails) {
-        //todo: 해당 댓글이 로그인 한 사람의 댓글인지 확인
-
         RecipeComment recipeComment = commentRepository.findById(commentId).orElseThrow(()->
                 new CustomErrorException("해당 댓글이 존재하지 않습니다"));
         recipeComment.updateComment(updateRequestDto.getContent());
+    }
+
+    public Optional<RecipeComment> findById(Long recipeId) {
+        return commentRepository.findById(recipeId);
     }
 }

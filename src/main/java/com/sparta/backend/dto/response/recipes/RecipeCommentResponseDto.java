@@ -16,9 +16,7 @@ public class RecipeCommentResponseDto {
 
     public RecipeCommentResponseDto(RecipeComment recipeComment){
         this.commentId = recipeComment.getId();
-        //todo: user이름으로 해야 함
-//        this.nickname = comment.getUser().getNickname();
-        this.nickname = "this is mock name";
+        this.nickname = recipeComment.getUser().getNickname();
         this.content = recipeComment.getContent();
         this.regdate = recipeComment.getRegDate();
     }

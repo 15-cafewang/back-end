@@ -8,12 +8,17 @@ import com.sparta.backend.repository.RecipeCommentRepository;
 import com.sparta.backend.repository.RecipeRepository;
 import com.sparta.backend.repository.UserRepository;
 import com.sparta.backend.service.Recipe.RecipeService;
+import com.sparta.backend.service.Recipe.TagService;
 import com.sparta.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Component
 public class TestDataRunner implements ApplicationRunner {
@@ -29,6 +34,8 @@ public class TestDataRunner implements ApplicationRunner {
     RecipeCommentRepository recipeCommentRepository;
     @Autowired
     RecipeService recipeService;
+    @Autowired
+    TagService tagService;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -42,12 +49,26 @@ public class TestDataRunner implements ApplicationRunner {
         User user2 = userRepository.save(testUser2);
         User user3 = userRepository.save(testUser3);
 
-
         //레시피 등록
         for(int i=1; i<100; i+=3){
-            더미레시피올리기("더미"+i+"의 제목","aaa의 내용입니다 울루루루",5000,"s3://99final/recipeImage/ff162957-df02-471a-bb78-69a78e8447e0puppy.jpg",user1,user2,user3);
-            더미레시피올리기("더미"+(i+1)+"의 제목","bbb의 내용입니다 하하하하",10000,"s3://99final/recipeImage/ff162957-df02-471a-bb78-69a78e8447e0puppy.jpg",user2,user2,user3);
-            더미레시피올리기("더미"+(i+2)+"의 제목","ccc의 내용입니다 쿄쿄쿄쿄",20000,"",user3,user2,user3);
+            더미레시피올리기("더미"+i+"의 제목",
+                    "aaa의 내용입니다 울루루루",
+                    5000,
+                    "s3://99final/recipeImage/ff162957-df02-471a-bb78-69a78e8447e0puppy.jpg",
+                    new ArrayList<>(Arrays.asList("가가","나나","다다")),
+                    user1,user2,user3);
+            더미레시피올리기("더미"+(i+1)+"의 제목",
+                    "bbb의 내용입니다 하하하하",
+                    10000,
+                    "s3://99final/recipeImage/ff162957-df02-471a-bb78-69a78e8447e0puppy.jpg",
+                    new ArrayList<>(Arrays.asList("가가","나나")),
+                    user2,user2,user3);
+            더미레시피올리기("더미"+(i+2)+"의 제목",
+                    "ccc의 내용입니다 쿄쿄쿄쿄",
+                    20000,
+                    "",
+                    new ArrayList<>(Arrays.asList("가가")),
+                    user3,user2,user3);
         }
 
         //좋아요 등록
@@ -63,9 +84,10 @@ public class TestDataRunner implements ApplicationRunner {
     }
 
 
-    private void 더미레시피올리기(String title, String content, int price, String image, User user, User commentWriter1, User commentWriter2) {
+    private void 더미레시피올리기(String title, String content, int price, String image, List<String> tags,User user, User commentWriter1, User commentWriter2) {
         Recipe recipe = new Recipe(title, content, price, image, user);
-        recipeRepository.save(recipe);
+        Recipe saveRecipe = recipeRepository.save(recipe);
+        tagService.saveTags(tags,saveRecipe);
         //1번유저가 댓글달기
         if(user.getNickname().equals("aaa")){
             for(int i=0; i<6; i++){
