@@ -49,6 +49,20 @@ public class UserController {
         }
     }
 
+    // 닉네임 중복 체크
+    @PostMapping("/user/signup/nickname")
+    public CustomResponseDto<?> validCheckNickname(String nickname) {
+
+        int result = userService.validCheckNickname(nickname);
+
+        if (result > 0) {
+            return new CustomResponseDto<>(-1, "이미 존재하는 닉네임입니다", "");
+        } else {
+            return new CustomResponseDto<>(1, "사용할 수 있는 닉네임입니다", "");
+        }
+    }
+
+
     // 로그인 요청
     @PostMapping("/user/login")
     public CustomResponseDto<?> login(@RequestBody SignupRequestDto requestDto) {
