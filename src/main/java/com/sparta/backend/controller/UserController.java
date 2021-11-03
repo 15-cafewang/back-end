@@ -40,6 +40,13 @@ public class UserController {
     // 이메일 중복 체크
     public CustomResponseDto<?> vaildCheckEmail(String email) {
 
+        int result = userService.vaildCheckEmail(email);
+
+        if (result > 0) {
+            return new CustomResponseDto<>(-1, "이미 존재하는 이메일입니다", "");
+        } else {
+            return new CustomResponseDto<>(1, "사용할 수 있는 이메일입니다", "");
+        }
     }
 
     // 로그인 요청

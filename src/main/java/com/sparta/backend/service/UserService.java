@@ -29,6 +29,18 @@ public class UserService {
     private final AmazonS3Client amazonS3Client;
     private final String bucket = "99final";
 
+    // 이메일 중복 체크
+    public int vaildCheckEmail(String email) {
+
+        Optional<User> found = userRepository.findByEmail(email);
+
+        if (found.isPresent()) {
+            return 1;
+        }
+
+        return 0;
+    }
+
     //회원등록
     public void registerUser(SignupRequestDto requestDto) {
 
