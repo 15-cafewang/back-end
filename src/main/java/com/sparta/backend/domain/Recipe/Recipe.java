@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sparta.backend.domain.BaseEntity;
 import com.sparta.backend.domain.Tag;
 import com.sparta.backend.domain.User;
+import com.sparta.backend.security.UserDetailsImpl;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -49,11 +50,12 @@ public class Recipe extends BaseEntity {
     @JsonBackReference
     private List<RecipeLikes> recipeLikesList;
 
-    public Recipe(String title, String content, int price, String image){
+    public Recipe(String title, String content, int price, String image, User user){
         this.title = title;
         this.content = content;
         this.price = price;
         this.image = image;
+        this.user = user;
     }
     public Recipe updateRecipe(String title, String content, int price,String image) {
         this.title = title;

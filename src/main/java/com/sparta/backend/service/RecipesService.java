@@ -40,10 +40,10 @@ public class RecipesService {
 
     //레시피 저장
     //todo: user정보도 넣어줘야 함
-    public Recipe saveRecipe(PostRecipeRequestDto requestDto) throws IOException {
+    public Recipe saveRecipe(PostRecipeRequestDto requestDto, UserDetailsImpl userDetails) throws IOException {
         String saveImage = "";
         if(requestDto.getImage() != null) saveImage = s3Uploader.upload(requestDto.getImage(),"recipeImage");
-        Recipe recipe = new Recipe(requestDto.getTitle(),requestDto.getContent(),requestDto.getPrice(),saveImage);
+        Recipe recipe = new Recipe(requestDto.getTitle(),requestDto.getContent(),requestDto.getPrice(),saveImage,userDetails.getUser());
         return recipesRepository.save(recipe);
     }
 
