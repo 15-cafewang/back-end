@@ -108,10 +108,10 @@ public class KakaoUserService {
         Long id = jsonNode.get("id").asLong();
         String nickname = jsonNode.get("properties")
                 .get("nickname").asText();
-        String email = jsonNode.get("kakao_account")
-                .get("email").asText();
+//        String email = jsonNode.get("kakao_account")
+//                .get("email").asText();
 
-        return new KakaoUserInfoDto(id, nickname, email);
+        return new KakaoUserInfoDto(id, nickname);
     }
 
     private User registerKakaoUserIfNeeded(KakaoUserInfoDto kakaoUserInfo) {
@@ -130,7 +130,7 @@ public class KakaoUserService {
             String encodedPassword = passwordEncoder.encode(password);
 
             // email: kakao email
-            String email = kakaoUserInfo.getEmail();
+            String email = UUID.randomUUID().toString() + "@kakao.com";
             // role: 일반 사용자
 //            UserRoleEnum role = UserRoleEnum.USER;
 
