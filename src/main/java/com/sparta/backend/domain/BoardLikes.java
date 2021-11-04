@@ -25,7 +25,7 @@ public class BoardLikes {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonManagedReference
-    @JoinColumn(name = "recipe_id")
+    @JoinColumn(name = "board_id")
     private Board board;
 
 }
