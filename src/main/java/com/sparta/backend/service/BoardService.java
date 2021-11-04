@@ -92,7 +92,8 @@ public class BoardService {
        Page<GetBoardResponseDto> responseDtoList = boardList.map(board -> new GetBoardResponseDto(
                 board.getId(), board.getUser().getNickname(), board.getTitle(), board.getContent(),
                 board.getBoardImageList().get(0).getImage(), board.getRegDate(), board.getBoardCommentList().size(),
-                board.getBoardLikesList().size(), board.getBoardLikesList().contains(currentLoginUser)
+                board.getBoardLikesList().size(),
+               (boardLikesRepository.findByBoardAndUser(board, currentLoginUser) != null)
        ));
 
         return responseDtoList;
