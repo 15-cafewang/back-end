@@ -5,9 +5,11 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.sparta.backend.awsS3.S3Uploader;
 import com.sparta.backend.domain.Board;
 import com.sparta.backend.domain.BoardImage;
+import com.sparta.backend.domain.BoardLikes;
 import com.sparta.backend.domain.User;
 import com.sparta.backend.dto.request.board.PostBoardRequestDto;
 import com.sparta.backend.dto.request.board.PutBoardRequestDto;
+import com.sparta.backend.dto.response.board.GetBoardDetailResponseDto;
 import com.sparta.backend.dto.response.board.GetBoardResponseDto;
 import com.sparta.backend.repository.BoardImageRepository;
 import com.sparta.backend.repository.BoardLikesRepository;
@@ -94,6 +96,39 @@ public class BoardService {
        ));
 
         return responseDtoList;
+    }
+
+    //게시물 상세 조회
+    public GetBoardDetailResponseDto getBoardDetail(Long id, UserDetailsImpl userDetails) {
+        User currentLoginUser = userDetails.getUser();
+
+        Board board = boardRepository.findById(id).orElseThrow(
+                () -> new NullPointerException("찾는 게시물이 없습니다.")
+        );
+
+        GetBoardDetailResponseDto responseDto = null;
+        if(board != null) {
+            Long boardId = board.getId();
+            String title = board.getTitle();
+            String nickname = board.getUser().getNickname();
+            String profile = board.getUser().getImage();
+            LocalDateTime regDate = board.getRegDate();
+            String content = board.getContent();
+            List<BoardImage> boardimageList = board.getBoardImageList();
+            List<String> images = new ArrayList<>();
+            for(BoardImage boardImage : boardimageList) {
+                String image = boardImage.getImage();
+                images.add(image);
+            }
+            int likeCount = board.getBoardLikesList().size();
+            BoardLikes boardLikes = boardLikesRepository.findByBoardAndUser(board, currentLoginUser);
+            boolean likeStatus = boardLikes != null;
+
+            responseDto = new GetBoardDetailResponseDto(boardId, title, nickname, profile, regDate,
+                                                        content, images, likeCount, likeStatus);
+        }
+
+        return responseDto;
     }
 
     //게시물 수정

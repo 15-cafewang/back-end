@@ -4,6 +4,7 @@ import com.sparta.backend.domain.Board;
 import com.sparta.backend.dto.request.board.PostBoardRequestDto;
 import com.sparta.backend.dto.request.board.PutBoardRequestDto;
 import com.sparta.backend.dto.response.CustomResponseDto;
+import com.sparta.backend.dto.response.board.GetBoardDetailResponseDto;
 import com.sparta.backend.dto.response.board.GetBoardResponseDto;
 import com.sparta.backend.security.UserDetailsImpl;
 import com.sparta.backend.service.BoardService;
@@ -56,10 +57,23 @@ public class BoardController {
 
         Page<GetBoardResponseDto> boardList =  boardService.getBoards(page, size, isAsc, sortBy, userDetails);
 
-        if(boardList!= null && boardList.getSize() > 0) {
+        if(boardList != null && boardList.getSize() > 0) {
             return new CustomResponseDto<>(1, "전체 게시물 조회 성공", boardList);
         } else {
             return new CustomResponseDto<>(-1, "전체 게시물 조회 실패", "");
+        }
+    }
+
+    //게시물 상세 조회
+    @GetMapping("/boards/{boardId}")
+    public CustomResponseDto<?> getBoardDetail(@PathVariable("boardId") Long id,
+                                               @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        GetBoardDetailResponseDto responseDto = boardService.getBoardDetail(id, userDetails);
+
+        if(responseDto != null) {
+            return new CustomResponseDto<>(1, "게시물 상세 조회 성공", responseDto);
+        } else {
+            return new CustomResponseDto<>(-1, "게시물 상세 조회 실패", "");
         }
     }
 
