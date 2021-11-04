@@ -41,19 +41,16 @@ public class RecipeCommentService {
     }
 
     //레시피에 대한 댓글들 조회- 리스트로 리턴
-    public List<RecipeCommentResponseDto> getComment(Long recipeId, UserDetailsImpl userDetails){
-        List<RecipeComment> recipeCommentList = commentRepository.findAllByRecipeIdOrderByRegDateDesc(recipeId);
-        List<RecipeCommentResponseDto> responseDtoList = new ArrayList<>();
-
-        recipeCommentList.forEach(comment ->
-                responseDtoList.add(new RecipeCommentResponseDto(
-                        comment.getId(),
-                        comment.getUser().getNickname(),
-                        comment.getContent(),
-                        comment.getRegDate()
-                        )));
-        return responseDtoList;
-    }
+//    public List<RecipeCommentResponseDto> getComment(Long recipeId, UserDetailsImpl userDetails){
+//        List<RecipeComment> recipeCommentList = commentRepository.findAllByRecipeIdOrderByRegDateDesc(recipeId);
+//        List<RecipeCommentResponseDto> responseDtoList = new ArrayList<>();
+//
+//        recipeCommentList.forEach(comment ->
+//                responseDtoList.add(new RecipeCommentResponseDto(
+//                        comment, userDetails, commentLikeReposiotory
+//                        )));
+//        return responseDtoList;
+//    }
 
     //레시피에 대한 댓글들 조회- 페이지로 리턴
     public Page<RecipeCommentResponseDto> getCommentByPage(Long recipeId, int page, int size, boolean isAsc,UserDetailsImpl userDetails){
@@ -64,7 +61,7 @@ public class RecipeCommentService {
         Page<RecipeComment> comments = commentRepository.findAllByRecipeId(recipeId,pageable);
 
         //필요한 정보만 리턴
-        Page<RecipeCommentResponseDto> responseDtos = comments.map(RecipeCommentResponseDto::new);
+        Page<RecipeCommentResponseDto> responseDtos = comments.map((comment -> new RecipeCommentResponseDto(comment,userDetails,commentLikeReposiotory)));
         return responseDtos;
     }
 

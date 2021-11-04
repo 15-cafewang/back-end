@@ -1,5 +1,6 @@
 package com.sparta.backend.domain.Recipe;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sparta.backend.domain.BaseEntity;
 import com.sparta.backend.domain.User;
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.List;
 
 @ToString(exclude = {"user", "recipe"})
 @Getter
@@ -31,6 +33,10 @@ public class RecipeComment extends BaseEntity {
     @JsonManagedReference
     @JoinColumn(name = "recipe_id")
     private Recipe recipe;
+
+    @OneToMany(mappedBy = "recipeComment", cascade = CascadeType.ALL)
+    @JsonBackReference
+    private List<RecipeCommentLikes> commentLikes;
 
     public RecipeComment(String content, User user, Recipe recipe) {
         this.content = content;
