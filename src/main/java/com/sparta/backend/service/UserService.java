@@ -13,6 +13,7 @@ import com.sparta.backend.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
@@ -101,11 +102,18 @@ public class UserService {
     }
 
     // 회원 정보 수정
+    @Transactional
     public void updateUser(Long userId, UpdateUserRequestDto requestDto) throws IOException {
 
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new NullPointerException("존재하지 않는 회원입니다")
         );
+
+        Optional<User> foundNickname = userRepository.findByNickname(requestDto.getNickname());
+
+        if (foundNickname.isPresent()) {
+            throw new IllegalArgumentException("이미 사용중인 닉네임 입니다");
+        }
 
         String imageUrl = user.getImage();
 
