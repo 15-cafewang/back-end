@@ -50,11 +50,11 @@ public class User extends BaseEntity {
     @JsonBackReference
     private List<Likes> likesList;
 
-    @OneToMany(mappedBy = "fromUser", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "fromUser")
     @JsonBackReference
     private List<Follow> fromUserFollowList;
 
-    @OneToMany(mappedBy = "toUser", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "toUser")
     @JsonBackReference
     private List<Follow> toUserFollowList;
 
