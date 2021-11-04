@@ -5,6 +5,7 @@ import com.sparta.backend.security.UserDetailsImpl;
 import com.sparta.backend.service.FollowService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,5 +22,13 @@ public class FollowController {
         followService.follow(userDetails.getUser().getId(), nickname);
 
         return new CustomResponseDto<>(1, "팔로우 성공", "");
+    }
+
+    @DeleteMapping("/follows/{nickname}")
+    public CustomResponseDto<?> unFollow(@PathVariable String nickname, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        followService.unFollow(userDetails.getUser().getId(), nickname);
+
+        return new CustomResponseDto<>(1, "언팔로우 성공", "");
     }
 }
