@@ -8,5 +8,5 @@ import org.springframework.web.multipart.MultipartFile;
 public class PostBoardRequestDto {
     private String title;
     private String content;
-    private MultipartFile image;
+    private MultipartFile[] image;
 }

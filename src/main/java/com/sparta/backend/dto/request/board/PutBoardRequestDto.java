@@ -9,5 +9,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class PutBoardRequestDto {
     private String title;
     private String content;
-    private MultipartFile image;
+    private String[] imageUrl;
+    private MultipartFile[] image;
 }

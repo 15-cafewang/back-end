@@ -4,9 +4,11 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.sparta.backend.awsS3.S3Uploader;
 import com.sparta.backend.domain.Board;
+import com.sparta.backend.domain.BoardImage;
 import com.sparta.backend.domain.User;
 import com.sparta.backend.dto.request.board.PostBoardRequestDto;
 import com.sparta.backend.dto.request.board.PutBoardRequestDto;
+import com.sparta.backend.repository.BoardImageRepository;
 import com.sparta.backend.repository.BoardRepository;
 import com.sparta.backend.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @RequiredArgsConstructor
@@ -22,23 +26,41 @@ import java.io.IOException;
 public class BoardService {
 
     private final BoardRepository boardRepository;
+    private final BoardImageRepository boardImageRepository;
     private final S3Uploader s3Uploader;
     private final AmazonS3Client amazonS3Client;
     private final String bucket = "99final";
+    private final int maxImageCount = 5;    //사진 업로드 최대 개수
 
     //게시물 등록
     @Transactional
     public Long createBoard(PostBoardRequestDto requestDto, UserDetailsImpl userDetails) throws IOException {
         User user = userDetails.getUser();
-        MultipartFile image = requestDto.getImage();
-        String saveImage = s3Uploader.upload(image, "boardImage");
-        System.out.println("savaImage: " + saveImage);
+        MultipartFile[] image = requestDto.getImage();
+        List<String> imageList = new ArrayList<>();
+
+        for(MultipartFile img : image) {
+            String imageUrl = s3Uploader.upload(img, "boardImage");
+            System.out.println("saveImage: " + imageUrl);
+            if(imageUrl == null)    //이미지 업로드에 실패했을 때
+                throw new NullPointerException("이미지 업로드에 실패하였습니다.");
+            imageList.add(imageUrl);
+        }
 
         Long boardId = 0L;
         if(user != null) {
-            Board board = new Board(requestDto, saveImage, user);
+            Board board = new Board(requestDto, user);
             Board savedBoard = boardRepository.save(board);
             boardId = savedBoard.getId();
+
+            for(String img : imageList) {
+                try {
+                    BoardImage boardImage = new BoardImage(img, board);
+                    boardImageRepository.save(boardImage);
+                } catch (Exception e) {
+                    deleteS3(img);
+                }
+            }
         } else {
             throw new NullPointerException("로그인이 필요합니다.");
         }
@@ -52,24 +74,68 @@ public class BoardService {
         Board board = null;
         String title = requestDto.getTitle();
         String content = requestDto.getContent();
-        String imageUrl = "";
 
         if(userDetails != null) {   //로그인 했을 때
             String currentLoginEmail = userDetails.getUser().getEmail();
             board = boardRepository.findById(id).orElseThrow(
                     () -> new NullPointerException("찾는 게시물이 없습니다.")
             );
-            imageUrl = board.getImage();    //수정 전 이미지 URL
-            String writterEmail = board.getUser().getEmail();
+
+            String writterEmail = board.getUser().getEmail();   //게시물을 작성한 계정 아이디: 이메일
 
             if(currentLoginEmail.equals(writterEmail)) {    //작성자가 현재 로그인한 사용자일 때
-                if(requestDto.getImage() != null) {     //수정할 이미지가 있을 떄
-                    deleteS3(board.getImage());     //기존에 등록되어있던 이미지 삭제
-                    MultipartFile image = requestDto.getImage();
-                    imageUrl = s3Uploader.upload(image, "boardImage");  //새 이미지 등록. return 이미지 URL
-                    System.out.println("수정한 이미지 URL: " + imageUrl);
-                    if(imageUrl == null)    //이미지 업로드에 실패했을 때
-                        throw new NullPointerException("이미지 업로드에 실패하였습니다.");
+                String[] imageUrlList =  requestDto.getImageUrl();  //ex: [https://...aaa.png, "", "" , https://...aab.png, https://...aac.png]
+                MultipartFile[] imageList = requestDto.getImage();  //ex: filename: ["", "abc.png", "def.png", "", ""]
+
+                //수정할 이미지를 S3에 올림
+                for(int i=0; i<imageList.length; i++) {
+                    MultipartFile image = imageList[i];
+                    if(!image.getOriginalFilename().equals("") || image.getSize() > 0) {    //업로드한 이미지가 있을 때
+                        String uploadImageUrl = s3Uploader.upload(image, "boardImage");
+                        if(uploadImageUrl == null)    //이미지 업로드에 실패했을 때
+                            throw new NullPointerException("이미지 업로드에 실패하였습니다.");
+                        imageUrlList[i] = uploadImageUrl;
+                    }
+                }
+
+                //imageUrlList에는 수정한 결과 이미지 URL이 담겨있는 상태
+                //imageUrlList에 있는 모든 Url을 반영해야 함
+                List<BoardImage> boardImageList = boardImageRepository.findAllByBoard(board);
+
+                //outOfIndex를 피하기 위해 저장 공간의 개수를 맞춰줌
+                String[] exisitImageList = new String[maxImageCount];
+
+                for(int i=0; i<boardImageList.size(); i++) {
+                    BoardImage boardImage = boardImageList.get(i);  //게시물 작성 시 첨부했던 이미지
+                    String image = boardImage.getImage();
+                    exisitImageList[i] = image;
+                }
+
+                for(int i=0; i<exisitImageList.length; i++) {
+                    if(!imageUrlList[i].equals(exisitImageList[i])) {
+
+                        //사용자가 게시물 수정 시 기존에 있던 이미지를 삭제한 경우
+                        if(imageUrlList[i].equals("") && exisitImageList[i] != null) {
+                            deleteS3(exisitImageList[i]);
+                            Long boardImageId = boardImageList.get(i).getId();
+                            boardImageRepository.deleteById(boardImageId);
+                        }
+                        //사용자가 새 이미지를 추가한 경우
+                        else if(imageUrlList[i].length() > 0 && exisitImageList[i] == null) {
+                            BoardImage newBoardImage = new BoardImage(imageUrlList[i], board);
+                            boardImageRepository.save(newBoardImage);
+                        }
+                        //게시물 작성 시 올린 이미지도, 새롭게 올린 이미지도 없을 경우
+                        else if(imageUrlList[i].equals("") && exisitImageList[i] == null) {
+                            break;
+                        }
+                        //사용자가 게시물 수정 시 기존에 있던 이미지를 수정한 경우
+                        else {
+                            BoardImage boardImage = boardImageList.get(i);
+                            deleteS3(exisitImageList[i]);    //기존에 올린 이미지는 삭제
+                            boardImage.updateImage(imageUrlList[i]);  //새로 올린 이미지로 update
+                        }
+                    }
                 }
             } else {    //작성자와 현재 로그인한 사용자가 다를 때
                 throw new IllegalArgumentException("게시물을 작성한 사용자만 수정 가능합니다.");
@@ -78,7 +144,7 @@ public class BoardService {
             throw new NullPointerException("로그인이 필요합니다.");
         }
 
-        return board.update(title, content, imageUrl);
+        return board.updateBoard(title, content);
     }
 
     //게시물 삭제
@@ -89,10 +155,16 @@ public class BoardService {
             Board board = boardRepository.findById(id).orElseThrow(
                     () -> new NullPointerException("찾는 게시물이 없습니다.")
             );
+
             String writerEmail = board.getUser().getEmail();
 
             if(writerEmail.equals(currentLoginEmail)) { //작성자와 현재 로그인한 사용자 계정이 동일할 때
-                deleteS3(board.getImage());
+                List<BoardImage> boardImageList = boardImageRepository.findAllByBoard(board);
+                for(BoardImage bi : boardImageList) {
+                    String image = bi.getImage();
+                    deleteS3(image);
+                    boardImageRepository.deleteAllByBoard(board);
+                }
                 boardRepository.deleteById(id);
             } else { //현재 로그인한 사용자 계정이 작성자가 아닐 때
                 throw new IllegalArgumentException("게시물을 작성한 사용자만 삭제 가능합니다.");
