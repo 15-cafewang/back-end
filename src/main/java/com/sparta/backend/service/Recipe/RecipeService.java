@@ -143,11 +143,12 @@ public class RecipeService {
         Boolean likeStatus = foundRecipeLike.isPresent();
 
         List<String> tagNames = new ArrayList<>();
-        recipe.getTagList().stream().map((tag)->tagNames.add(tag.getName()));
+        recipe.getTagList().forEach((tag)->tagNames.add(tag.getName()));
 
+        List<String> images =new ArrayList<>();
+        recipe.getRecipeImagesList().forEach((recipeImage)->images.add(recipeImage.getImage()));
         RecipeDetailResponsetDto responsetDto = new RecipeDetailResponsetDto(
-                //todo: 이미지 여러개
-                recipeId, nickname, title, content, regDate, likeCount, likeStatus, "mockimage", tagNames);
+                recipeId, nickname, title, content, regDate, likeCount, likeStatus, images, tagNames);
 
         return responsetDto;
     }
