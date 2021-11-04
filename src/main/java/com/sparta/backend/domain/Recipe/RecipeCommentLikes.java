@@ -3,9 +3,12 @@ package com.sparta.backend.domain.Recipe;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sparta.backend.domain.BaseEntity;
 import com.sparta.backend.domain.User;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+@NoArgsConstructor
+@Entity
 public class RecipeCommentLikes extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

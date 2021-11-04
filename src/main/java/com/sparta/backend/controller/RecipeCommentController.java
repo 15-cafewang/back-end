@@ -72,6 +72,15 @@ public class RecipeCommentController {
         return new CustomResponseDto<>(1,"댓글 수정 성공","");
    }
 
+   //댓글 좋아요 등록/취소
+    @GetMapping("/recipes/comment/likes/{commentId}")
+    public CustomResponseDto<?> likeComment(@PathVariable Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        checkLogin(userDetails);
+        String resultMessage = commentService.likeComment(commentId, userDetails.getUser());
+        return new CustomResponseDto<>(1,resultMessage, "");
+    }
+
+
     private void checkLogin(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         if (userDetails == null) {
             throw new CustomErrorException("로그인된 유저만 사용가능한 기능입니다.");
