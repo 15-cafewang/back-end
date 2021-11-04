@@ -9,6 +9,7 @@ import com.sparta.backend.dto.request.user.KakaoUserInfoDto;
 import com.sparta.backend.repository.UserRepository;
 import com.sparta.backend.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -36,6 +37,9 @@ public class KakaoUserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Value("${kakao.client_id}")
+    String clientId;
+
     public void kakaoLogin(String code) throws JsonProcessingException {
 
         // 1. "인가 코드"로 "액세스 토큰" 요청
@@ -60,7 +64,7 @@ public class KakaoUserService {
         // HTTP Body 생성
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", "057c71b5702a123f612575268ad12f91");
+        body.add("client_id", clientId);
         body.add("redirect_uri", "http://localhost:8888/user/kakao/callback");
         body.add("code", code);
 
