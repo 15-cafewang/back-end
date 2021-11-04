@@ -28,7 +28,9 @@ public class Board extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
-    private String image;
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    @JsonBackReference
+    private List<BoardImage> boardImageList;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonManagedReference
@@ -43,17 +45,15 @@ public class Board extends BaseEntity {
     @JsonBackReference
     private List<BoardLikes> boardLikesList;
 
-    public Board(PostBoardRequestDto requestDto, String image, User user) {
+    public Board(PostBoardRequestDto requestDto, User user) {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
-        this.image = image;
         this.user = user;
     }
 
-    public Board update(String title, String content, String imageUrl) {
+    public Board updateBoard(String title, String content) {
         this.title = title;
         this.content = content;
-        this.image = imageUrl;
 
         return this;
     }
