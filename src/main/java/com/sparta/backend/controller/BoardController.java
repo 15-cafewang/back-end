@@ -4,9 +4,11 @@ import com.sparta.backend.domain.Board;
 import com.sparta.backend.dto.request.board.PostBoardRequestDto;
 import com.sparta.backend.dto.request.board.PutBoardRequestDto;
 import com.sparta.backend.dto.response.CustomResponseDto;
+import com.sparta.backend.dto.response.board.GetBoardResponseDto;
 import com.sparta.backend.security.UserDetailsImpl;
 import com.sparta.backend.service.BoardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,6 +45,21 @@ public class BoardController {
             return new CustomResponseDto<>(1, "게시물 수정 성공", "");
         } else {
             return new CustomResponseDto<>(-1, "게시물 수정 실패", "");
+        }
+    }
+
+    //전체 게시물 조회
+    @GetMapping("/boards")
+    public CustomResponseDto<?> getBoards(@RequestParam int page, @RequestParam int size,
+                                          @RequestParam boolean isAsc, @RequestParam String sortBy,
+                                          @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        Page<GetBoardResponseDto> boardList =  boardService.getBoards(page, size, isAsc, sortBy, userDetails);
+
+        if(boardList!= null && boardList.getSize() > 0) {
+            return new CustomResponseDto<>(1, "전체 게시물 조회 성공", boardList);
+        } else {
+            return new CustomResponseDto<>(-1, "전체 게시물 조회 실패", "");
         }
     }
 

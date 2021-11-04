@@ -8,15 +8,19 @@ import com.sparta.backend.domain.BoardImage;
 import com.sparta.backend.domain.User;
 import com.sparta.backend.dto.request.board.PostBoardRequestDto;
 import com.sparta.backend.dto.request.board.PutBoardRequestDto;
+import com.sparta.backend.dto.response.board.GetBoardResponseDto;
 import com.sparta.backend.repository.BoardImageRepository;
+import com.sparta.backend.repository.BoardLikesRepository;
 import com.sparta.backend.repository.BoardRepository;
 import com.sparta.backend.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +31,7 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
     private final BoardImageRepository boardImageRepository;
+    private final BoardLikesRepository boardLikesRepository;
     private final S3Uploader s3Uploader;
     private final AmazonS3Client amazonS3Client;
     private final String bucket = "99final";
@@ -66,6 +71,29 @@ public class BoardService {
         }
 
         return boardId;
+    }
+
+    //전체 게시물 조회
+    public Page<GetBoardResponseDto> getBoards(int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails) {
+        User currentLoginUser = userDetails.getUser();
+
+        //정렬 기준
+        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+        //어떤 컬럼 기준으로 정렬할 지 결정(sortBy: 컬럼이름)
+        Sort sort = Sort.by(direction, sortBy);
+        //페이징
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+       Page<Board> boardList = boardRepository.findAll(pageable);
+
+       //Page<Board> -> Page<Dto> 로 변환
+       Page<GetBoardResponseDto> responseDtoList = boardList.map(board -> new GetBoardResponseDto(
+                board.getId(), board.getUser().getNickname(), board.getTitle(), board.getContent(),
+                board.getBoardImageList().get(0).getImage(), board.getRegDate(), board.getBoardCommentList().size(),
+                board.getBoardLikesList().size(), board.getBoardLikesList().contains(currentLoginUser)
+       ));
+
+        return responseDtoList;
     }
 
     //게시물 수정
@@ -189,5 +217,4 @@ public class BoardService {
             throw new AmazonServiceException(e.getMessage());
         }
     }
-
 }
