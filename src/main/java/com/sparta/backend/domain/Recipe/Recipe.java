@@ -59,7 +59,7 @@ public class Recipe extends BaseEntity {
         this.price = price;
         this.user = user;
     }
-    public Recipe updateRecipe(String title, String content, int pricer) {
+    public Recipe updateRecipe(String title, String content, int price) {
         this.title = title;
         this.content = content;
         this.price = price;
