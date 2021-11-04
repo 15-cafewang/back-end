@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @ToString(exclude = {"user"})
@@ -28,8 +29,6 @@ public class Recipe extends BaseEntity {
 
     @Column(nullable = false)
     private String content;
-
-    private String image;
 
     private int price;
 
@@ -50,22 +49,20 @@ public class Recipe extends BaseEntity {
     @JsonBackReference
     private List<RecipeLikes> recipeLikesList;
 
-    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "recipe",  cascade = CascadeType.REMOVE)
     @JsonBackReference
     private List<RecipeImage> recipeImagesList;
 
-    public Recipe(String title, String content, int price, String image, User user){
+    public Recipe(String title, String content, int price, User user){
         this.title = title;
         this.content = content;
         this.price = price;
-        this.image = image;
         this.user = user;
     }
-    public Recipe updateRecipe(String title, String content, int price,String image,User user) {
+    public Recipe updateRecipe(String title, String content, int price,User user) {
         this.title = title;
         this.content = content;
         this.price = price;
-        this.image = image;
         this.user = user;
 
         return this;

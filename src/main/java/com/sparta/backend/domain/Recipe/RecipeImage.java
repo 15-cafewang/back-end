@@ -23,5 +23,14 @@ public class RecipeImage extends BaseEntity {
     @JoinColumn(name = "recipe_id")
     private Recipe recipe;
 
+    public RecipeImage(String image, Recipe recipe){
+        this.image = image;
+        this.recipe = recipe;
+    }
 
+    public RecipeImage updateRecipeImage(String image, Recipe recipe){
+        this.image = image;
+        this.recipe = recipe;
+        return this;
+    }
 }

@@ -9,10 +9,11 @@ import java.util.List;
 public class PostRecipeRequestDto {
     private String title;
     private String content;
-    private MultipartFile image;
+    private MultipartFile image1;
     private int price;
     private List<String> tag;
     private MultipartFile image2;
     private MultipartFile image3;
     private MultipartFile image4;
+    private MultipartFile image5;
 }

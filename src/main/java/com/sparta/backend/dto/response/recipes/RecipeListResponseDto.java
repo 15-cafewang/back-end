@@ -34,7 +34,7 @@ public class RecipeListResponseDto {
         this.content = recipe.getContent();
         this.regdate = recipe.getRegDate();
         this.commentCount = recipe.getRecipeCommentList().size();
-        this.image = recipe.getImage();
+//        this.image = recipe.getImage();
         this.likeCount = recipe.getRecipeLikesList().size();
 
         Optional<RecipeLikes> foundRecipeLike = recipeLikesRepository.findByRecipeIdAndUserId(recipe.getId(),userDetails.getUser().getId());

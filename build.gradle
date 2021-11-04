@@ -39,6 +39,8 @@ dependencies {
     //S3 서버 연결관련
     implementation platform('com.amazonaws:aws-java-sdk-bom:1.11.228')
     implementation 'com.amazonaws:aws-java-sdk-s3'
+    //쿼리에 ?내용 보여주기
+    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.7'
 }
 
 test {
