@@ -119,11 +119,7 @@ public class UserService {
 
         if (requestDto.getImage() != null) {
 
-            User foundUser = userRepository.findById(userId).orElseThrow(
-                    () -> new NullPointerException("존재하지 않는 회원입니다")
-            );
-
-            deleteS3(foundUser.getImage());
+            deleteS3(user.getImage());
 
             imageUrl = s3Uploader.upload(requestDto.getImage(), "userImage");
 
