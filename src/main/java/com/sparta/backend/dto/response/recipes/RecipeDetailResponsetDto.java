@@ -16,6 +16,6 @@ public class RecipeDetailResponsetDto {
     private LocalDateTime regdate;
     private int likeCount;
     private boolean likeStatus;
-    private String image;
+    private List<String> images;
     private List<String> tags;
 }

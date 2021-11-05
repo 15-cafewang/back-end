@@ -1,12 +1,11 @@
 package com.sparta.backend.domain;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.sparta.backend.domain.Recipe.Recipe;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.util.List;
 
 @ToString
 @Getter

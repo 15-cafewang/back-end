@@ -1,6 +1,9 @@
 package com.sparta.backend.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.sparta.backend.domain.Recipe.Recipe;
+import com.sparta.backend.domain.Recipe.RecipeComment;
+import com.sparta.backend.domain.Recipe.RecipeLikes;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -44,11 +47,11 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonBackReference
-    private List<Comment> commentList;
+    private List<RecipeComment> recipeCommentList;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonBackReference
-    private List<Likes> likesList;
+    private List<RecipeLikes> recipeLikesList;
 
     @OneToMany(mappedBy = "fromUser")
     @JsonBackReference

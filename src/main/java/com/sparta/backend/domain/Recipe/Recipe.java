@@ -1,12 +1,17 @@
-package com.sparta.backend.domain;
+package com.sparta.backend.domain.Recipe;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.sparta.backend.domain.BaseEntity;
+import com.sparta.backend.domain.Tag;
+import com.sparta.backend.domain.User;
+import com.sparta.backend.security.UserDetailsImpl;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @ToString(exclude = {"user"})
@@ -25,7 +30,7 @@ public class Recipe extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
-    private String image;
+    private int price;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonManagedReference
@@ -38,21 +43,26 @@ public class Recipe extends BaseEntity {
 
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
     @JsonBackReference
-    private List<Comment> commentList;
+    private List<RecipeComment> recipeCommentList;
 
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
     @JsonBackReference
-    private List<Likes> likesList;
+    private List<RecipeLikes> recipeLikesList;
 
-    public Recipe(String title, String content, String image){
+    @OneToMany(mappedBy = "recipe",  cascade = CascadeType.REMOVE)
+    @JsonBackReference
+    private List<RecipeImage> recipeImagesList;
+
+    public Recipe(String title, String content, int price, User user){
         this.title = title;
         this.content = content;
-        this.image = image;
+        this.price = price;
+        this.user = user;
     }
-    public Recipe updateRecipe(String title, String content, String image) {
+    public Recipe updateRecipe(String title, String content, int price) {
         this.title = title;
         this.content = content;
-        this.image = image;
+        this.price = price;
 
         return this;
     }
