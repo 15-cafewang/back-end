@@ -105,13 +105,8 @@ public class RecipeController {
                                              @AuthenticationPrincipal UserDetailsImpl userDetails){
         checkLogin(userDetails);
         //태그로 검색
-        if(withTag){
-            Page<RecipeListResponseDto> recipeByPage= recipeService.searchByTag(keyword, page, size, isAsc, sortBy,userDetails);
-            return new CustomResponseDto<>(1, "레시피 리스트 성공", recipeByPage);
-        } else{
-            Page<RecipeListResponseDto> recipeByPage = recipeService.searchByTitleOrContents(keyword, page, size, isAsc, sortBy, userDetails);
-            return new CustomResponseDto<>(1, "레시피 리스트 성공", recipeByPage);
-        }
+        Page<RecipeListResponseDto> recipeByPage= recipeService.searchRecipe(withTag,keyword, page, size, isAsc, sortBy,userDetails);
+        return new CustomResponseDto<>(1, "레시피 리스트 성공", recipeByPage);
     }
 
     private void checkLogin(@AuthenticationPrincipal UserDetailsImpl userDetails) {
