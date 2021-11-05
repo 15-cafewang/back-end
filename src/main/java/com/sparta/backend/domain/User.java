@@ -53,6 +53,18 @@ public class User extends BaseEntity {
     @JsonBackReference
     private List<RecipeLikes> recipeLikesList;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonBackReference
+    private List<Board> boardList;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonBackReference
+    private List<BoardComment> boardCommentList;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonBackReference
+    private List<BoardLikes> boardLikesList;
+
     @OneToMany(mappedBy = "fromUser")
     @JsonBackReference
     private List<Follow> fromUserFollowList;
@@ -60,10 +72,6 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "toUser")
     @JsonBackReference
     private List<Follow> toUserFollowList;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonBackReference
-    private List<Review> reviewList;
 
     public void encodePassword(PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(this.password);
