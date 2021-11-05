@@ -15,7 +15,7 @@ public class SignupRequestDto {
     private String email;
 
     @NotBlank(message = "비밀번호는 필수 입력 값입니다.")
-    @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z]).{8,20}",
+    @Pattern(regexp = "^((?=.*[0-9])(?=.*[a-zA-Z])(?=.*[\\W]).{8,20})$",
             message = "비밀번호는 영문 대,소문자와 숫자, 8자 ~ 20자의 비밀번호여야 합니다.")
     private String password;
 
@@ -23,5 +23,7 @@ public class SignupRequestDto {
     private String passwordCheck;
 
     @NotBlank(message = "닉네임은 필수 입력 값입니다.")
+    @Pattern(regexp = "^([^\\W]{2,8})$",
+            message = "닉네임은 2글자 이상 8글자 이하면서 특수문자를 포함하지 않아야 합니다.")
     private String nickname;
 }

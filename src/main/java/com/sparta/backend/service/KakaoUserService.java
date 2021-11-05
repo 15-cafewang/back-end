@@ -4,10 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.backend.domain.User;
+import com.sparta.backend.domain.UserRole;
 import com.sparta.backend.dto.request.user.KakaoUserInfoDto;
 import com.sparta.backend.repository.UserRepository;
 import com.sparta.backend.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -35,6 +37,9 @@ public class KakaoUserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Value("${kakao.client_id}")
+    String clientId;
+
     public void kakaoLogin(String code) throws JsonProcessingException {
 
         // 1. "인가 코드"로 "액세스 토큰" 요청
@@ -59,7 +64,7 @@ public class KakaoUserService {
         // HTTP Body 생성
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", "057c71b5702a123f612575268ad12f91");
+        body.add("client_id", clientId);
         body.add("redirect_uri", "http://localhost:8888/user/kakao/callback");
         body.add("code", code);
 
@@ -103,10 +108,10 @@ public class KakaoUserService {
         Long id = jsonNode.get("id").asLong();
         String nickname = jsonNode.get("properties")
                 .get("nickname").asText();
-        String email = jsonNode.get("kakao_account")
-                .get("email").asText();
+//        String email = jsonNode.get("kakao_account")
+//                .get("email").asText();
 
-        return new KakaoUserInfoDto(id, nickname, email);
+        return new KakaoUserInfoDto(id, nickname);
     }
 
     private User registerKakaoUserIfNeeded(KakaoUserInfoDto kakaoUserInfo) {
@@ -125,11 +130,11 @@ public class KakaoUserService {
             String encodedPassword = passwordEncoder.encode(password);
 
             // email: kakao email
-            String email = kakaoUserInfo.getEmail();
+            String email = UUID.randomUUID().toString() + "@kakao.com";
             // role: 일반 사용자
 //            UserRoleEnum role = UserRoleEnum.USER;
 
-            kakaoUser = new User(email, encodedPassword, nickname, kakaoId);
+            kakaoUser = new User(email, encodedPassword, nickname, null, UserRole.USER, kakaoId, "Y");
             userRepository.save(kakaoUser);
         }
         return kakaoUser;

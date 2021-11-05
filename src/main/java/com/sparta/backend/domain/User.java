@@ -23,13 +23,20 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String nickname;
+
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private UserRole role;
 
     @Column(unique = true)
     private Long kakaoId;
 
     private String image;
+
+    @Column(nullable = false)
+    private String status;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonBackReference
@@ -43,11 +50,11 @@ public class User extends BaseEntity {
     @JsonBackReference
     private List<Likes> likesList;
 
-    @OneToMany(mappedBy = "fromUser", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "fromUser")
     @JsonBackReference
     private List<Follow> fromUserFollowList;
 
-    @OneToMany(mappedBy = "toUser", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "toUser")
     @JsonBackReference
     private List<Follow> toUserFollowList;
 
@@ -60,16 +67,33 @@ public class User extends BaseEntity {
     }
 
     @Builder
-    public User(String email, String password, String nickname) {
+    public User(String email, String password, String nickname, String image, UserRole role, String status) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
+        this.image = image;
+        this.role = role;
+        this.status = status;
     }
 
-    public User(String email, String password, String nickname, Long kakaoId) {
+    public User(String email, String password, String nickname, String image, UserRole role, Long kakaoId, String status) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
+        this.image = image;
+        this.role = role;
         this.kakaoId = kakaoId;
+        this.status = status;
+    }
+
+    // 정보 수정
+    public void changeProfile(String nickname, String image) {
+        this.nickname = nickname;
+        this.image = image;
+    }
+
+    // 회원 삭제
+    public void deleteUser(String status) {
+        this.status = status;
     }
 }

@@ -27,4 +27,9 @@ public class Follow extends BaseEntity {
     @JsonManagedReference
     @JoinColumn(name = "to_user_id")
     private User toUser;
+
+    public Follow(User fromUser, User toUser) {
+        this.fromUser = fromUser;
+        this.toUser = toUser;
+    }
 }
