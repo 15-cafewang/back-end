@@ -182,4 +182,16 @@ public class RecipeService {
     public Optional<Recipe> findById(Long recipeId) {
         return recipeRepository.findById(recipeId);
     }
+
+    public Page<RecipeListResponseDto> searchByTag(String keyword, int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails) {
+        page = page-1;
+        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, sortBy);
+        Pageable pageable = PageRequest.of(page,size,sort);
+
+        Page<Recipe> recipes = recipeRepository.findAllByTag(keyword, pageable);
+//        System.out.println(recipes.getContent().get(0));
+        Page<RecipeListResponseDto> responseDtos = recipes.map((recipe) -> new RecipeListResponseDto(recipe,userDetails, recipeLikesRepository));
+        return responseDtos;
+    }
 }

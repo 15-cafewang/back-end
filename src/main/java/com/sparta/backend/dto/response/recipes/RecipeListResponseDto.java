@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Getter
@@ -20,7 +22,7 @@ public class RecipeListResponseDto {
     private String nickname;
     private String title;
     private String content;
-    private String image;
+    private List<String> images = new ArrayList<>();
     private LocalDateTime regdate;
     private int commentCount;
     private int likeCount;
@@ -34,7 +36,7 @@ public class RecipeListResponseDto {
         this.content = recipe.getContent();
         this.regdate = recipe.getRegDate();
         this.commentCount = recipe.getRecipeCommentList().size();
-//        this.image = recipe.getImage();
+        recipe.getRecipeImagesList().forEach((RecipeImage)->this.images.add(RecipeImage.getImage()));
         this.likeCount = recipe.getRecipeLikesList().size();
 
         Optional<RecipeLikes> foundRecipeLike = recipeLikesRepository.findByRecipeIdAndUserId(recipe.getId(),userDetails.getUser().getId());

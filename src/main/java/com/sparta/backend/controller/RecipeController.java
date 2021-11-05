@@ -93,6 +93,25 @@ public class RecipeController {
         return new CustomResponseDto<>(1, resultMessage,"");
     }
 
+    //레시피 검색
+    @GetMapping("/search/recipe")
+    public CustomResponseDto<?> searchRecipe(@RequestParam("keyword") String keyword,
+                                             @RequestParam("withTag") boolean withTag,
+                                             @RequestParam("page") int page,
+                                             @RequestParam("size") int size,
+                                             @RequestParam("isAsc") boolean isAsc,
+                                             @RequestParam("sortBy") String sortBy,
+                                             @AuthenticationPrincipal UserDetailsImpl userDetails){
+        checkLogin(userDetails);
+        //태그로 검색
+        if(withTag){
+            Page<RecipeListResponseDto> recipeByPage= recipeService.searchByTag(keyword, page, size, isAsc, sortBy,userDetails);
+            return new CustomResponseDto<>(1, "레시피 리스트 성공", recipeByPage);
+        }
+//        recipeService.
+        return new CustomResponseDto<>();
+    }
+
     private void checkLogin(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         if (userDetails == null) {
             throw new CustomErrorException("로그인된 유저만 사용가능한 기능입니다.");
