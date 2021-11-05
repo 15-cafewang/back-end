@@ -194,4 +194,31 @@ public class RecipeService {
         Page<RecipeListResponseDto> responseDtos = recipes.map((recipe) -> new RecipeListResponseDto(recipe,userDetails, recipeLikesRepository));
         return responseDtos;
     }
+
+    public Page<RecipeListResponseDto> searchByTitleOrContents(String keyword, int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails) {
+        page = page-1;
+        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, sortBy);
+        Pageable pageable = PageRequest.of(page,size,sort);
+
+        Page<Recipe> recipes = recipeRepository.findAllByTitleOrContent(keyword, pageable);
+        Page<RecipeListResponseDto> responseDtos = recipes.map((recipe) -> new RecipeListResponseDto(recipe,userDetails, recipeLikesRepository));
+        return responseDtos;
+    }
+
+    public Page<RecipeListResponseDto> searchRecipe(boolean withTag, String keyword, int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails) {
+        page = page-1;
+        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, sortBy);
+        Pageable pageable = PageRequest.of(page,size,sort);
+
+        Page<Recipe> recipes;
+        if(withTag){
+            recipes = recipeRepository.findAllByTag(keyword, pageable);
+        }else{
+            recipes = recipeRepository.findAllByTitleOrContent(keyword, pageable);
+        }
+        Page<RecipeListResponseDto> responseDtos = recipes.map((recipe) -> new RecipeListResponseDto(recipe,userDetails, recipeLikesRepository));
+        return responseDtos;
+    }
 }

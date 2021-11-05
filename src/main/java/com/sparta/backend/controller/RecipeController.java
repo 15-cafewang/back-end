@@ -16,6 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Slf4j
@@ -104,12 +105,8 @@ public class RecipeController {
                                              @AuthenticationPrincipal UserDetailsImpl userDetails){
         checkLogin(userDetails);
         //태그로 검색
-        if(withTag){
-            Page<RecipeListResponseDto> recipeByPage= recipeService.searchByTag(keyword, page, size, isAsc, sortBy,userDetails);
-            return new CustomResponseDto<>(1, "레시피 리스트 성공", recipeByPage);
-        }
-//        recipeService.
-        return new CustomResponseDto<>();
+        Page<RecipeListResponseDto> recipeByPage= recipeService.searchRecipe(withTag,keyword, page, size, isAsc, sortBy,userDetails);
+        return new CustomResponseDto<>(1, "레시피 리스트 성공", recipeByPage);
     }
 
     private void checkLogin(@AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -120,6 +117,7 @@ public class RecipeController {
 
     private void checkOwnership(Long recipeId, UserDetailsImpl userDetails){
         Optional<Recipe> recipe = recipeService.findById(recipeId);
+        if(recipe.isEmpty()) throw new NoSuchElementException("해당 게시물이 존재하지 않습니다");
         if(!recipe.get().getUser().getEmail().equals(userDetails.getUser().getEmail())) throw new CustomErrorException("본인의 게시물만 수정,삭제 가능합니다.");
     }
 }

@@ -11,4 +11,7 @@ public interface RecipeRepository extends JpaRepository<Recipe,Long> {
 
     @Query("select r from Recipe r join r.tagList t where t.name = :tagName")
     Page<Recipe> findAllByTag(String tagName, Pageable pageable);
+
+    @Query("select r from Recipe r where r.title like concat('%',:keyword,'%') or r.content like concat('%',:keyword,'%')")
+    Page<Recipe> findAllByTitleOrContent(String keyword, Pageable pageable);
 }
