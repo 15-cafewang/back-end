@@ -1,5 +1,6 @@
 package com.sparta.backend.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sparta.backend.dto.request.board.PostBoardCommentRequestDto;
 import lombok.Getter;
@@ -7,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.List;
 
 @ToString(exclude = {"user", "board"})
 @Getter
@@ -32,10 +34,13 @@ public class BoardComment extends BaseEntity {
     @JoinColumn(name = "board_id")
     private Board board;
 
+    @OneToMany(mappedBy = "boardComment", cascade = CascadeType.ALL)
+    @JsonBackReference
+    private List<BoardCommentLikes> boardCommentLikesList;
+
     public BoardComment(PostBoardCommentRequestDto requestDto, Board board, User user) {
         this.content = requestDto.getContent();
         this.board = board;
         this.user = user;
     }
-
 }
