@@ -3,6 +3,7 @@ package com.sparta.backend.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.backend.dto.request.user.*;
 import com.sparta.backend.dto.response.CustomResponseDto;
+import com.sparta.backend.dto.response.user.GetUserInfoResponseDto;
 import com.sparta.backend.dto.response.user.UserInfoResponseDto;
 import com.sparta.backend.security.UserDetailsImpl;
 import com.sparta.backend.service.KakaoUserService;
@@ -71,9 +72,9 @@ public class UserController {
     @PostMapping("/user/login")
     public CustomResponseDto<?> login(@RequestBody SignupRequestDto requestDto) {
 
-        List<Map<String, String>> ret = userService.login(requestDto);
+        GetUserInfoResponseDto responseDto = userService.login(requestDto);
 
-        return new CustomResponseDto<>(1, "로그인 성공", ret);
+        return new CustomResponseDto<>(1, "로그인 성공", responseDto);
     }
 
     // 카카오 로그인

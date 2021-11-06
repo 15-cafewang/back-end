@@ -8,6 +8,7 @@ import com.sparta.backend.domain.UserRole;
 import com.sparta.backend.dto.request.user.DeleteUserRequestDto;
 import com.sparta.backend.dto.request.user.SignupRequestDto;
 import com.sparta.backend.dto.request.user.UpdateUserRequestDto;
+import com.sparta.backend.dto.response.user.GetUserInfoResponseDto;
 import com.sparta.backend.repository.UserRepository;
 import com.sparta.backend.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -78,7 +79,7 @@ public class UserService {
     }
 
     // 로그인
-    public List<Map<String, String>> login(SignupRequestDto requestDto) {
+    public GetUserInfoResponseDto login(SignupRequestDto requestDto) {
 
         User user = userRepository.findByEmail(requestDto.getEmail()).orElseThrow(
                 () -> new NullPointerException("아이디를 찾을수 없습니다")
@@ -90,15 +91,13 @@ public class UserService {
             throw new IllegalArgumentException("비밀번호가 맞지 않습니다");
         }
 
-        Map<String, String> nickname = new HashMap<>();
-        Map<String, String> token = new HashMap<>();
-        List<Map<String, String>>  tu = new ArrayList<>();
-        token.put("Authorization", jwtTokenProvider.createToken(requestDto.getEmail()));
-        nickname.put("nickname", user.getNickname());
-        tu.add(nickname);
-        tu.add(token);
+        String token = jwtTokenProvider.createToken(requestDto.getEmail());
+        String nickname = user.getNickname();
+        String image = user.getImage();
 
-        return tu;
+        GetUserInfoResponseDto responseDto = new GetUserInfoResponseDto(token, nickname, image);
+
+        return responseDto;
     }
 
     // 회원 정보 수정
