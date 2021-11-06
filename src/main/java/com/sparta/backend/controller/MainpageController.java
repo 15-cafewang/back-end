@@ -3,6 +3,7 @@ package com.sparta.backend.controller;
 import com.sparta.backend.domain.Recipe.Recipe;
 import com.sparta.backend.dto.queryInterface.PopularRecipeInterface;
 import com.sparta.backend.dto.response.CustomResponseDto;
+import com.sparta.backend.dto.response.recipes.RecipeListResponseDto;
 import com.sparta.backend.exception.CustomErrorException;
 import com.sparta.backend.security.UserDetailsImpl;
 import com.sparta.backend.service.Recipe.RecipeService;
@@ -24,7 +25,7 @@ public class MainpageController {
     @GetMapping("/main/popular")
     public CustomResponseDto<?> getPopularRecipe(@RequestParam("sortBy") String sortBy, @AuthenticationPrincipal UserDetailsImpl userDetails){
         checkLogin(userDetails);
-        List<Long> recipes = recipeService.getPopularRecipe(sortBy,userDetails.getUser());
+        List<RecipeListResponseDto> recipes = recipeService.getPopularRecipe(sortBy,userDetails.getUser());
         return new CustomResponseDto<>(1, "dz" ,recipes);
     }
 

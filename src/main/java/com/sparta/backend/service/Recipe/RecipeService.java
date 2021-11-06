@@ -7,7 +7,6 @@ import com.sparta.backend.domain.Recipe.Recipe;
 import com.sparta.backend.domain.Recipe.RecipeImage;
 import com.sparta.backend.domain.Recipe.RecipeLikes;
 import com.sparta.backend.domain.User;
-import com.sparta.backend.dto.queryInterface.PopularRecipeInterface;
 import com.sparta.backend.dto.request.recipes.PostRecipeRequestDto;
 import com.sparta.backend.dto.response.recipes.RecipeDetailResponsetDto;
 import com.sparta.backend.dto.response.recipes.RecipeListResponseDto;
@@ -223,7 +222,7 @@ public class RecipeService {
         return responseDtos;
     }
 
-    public List<Long> getPopularRecipe(String sortBy, User user) {
+    public List<RecipeListResponseDto> getPopularRecipe(String sortBy, User user) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime startDate = null;
         switch (sortBy){
@@ -238,15 +237,14 @@ public class RecipeService {
                 break;
             default: startDate = LocalDateTime.now().minusDays(1);
         }
-//        System.out.println("로컬데이트타임:"+LocalDateTime.now());
 
-//        List<PopularRecipeInterface> popularRecipes = recipeRepository.findPopularRecipe(startDate, now);
-//        List<RecipeListResponseDto> responseDtos = popularRecipes.forEach((recipe)->{
-//
-//            new RecipeListResponseDto(recipe.getRecipeId(),user,recipeLikesRepository)
-//        });
-//        List<Recipe> popularRecipes2 = recipeRepository.findPopularRecipe2(startDate, now);
-        List<Long> popularRecipes = recipeRepository.findPopularRecipeId2(startDate, now);
-        return popularRecipes;
+        List<Long> popularRecipeIdList = recipeRepository.findPopularRecipeId2(startDate, now);
+        List<Optional<Recipe>> popularRecipeList = new ArrayList<>();
+        popularRecipeIdList.forEach((recipeId)-> popularRecipeList.add(recipeRepository.findById(recipeId)));
+
+        List<RecipeListResponseDto> responseDtoList = new ArrayList<>();
+        popularRecipeList.forEach((recipe -> responseDtoList.add(new RecipeListResponseDto(recipe, user, recipeLikesRepository))));
+
+        return responseDtoList;
     }
 }
