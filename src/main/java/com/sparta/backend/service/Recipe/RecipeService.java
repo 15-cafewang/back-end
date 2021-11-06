@@ -7,6 +7,7 @@ import com.sparta.backend.domain.Recipe.Recipe;
 import com.sparta.backend.domain.Recipe.RecipeImage;
 import com.sparta.backend.domain.Recipe.RecipeLikes;
 import com.sparta.backend.domain.User;
+import com.sparta.backend.dto.queryInterface.PopularRecipeInterface;
 import com.sparta.backend.dto.request.recipes.PostRecipeRequestDto;
 import com.sparta.backend.dto.response.recipes.RecipeDetailResponsetDto;
 import com.sparta.backend.dto.response.recipes.RecipeListResponseDto;
@@ -220,5 +221,12 @@ public class RecipeService {
         }
         Page<RecipeListResponseDto> responseDtos = recipes.map((recipe) -> new RecipeListResponseDto(recipe,userDetails, recipeLikesRepository));
         return responseDtos;
+    }
+
+    public List<PopularRecipeInterface> getPopularRecipe(String sortBy) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime startDate = now.minusHours(24);
+        List<PopularRecipeInterface> recipes = recipeRepository.findPopularRecipe();
+        return recipes;
     }
 }
