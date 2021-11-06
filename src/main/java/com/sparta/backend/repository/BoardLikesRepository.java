@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BoardLikesRepository extends JpaRepository<BoardLikes, Long> {
     BoardLikes findByBoardAndUser(Board board, User user);
+    void deleteByBoardAndUser(Board board, User user);
 }

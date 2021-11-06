@@ -7,12 +7,11 @@ import lombok.ToString;
 
 import javax.persistence.*;
 
-@ToString(exclude = {"user", "board"})
+@ToString(exclude = {"user", "boardComment"})
 @Getter
 @NoArgsConstructor
 @Entity
-public class BoardLikes {
-
+public class BoardCommentLikes extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "likes_id")
@@ -25,11 +24,11 @@ public class BoardLikes {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonManagedReference
-    @JoinColumn(name = "board_id")
-    private Board board;
+    @JoinColumn(name = "board_comment_id")
+    private BoardComment boardComment;
 
-    public BoardLikes(User user, Board board) {
+    public BoardCommentLikes(User user, BoardComment boardComment) {
         this.user = user;
-        this.board = board;
+        this.boardComment = boardComment;
     }
 }
