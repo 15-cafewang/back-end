@@ -1,11 +1,10 @@
 package com.sparta.backend.controller;
 
-import com.sparta.backend.domain.Recipe.Recipe;
 import com.sparta.backend.dto.response.CustomResponseDto;
 import com.sparta.backend.dto.response.userinfo.GetRecipeListResponseDto;
 import com.sparta.backend.dto.response.userinfo.GetUserinfoResponseDto;
 import com.sparta.backend.security.UserDetailsImpl;
-import com.sparta.backend.service.MypageService;
+import com.sparta.backend.service.UserinfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,13 +13,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RequiredArgsConstructor
 @RestController
-public class MypageController {
+public class UserinfoController {
 
-    private final MypageService mypageService;
+    private final UserinfoService mypageService;
 
     @GetMapping("/mypage/{nickname}")
     public CustomResponseDto<?> getMypageInfo(@PathVariable String nickname, @AuthenticationPrincipal UserDetailsImpl userDetails) {

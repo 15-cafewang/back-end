@@ -17,12 +17,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
-public class MypageServiceImpl implements MypageService{
+public class UserinfoServiceImpl implements UserinfoService {
 
     private final UserRepository userRepository;
     private final FollowRepository followRepository;

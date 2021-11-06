@@ -8,7 +8,7 @@ import org.springframework.data.domain.Page;
 
 import java.util.List;
 
-public interface MypageService {
+public interface UserinfoService {
 
     // 마이페이지 조회(프사, 닉네임, 팔로워 수, 팔로잉 수)
     GetUserinfoResponseDto getMypageInfo(UserDetailsImpl userDetails, String nickname);
