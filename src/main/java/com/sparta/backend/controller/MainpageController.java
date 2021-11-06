@@ -24,7 +24,7 @@ public class MainpageController {
     @GetMapping("/main/popular")
     public CustomResponseDto<?> getPopularRecipe(@RequestParam("sortBy") String sortBy, @AuthenticationPrincipal UserDetailsImpl userDetails){
         checkLogin(userDetails);
-        List<PopularRecipeInterface> recipes = recipeService.getPopularRecipe(sortBy);
+        List<Long> recipes = recipeService.getPopularRecipe(sortBy,userDetails.getUser());
         return new CustomResponseDto<>(1, "dz" ,recipes);
     }
 

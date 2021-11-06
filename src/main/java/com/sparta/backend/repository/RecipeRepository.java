@@ -19,9 +19,53 @@ public interface RecipeRepository extends JpaRepository<Recipe,Long> {
     @Query("select r from Recipe r where r.title like concat('%',:keyword,'%') or r.content like concat('%',:keyword,'%')")
     Page<Recipe> findAllByTitleOrContent(String keyword, Pageable pageable);
 
-    @Query(value = "select r.id as recipeId, count(l.recipe) as likeCount,r.title as title, r.content as content , r.price as price " +
+//  특정기간&인기레시피 - 원하는 칼럼만 가져오는 jpql
+    @Query("select r.id as recipeId, r.title as title, r.content as content , r.price as price " +
             "from Recipe r join r.recipeLikesList l " +
             "where l.regDate between :startDate and :endDate " +
             "group by r.id order by count(l.recipe) desc ")
     List<PopularRecipeInterface> findPopularRecipe(LocalDateTime startDate, LocalDateTime endDate);
+
+    //특정기간&인기레시피 - id만 가져오기..전체..jpql
+    @Query("select r.id " +
+            "from Recipe r join r.recipeLikesList l " +
+            "where l.regDate between :startDate and :endDate " +
+            "group by r.id order by count(l.recipe) ")
+    List<Long> findPopularRecipeId(LocalDateTime startDate, LocalDateTime endDate);
+
+    //특정기간&인기레시피 - id만 가져오기..top3..native sql
+    @Query(value="SELECT r.recipe_id " +
+            "FROM recipe r JOIN recipe_likes l ON r.recipe_id = l.recipe_id " +
+            "WHERE l.regdate BETWEEN :startDate AND :endDate " +
+            "GROUP BY r.recipe_id order by count(l.recipe_id) desc limit 3",
+    nativeQuery = true)
+    List<Long> findPopularRecipeId2(LocalDateTime startDate, LocalDateTime endDate);
+
+    //한번에 좋아요 순으로 Recipe객체 가져오려는 시도 실패
+//    @Query(value = "select re from Recipe re where re.id in (" +
+//            "select r.id as recipeId " +
+//            "from Recipe r join r.recipeLikesList l " +
+//            "where l.regDate between :startDate and :endDate " +
+//            "group by r.id order by count(l.recipe) desc) " +
+//            "order by field(re.id, " +
+//            "select r.id as recipeId " +
+//            "from Recipe r join r.recipeLikesList l " +
+//            "where l.regDate between :startDate and :endDate " +
+//            "group by r.id order by count(l.recipe) desc) ")
+//    List<Recipe> findPopularRecipe2(LocalDateTime startDate, LocalDateTime endDate);
+
+    //위와 같은 시도 sql로 하려는 시도 실패
+//    @Query(value = "SELECT * from recipe r2 " +
+//            "where r2.recipe_id " +
+//            "in " +
+//            "(SELECT r.recipe_id " +
+//            "FROM recipe r JOIN recipe_likes l ON r.recipe_id = l.recipe_id " +
+//            "WHERE l.regdate BETWEEN '2021-11-01' AND '2021-11-08' " +
+//            "GROUP BY r.recipe_id order by count(l.recipe_id) desc) " +
+//            "ORDER BY FIELD(r2.recipe_id,(SELECT r.recipe_id " +
+//            "                             FROM recipe r JOIN recipe_likes l ON r.recipe_id = l.recipe_id " +
+//            "                             WHERE l.regdate BETWEEN :startDate AND :endDate " +
+//            "                             GROUP BY r.recipe_id order by count(l.recipe_id) desc))"
+//    ,nativeQuery = true)
+//    List<Recipe> findPopularRecipe3(LocalDateTime startDate, LocalDateTime endDdate);
 }

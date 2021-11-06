@@ -5,5 +5,4 @@ public interface PopularRecipeInterface {
     String getTitle();
     String getContent();
     int getPrice();
-    int getLikeCount();
 }

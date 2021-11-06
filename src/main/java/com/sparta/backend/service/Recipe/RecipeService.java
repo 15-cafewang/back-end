@@ -223,7 +223,7 @@ public class RecipeService {
         return responseDtos;
     }
 
-    public List<PopularRecipeInterface> getPopularRecipe(String sortBy) {
+    public List<Long> getPopularRecipe(String sortBy, User user) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime startDate = null;
         switch (sortBy){
@@ -240,7 +240,13 @@ public class RecipeService {
         }
 //        System.out.println("로컬데이트타임:"+LocalDateTime.now());
 
-        List<PopularRecipeInterface> recipes = recipeRepository.findPopularRecipe(startDate, now);
-        return recipes;
+//        List<PopularRecipeInterface> popularRecipes = recipeRepository.findPopularRecipe(startDate, now);
+//        List<RecipeListResponseDto> responseDtos = popularRecipes.forEach((recipe)->{
+//
+//            new RecipeListResponseDto(recipe.getRecipeId(),user,recipeLikesRepository)
+//        });
+//        List<Recipe> popularRecipes2 = recipeRepository.findPopularRecipe2(startDate, now);
+        List<Long> popularRecipes = recipeRepository.findPopularRecipeId2(startDate, now);
+        return popularRecipes;
     }
 }
