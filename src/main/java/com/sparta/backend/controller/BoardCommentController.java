@@ -2,6 +2,7 @@ package com.sparta.backend.controller;
 
 import com.sparta.backend.dto.request.board.GetBoardCommentResponseDto;
 import com.sparta.backend.dto.request.board.PostBoardCommentRequestDto;
+import com.sparta.backend.dto.request.board.PutBoardCommentRequestDto;
 import com.sparta.backend.dto.response.CustomResponseDto;
 import com.sparta.backend.security.UserDetailsImpl;
 import com.sparta.backend.service.BoardCommentService;
@@ -44,6 +45,21 @@ public class BoardCommentController {
         } else {
             return new CustomResponseDto<>(-1, "댓글 조회 실패", "");
         }
+    }
+
+    //댓글 수정
+    @PutMapping("/boards/comments/{commentId}")
+    public CustomResponseDto<?> updateComment(@PathVariable("commentId") Long id,
+                                              @RequestBody PutBoardCommentRequestDto requestDto,
+                                              @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Long commentId = boardCommentService.updateComment(id, requestDto, userDetails);
+
+        if(commentId > 0) {
+            return new CustomResponseDto<>(1, "댓글 수정 성공", "");
+        } else {
+            return new CustomResponseDto<>(-1, "댓글 수정 실패", "");
+        }
+
     }
 
     //댓글 삭제

@@ -5,6 +5,7 @@ import com.sparta.backend.domain.BoardComment;
 import com.sparta.backend.domain.User;
 import com.sparta.backend.dto.request.board.GetBoardCommentResponseDto;
 import com.sparta.backend.dto.request.board.PostBoardCommentRequestDto;
+import com.sparta.backend.dto.request.board.PutBoardCommentRequestDto;
 import com.sparta.backend.repository.BoardCommentLikesRepository;
 import com.sparta.backend.repository.BoardCommentRepository;
 import com.sparta.backend.repository.BoardRepository;
@@ -72,6 +73,29 @@ public class BoardCommentService {
         );
 
         return responseDtoList;
+    }
+
+    //댓글 수정
+    @Transactional
+    public Long updateComment(Long id, PutBoardCommentRequestDto requestDto, UserDetailsImpl userDetails) {
+        if(userDetails != null) {
+            Long currentLoginUser = userDetails.getUser().getId();
+
+            BoardComment boardComment = boardCommentRepository.findById(id).orElseThrow(
+                    () -> new NullPointerException("찾는 댓글이 없습니다.")
+            );
+            Long writeUser = boardComment.getUser().getId();
+
+            if(currentLoginUser.equals(writeUser)) {
+                boardComment.updateComment(requestDto);
+            } else {
+                throw new IllegalArgumentException("작성자만 댓글을 수정할 수 있습니다.");
+            }
+        } else {
+            throw new NullPointerException("로그인이 필요합니다.");
+        }
+
+        return id;
     }
 
     //댓글 삭제
