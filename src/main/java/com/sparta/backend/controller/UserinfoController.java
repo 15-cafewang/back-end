@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class UserinfoController {
 
-    private final UserinfoService mypageService;
+    private final UserinfoService userinfoService;
 
     @GetMapping("/mypage/{nickname}")
     public CustomResponseDto<?> getMypageInfo(@PathVariable String nickname, @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        GetUserinfoResponseDto responseDto = mypageService.getUserInfo(userDetails, nickname);
+        GetUserinfoResponseDto responseDto = userinfoService.getUserInfo(userDetails, nickname);
 
         return new CustomResponseDto<>(1, "마이페이지 조회 성공", responseDto);
     }
@@ -36,7 +36,7 @@ public class UserinfoController {
                                               @PathVariable String nickname) {
 
         page -= 1;
-        Page<GetRecipeListResponseDto> recipeList = mypageService.getRecipeListByPage(page, size, isAsc, sortBy, userDetails, nickname);
+        Page<GetRecipeListResponseDto> recipeList = userinfoService.getRecipeListByPage(page, size, isAsc, sortBy, userDetails, nickname);
 
         return new CustomResponseDto<>(1, "레시피 목록 조회 성공", recipeList);
     }
