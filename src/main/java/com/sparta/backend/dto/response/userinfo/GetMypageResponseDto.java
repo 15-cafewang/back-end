@@ -1,4 +1,4 @@
-package com.sparta.backend.dto.response.mypage;
+package com.sparta.backend.dto.response.userinfo;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
