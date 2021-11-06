@@ -2,7 +2,10 @@ package com.sparta.backend.dto.response.recipes;
 
 import com.sparta.backend.domain.Recipe.Recipe;
 import com.sparta.backend.domain.Recipe.RecipeLikes;
+import com.sparta.backend.domain.User;
+import com.sparta.backend.dto.queryInterface.PopularRecipeInterface;
 import com.sparta.backend.repository.RecipeLikesRepository;
+import com.sparta.backend.repository.RecipeRepository;
 import com.sparta.backend.security.UserDetailsImpl;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,6 +29,7 @@ public class RecipeListResponseDto {
     private LocalDateTime regdate;
     private int commentCount;
     private int likeCount;
+    private int price;
     private boolean likeStatus;
 
 
@@ -38,8 +42,38 @@ public class RecipeListResponseDto {
         this.commentCount = recipe.getRecipeCommentList().size();
         recipe.getRecipeImagesList().forEach((RecipeImage)->this.images.add(RecipeImage.getImage()));
         this.likeCount = recipe.getRecipeLikesList().size();
+        this.price = recipe.getPrice();
 
         Optional<RecipeLikes> foundRecipeLike = recipeLikesRepository.findByRecipeIdAndUserId(recipe.getId(),userDetails.getUser().getId());
+        this.likeStatus = foundRecipeLike.isPresent();
+    }
+//
+    public RecipeListResponseDto(Recipe recipe, User user, RecipeLikesRepository recipeLikesRepository){
+        this.recipeId = recipe.getId();
+        this.nickname = recipe.getUser().getNickname(); //todo:N+1 해결하면 될듯
+        this.title = recipe.getTitle();
+        this.content = recipe.getContent();
+        this.regdate = recipe.getRegDate();
+        this.commentCount = recipe.getRecipeCommentList().size();
+        recipe.getRecipeImagesList().forEach((RecipeImage)->this.images.add(RecipeImage.getImage()));
+        this.likeCount = recipe.getRecipeLikesList().size();
+
+        Optional<RecipeLikes> foundRecipeLike = recipeLikesRepository.findByRecipeAndUser(recipe,user);
+        this.likeStatus = foundRecipeLike.isPresent();
+    }
+
+    public RecipeListResponseDto(Optional<Recipe> recipe, User user, RecipeLikesRepository likesRepository) {
+        this.recipeId = recipe.get().getId();
+        this.nickname = recipe.get().getUser().getNickname();
+        this.title = recipe.get().getTitle();
+        this.content = recipe.get().getContent();
+        this.regdate = recipe.get().getRegDate();
+        this.commentCount = recipe.get().getRecipeCommentList().size();
+        recipe.get().getRecipeImagesList().forEach((RecipeImage)->this.images.add(RecipeImage.getImage()));
+        this.likeCount = recipe.get().getRecipeLikesList().size();
+        this.price = recipe.get().getPrice();
+
+        Optional<RecipeLikes> foundRecipeLike = likesRepository.findByRecipeIdAndUserId(recipe.get().getId(), user.getId());
         this.likeStatus = foundRecipeLike.isPresent();
     }
 }

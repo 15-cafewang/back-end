@@ -221,4 +221,30 @@ public class RecipeService {
         Page<RecipeListResponseDto> responseDtos = recipes.map((recipe) -> new RecipeListResponseDto(recipe,userDetails, recipeLikesRepository));
         return responseDtos;
     }
+
+    public List<RecipeListResponseDto> getPopularRecipe(String sortBy, User user) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime startDate = null;
+        switch (sortBy){
+            case "day":
+                startDate = LocalDateTime.now().minusDays(1);
+                break;
+            case "week":
+                startDate = LocalDateTime.now().minusWeeks(1);
+                break;
+            case "month":
+                startDate = LocalDateTime.now().minusMonths(1);
+                break;
+            default: startDate = LocalDateTime.now().minusDays(1);
+        }
+
+        List<Long> popularRecipeIdList = recipeRepository.findPopularRecipeId2(startDate, now);
+        List<Optional<Recipe>> popularRecipeList = new ArrayList<>();
+        popularRecipeIdList.forEach((recipeId)-> popularRecipeList.add(recipeRepository.findById(recipeId)));
+
+        List<RecipeListResponseDto> responseDtoList = new ArrayList<>();
+        popularRecipeList.forEach((recipe -> responseDtoList.add(new RecipeListResponseDto(recipe, user, recipeLikesRepository))));
+
+        return responseDtoList;
+    }
 }
