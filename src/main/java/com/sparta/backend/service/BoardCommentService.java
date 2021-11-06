@@ -73,4 +73,28 @@ public class BoardCommentService {
 
         return responseDtoList;
     }
+
+    //댓글 삭제
+    @Transactional
+    public Long deleteComment(Long id, UserDetailsImpl userDetails) {
+        if(userDetails != null) {
+            Long currentLoginUser = userDetails.getUser().getId();
+
+            BoardComment boardComment = boardCommentRepository.findById(id).orElseThrow(
+                    () -> new NullPointerException("찾는 댓글이 없습니다.")
+            );
+            Long writeUser = boardComment.getUser().getId();
+
+            if(currentLoginUser.equals(writeUser)) {
+                boardCommentRepository.deleteById(id);
+            } else {
+                throw new IllegalArgumentException("작성자만 댓글을 삭제할 수 있습니다.");
+            }
+
+        } else {
+            throw new NullPointerException("로그인이 필요합니다.");
+        }
+
+        return id;
+    }
 }

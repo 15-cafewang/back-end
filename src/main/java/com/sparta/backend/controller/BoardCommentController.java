@@ -45,4 +45,17 @@ public class BoardCommentController {
             return new CustomResponseDto<>(-1, "댓글 조회 실패", "");
         }
     }
+
+    //댓글 삭제
+    @DeleteMapping("/boards/comments/{commentId}")
+    public CustomResponseDto<?> deleteComment(@PathVariable("commentId") Long id,
+                                              @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Long boardCommentId = boardCommentService.deleteComment(id, userDetails);
+
+        if(boardCommentId > 0) {
+            return new CustomResponseDto<>(1, "댓글 삭제 성공", "");
+        } else {
+            return new CustomResponseDto<>(-1, "댓글 삭제 실패", "");
+        }
+    }
 }
