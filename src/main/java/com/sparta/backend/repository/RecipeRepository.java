@@ -1,6 +1,7 @@
 package com.sparta.backend.repository;
 
 import com.sparta.backend.domain.Recipe.Recipe;
+import com.sparta.backend.domain.User;
 import com.sparta.backend.dto.queryInterface.PopularRecipeInterface;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -68,4 +69,6 @@ public interface RecipeRepository extends JpaRepository<Recipe,Long> {
 //            "                             GROUP BY r.recipe_id order by count(l.recipe_id) desc))"
 //    ,nativeQuery = true)
 //    List<Recipe> findPopularRecipe3(LocalDateTime startDate, LocalDateTime endDdate);
+
+    Page<Recipe> findAllByUser(Pageable pageable, User user);
 }

@@ -1,7 +1,9 @@
 package com.sparta.backend.service;
 
 import com.sparta.backend.domain.Follow;
+import com.sparta.backend.domain.Recipe.Recipe;
 import com.sparta.backend.domain.User;
+import com.sparta.backend.dto.response.userinfo.GetRecipeListResponseDto;
 import com.sparta.backend.dto.response.userinfo.GetUserinfoResponseDto;
 import com.sparta.backend.repository.BoardRepository;
 import com.sparta.backend.repository.FollowRepository;
@@ -9,6 +11,10 @@ import com.sparta.backend.repository.RecipeRepository;
 import com.sparta.backend.repository.UserRepository;
 import com.sparta.backend.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -19,6 +25,7 @@ public class UserinfoServiceImpl implements UserinfoService {
 
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
+    private final RecipeRepository recipeRepository;
 
     @Override
     public GetUserinfoResponseDto getUserInfo(UserDetailsImpl userDetails, String nickname) {
@@ -53,8 +60,26 @@ public class UserinfoServiceImpl implements UserinfoService {
     }
 
     @Override
-    public void getRecipeList() {
+    public Page<GetRecipeListResponseDto> getRecipeListByPage(int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails, String nickname) {
 
+        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        User user;
+
+        // 조회화는 회원이 로그인한 회원일 때
+        if (nickname.equals(userDetails.getUser().getNickname())) {
+            user = userDetails.getUser();
+        } else { // 다른 회원일 때
+            user = userRepository.findByNickname(nickname).orElseThrow(
+                    () -> new NullPointerException("존재하지 않는 회원입니다")
+            );
+        }
+
+        Page<Recipe> recipeList = recipeRepository.findAllByUser(pageable, user);
+
+        return recipeList.map((recipe -> new GetRecipeListResponseDto(recipe, userDetails)));
     }
 
     @Override
