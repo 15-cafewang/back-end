@@ -29,7 +29,7 @@ public class UserinfoServiceImpl implements UserinfoService {
     private final RecipeRepository recipeRepository;
 
     @Override
-    public GetUserinfoResponseDto getMypageInfo(UserDetailsImpl userDetails, String nickname) {
+    public GetUserinfoResponseDto getUserInfo(UserDetailsImpl userDetails, String nickname) {
 
         String image;
         int followCount;

@@ -11,7 +11,7 @@ import java.util.List;
 public interface UserinfoService {
 
     // 마이페이지 조회(프사, 닉네임, 팔로워 수, 팔로잉 수)
-    GetUserinfoResponseDto getMypageInfo(UserDetailsImpl userDetails, String nickname);
+    GetUserinfoResponseDto getUserInfo(UserDetailsImpl userDetails, String nickname);
 
     // 내가 쓴 레시피 목록 조회
     Page<GetRecipeListResponseDto> getRecipeListByPage(int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails, String nickname);

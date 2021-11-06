@@ -22,7 +22,7 @@ public class UserinfoController {
     @GetMapping("/mypage/{nickname}")
     public CustomResponseDto<?> getMypageInfo(@PathVariable String nickname, @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        GetUserinfoResponseDto responseDto = mypageService.getMypageInfo(userDetails, nickname);
+        GetUserinfoResponseDto responseDto = mypageService.getUserInfo(userDetails, nickname);
 
         return new CustomResponseDto<>(1, "마이페이지 조회 성공", responseDto);
     }
