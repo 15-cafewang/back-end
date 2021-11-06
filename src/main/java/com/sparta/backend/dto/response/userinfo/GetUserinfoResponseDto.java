@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetMypageResponseDto {
+public class GetUserinfoResponseDto {
 
     private String image;        // 프사
     private String nickname;     // 닉네임
