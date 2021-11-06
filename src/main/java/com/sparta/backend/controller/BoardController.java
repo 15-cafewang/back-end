@@ -89,4 +89,19 @@ public class BoardController {
             return new CustomResponseDto<>(-1, "게시물 삭제 실패", "");
         }
     }
+
+    //게시물 검색
+    @GetMapping("/search/boards")
+    public CustomResponseDto<?> searchBoards(@RequestParam String keyword, @RequestParam int page, @RequestParam int size,
+                                             @RequestParam boolean isAsc, @RequestParam String sortBy,
+                                             @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Page<GetBoardResponseDto> boardList =  boardService.searchBoards(keyword, page, size, isAsc, sortBy, userDetails);
+
+        if(boardList != null && boardList.getSize() > 0) {
+            return new CustomResponseDto<>(1, "게시물 검색 성공", boardList);
+        } else {
+            return new CustomResponseDto<>(-1, "게시물 검색 실패", "");
+        }
+
+    }
 }
