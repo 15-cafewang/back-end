@@ -225,8 +225,22 @@ public class RecipeService {
 
     public List<PopularRecipeInterface> getPopularRecipe(String sortBy) {
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime startDate = now.minusHours(24);
-        List<PopularRecipeInterface> recipes = recipeRepository.findPopularRecipe();
+        LocalDateTime startDate = null;
+        switch (sortBy){
+            case "day":
+                startDate = LocalDateTime.now().minusDays(1);
+                break;
+            case "week":
+                startDate = LocalDateTime.now().minusWeeks(1);
+                break;
+            case "month":
+                startDate = LocalDateTime.now().minusMonths(1);
+                break;
+            default: startDate = LocalDateTime.now().minusDays(1);
+        }
+//        System.out.println("로컬데이트타임:"+LocalDateTime.now());
+
+        List<PopularRecipeInterface> recipes = recipeRepository.findPopularRecipe(startDate, now);
         return recipes;
     }
 }

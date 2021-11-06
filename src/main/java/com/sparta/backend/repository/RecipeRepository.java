@@ -21,6 +21,7 @@ public interface RecipeRepository extends JpaRepository<Recipe,Long> {
 
     @Query(value = "select r.id as recipeId, count(l.recipe) as likeCount,r.title as title, r.content as content , r.price as price " +
             "from Recipe r join r.recipeLikesList l " +
+            "where l.regDate between :startDate and :endDate " +
             "group by r.id order by count(l.recipe) desc ")
-    List<PopularRecipeInterface> findPopularRecipe();
+    List<PopularRecipeInterface> findPopularRecipe(LocalDateTime startDate, LocalDateTime endDate);
 }
