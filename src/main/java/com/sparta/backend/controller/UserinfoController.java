@@ -1,6 +1,7 @@
 package com.sparta.backend.controller;
 
 import com.sparta.backend.dto.response.CustomResponseDto;
+import com.sparta.backend.dto.response.userinfo.GetBoardListResponseDto;
 import com.sparta.backend.dto.response.userinfo.GetRecipeListResponseDto;
 import com.sparta.backend.dto.response.userinfo.GetUserinfoResponseDto;
 import com.sparta.backend.security.UserDetailsImpl;
@@ -39,5 +40,19 @@ public class UserinfoController {
         Page<GetRecipeListResponseDto> recipeList = userinfoService.getRecipeListByPage(page, size, isAsc, sortBy, userDetails, nickname);
 
         return new CustomResponseDto<>(1, "레시피 목록 조회 성공", recipeList);
+    }
+
+    @GetMapping("/userinfo/boards/{nickname}")
+    public CustomResponseDto<?> getBoardList(@RequestParam("page") int page,
+                                             @RequestParam("size") int size,
+                                             @RequestParam("isAsc") boolean isAsc,
+                                             @RequestParam("sortBy") String sortBy,
+                                             @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                             @PathVariable String nickname) {
+
+        page -= 1;
+        Page<GetBoardListResponseDto> boardList = userinfoService.getBoardListByPage(page, size, isAsc, sortBy, userDetails, nickname);
+
+        return new CustomResponseDto<>(1, "게시글 목록 조회 성공", boardList);
     }
 }
