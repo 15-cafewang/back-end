@@ -55,4 +55,18 @@ public class UserinfoController {
 
         return new CustomResponseDto<>(1, "게시글 목록 조회 성공", boardList);
     }
+
+    @GetMapping("/userinfo/recipes/likes/{nickname}")
+    public CustomResponseDto<?> getLikedRecipeList(@RequestParam("page") int page,
+                                                   @RequestParam("size") int size,
+                                                   @RequestParam("isAsc") boolean isAsc,
+                                                   @RequestParam("sortBy") String sortBy,
+                                                   @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                   @PathVariable String nickname) {
+
+        page -= 1;
+        Page<GetRecipeListResponseDto> likedRecipeList = userinfoService.getLikedRecipeListByPage(page, size, isAsc, sortBy, userDetails, nickname);
+
+        return new CustomResponseDto<>(1, "좋아요한 레시피 목록 조회 성공", likedRecipeList);
+    }
 }
