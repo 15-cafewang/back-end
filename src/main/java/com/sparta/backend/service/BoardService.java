@@ -240,6 +240,34 @@ public class BoardService {
         return id;
     }
 
+    //게시물 검색
+    public Page<GetBoardResponseDto> searchBoards(String keword, int page, int size, boolean isAsc, String sortBy,
+                                                  UserDetailsImpl userDetails) {
+        User currentLoginUser = userDetails.getUser();
+
+        //정렬 기준
+        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+        //어떤 컬럼 기준으로 정렬할 지 결정(sortBy: 컬럼이름)
+        Sort sort = Sort.by(direction, sortBy);
+        //페이징
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        //키워드가 제목 또는 내용에 포함되어있어야 검색 결과에 나타남
+        String title = keword;
+        String content = keword;
+        Page<Board> boardList = boardRepository.findAllByTitleContainingOrContentContaining(title, content, pageable);
+
+        //Page<Board> -> Page<Dto> 로 변환
+        Page<GetBoardResponseDto> responseDtoList = boardList.map(board -> new GetBoardResponseDto(
+                board.getId(), board.getUser().getNickname(), board.getTitle(), board.getContent(),
+                board.getBoardImageList().get(0).getImage(), board.getRegDate(), board.getBoardCommentList().size(),
+                board.getBoardLikesList().size(),
+                (boardLikesRepository.findByBoardAndUser(board, currentLoginUser) != null)
+        ));
+
+        return responseDtoList;
+    }
+
     //S3 이미지 삭제
     public void deleteS3(String imageName){
         //https://S3 버킷 URL/버킷에 생성한 폴더명/이미지이름
