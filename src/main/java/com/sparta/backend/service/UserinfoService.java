@@ -21,5 +21,5 @@ public interface UserinfoService {
     Page<GetRecipeListResponseDto> getLikedRecipeListByPage(int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails, String nickname);
 
     // 내가 좋아요한 게시글 목록 조회
-    void likedBoardList();
+    Page<GetBoardListResponseDto> getLikedBoardListByPage(int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails, String nickname);
 }

@@ -29,7 +29,6 @@ public class UserinfoServiceImpl implements UserinfoService {
     private final FollowRepository followRepository;
     private final RecipeRepository recipeRepository;
     private final BoardRepository boardRepository;
-    private final RecipeLikesRepository recipeLikesRepository;
 
     @Override
     public GetUserinfoResponseDto getUserInfo(UserDetailsImpl userDetails, String nickname) {
@@ -136,7 +135,25 @@ public class UserinfoServiceImpl implements UserinfoService {
     }
 
     @Override
-    public void likedBoardList() {
+    public Page<GetBoardListResponseDto> getLikedBoardListByPage(int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails, String nickname) {
 
+        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        User user;
+
+        // 조회화는 회원이 로그인한 회원일 때
+        if (nickname.equals(userDetails.getUser().getNickname())) {
+            user = userDetails.getUser();
+        } else { // 다른 회원일 때
+            user = userRepository.findByNickname(nickname).orElseThrow(
+                    () -> new NullPointerException("존재하지 않는 회원입니다")
+            );
+        }
+
+        Page<Board> likedBoardList = boardRepository.findAllByBoardLikesList(user.getId(), pageable);
+
+        return likedBoardList.map(board -> new GetBoardListResponseDto(board, userDetails));
     }
 }
