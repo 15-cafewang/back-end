@@ -19,6 +19,7 @@ public class RecipeCommentResponseDto {
     private LocalDateTime regdate;
     private int likeCount;
     private boolean likeStatus;
+    private String profileImage;
 
     public RecipeCommentResponseDto(RecipeComment recipeComment, UserDetailsImpl userDetails, RecipeCommentLikeRepository commentLikeRepository){
         this.commentId = recipeComment.getId();
@@ -29,5 +30,6 @@ public class RecipeCommentResponseDto {
 
         Optional<RecipeCommentLikes> foundCommentLikes = commentLikeRepository.findByRecipeCommentAndUser(recipeComment,userDetails.getUser());
         this.likeStatus = foundCommentLikes.isPresent();
+        profileImage = userDetails.getUser().getImage();
     }
 }
