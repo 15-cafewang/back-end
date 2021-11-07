@@ -20,7 +20,7 @@ public class UserinfoController {
 
     private final UserinfoService userinfoService;
 
-    @GetMapping("/mypage/{nickname}")
+    @GetMapping("/userinfo/{nickname}")
     public CustomResponseDto<?> getUserInfo(@PathVariable String nickname, @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         GetUserinfoResponseDto responseDto = userinfoService.getUserInfo(userDetails, nickname);
@@ -28,7 +28,7 @@ public class UserinfoController {
         return new CustomResponseDto<>(1, "마이페이지 조회 성공", responseDto);
     }
 
-    @GetMapping("/mypage/recipes/{nickname}")
+    @GetMapping("/userinfo/recipes/{nickname}")
     public CustomResponseDto<?> getRecipeList(@RequestParam("page") int page,
                                               @RequestParam("size") int size,
                                               @RequestParam("isAsc") boolean isAsc,
