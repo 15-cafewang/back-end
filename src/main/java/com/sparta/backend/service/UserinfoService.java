@@ -1,8 +1,6 @@
 package com.sparta.backend.service;
 
-import com.sparta.backend.dto.response.userinfo.GetBoardListResponseDto;
-import com.sparta.backend.dto.response.userinfo.GetRecipeListResponseDto;
-import com.sparta.backend.dto.response.userinfo.GetUserinfoResponseDto;
+import com.sparta.backend.dto.response.userinfo.*;
 import com.sparta.backend.security.UserDetailsImpl;
 import org.springframework.data.domain.Page;
 
@@ -22,4 +20,11 @@ public interface UserinfoService {
 
     // 내가 좋아요한 게시글 목록 조회
     Page<GetBoardListResponseDto> getLikedBoardListByPage(int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails, String nickname);
+
+    // 팔로잉 목록 조회
+    Page<GetFollowingListResponseDto> getFollowingListByPage(int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails, String nickname);
+
+    // 팔로워 목록 조회
+    Page<GetFollowerListResponseDto> getFollowerListByPage(int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails, String nickname);
+
 }
