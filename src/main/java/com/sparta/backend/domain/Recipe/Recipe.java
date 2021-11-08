@@ -6,6 +6,7 @@ import com.sparta.backend.domain.BaseEntity;
 import com.sparta.backend.domain.Tag;
 import com.sparta.backend.domain.User;
 import com.sparta.backend.security.UserDetailsImpl;
+import com.sparta.backend.validator.ProductValidator;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -54,6 +55,8 @@ public class Recipe extends BaseEntity {
     private List<RecipeImage> recipeImagesList;
 
     public Recipe(String title, String content, int price, User user){
+        //Edge케이스들 validation
+        ProductValidator.validateRecipeInput(title,content,user);
         this.title = title;
         this.content = content;
         this.price = price;
@@ -65,5 +68,14 @@ public class Recipe extends BaseEntity {
         this.price = price;
 
         return this;
+    }
+
+    //test용(강제 id주입 위해)
+    public Recipe(Long id, String title, String content, int price, User user){
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.price = price;
+        this.user = user;
     }
 }

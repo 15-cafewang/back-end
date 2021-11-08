@@ -32,7 +32,7 @@ public class RecipeController {
         //todo:IOException처리
         checkLogin(userDetails);
         //레시피 먼저 생성, 등록
-        Recipe savedRecipe = recipeService.saveRecipe(requestDto, userDetails);
+        Recipe savedRecipe = recipeService.saveRecipe(requestDto, userDetails.getUser());
         //태그 등록할때 저장한 레시피객체도 넣어줌
 //        System.out.println(requestDto.getTag());
         tagService.saveTags(requestDto.getTag(), savedRecipe);
