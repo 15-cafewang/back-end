@@ -48,6 +48,28 @@ class RecipeTest {
             assertEquals(price, recipe.getPrice());
             assertEquals(user, recipe.getUser());
         }
+
+        @Nested
+        @DisplayName("실패 케이스")
+        class FailCases{
+            @Nested
+            @DisplayName("권한 관련")
+            class userFail{
+                @Test
+                @DisplayName("null")
+                void userNull(){
+                    //given
+                    user = null;
+
+                    //when
+                    Exception exception = assertThrows(IllegalArgumentException.class, ()->{
+                        Recipe recipe = new Recipe(title, content,price,user);
+                    });
+                    //then
+                    assertEquals("로그인 되지 않은 사용자입니다", exception.getMessage());
+                }
+            }
+        }
     }
 
 }
