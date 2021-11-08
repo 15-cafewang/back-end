@@ -46,26 +46,30 @@ public class BoardService {
         MultipartFile[] image = requestDto.getImage();
         List<String> imageList = new ArrayList<>();
 
-        for(MultipartFile img : image) {
-            String imageUrl = s3Uploader.upload(img, "boardImage");
-            System.out.println("saveImage: " + imageUrl);
-            if(imageUrl == null)    //이미지 업로드에 실패했을 때
-                throw new NullPointerException("이미지 업로드에 실패하였습니다.");
-            imageList.add(imageUrl);
-        }
-
         Long boardId = 0L;
         if(user != null) {
             Board board = new Board(requestDto, user);
             Board savedBoard = boardRepository.save(board);
             boardId = savedBoard.getId();
 
-            for(String img : imageList) {
-                try {
-                    BoardImage boardImage = new BoardImage(img, board);
-                    boardImageRepository.save(boardImage);
-                } catch (Exception e) {
-                    deleteS3(img);
+            if(image != null) { //업로드한 이미지가 있을 경우
+                //S3에 이미지 업로드
+                for(MultipartFile img : image) {
+                    String imageUrl = s3Uploader.upload(img, "boardImage");
+                    System.out.println("saveImage: " + imageUrl);
+                    if(imageUrl == null)    //이미지 업로드에 실패했을 때
+                        throw new NullPointerException("이미지 업로드에 실패하였습니다.");
+                    imageList.add(imageUrl);
+                }
+
+                //이미지 URL을 DB에 저장
+                for (String img : imageList) {
+                    try {
+                        BoardImage boardImage = new BoardImage(img, board);
+                        boardImageRepository.save(boardImage);
+                    } catch (Exception e) {
+                        deleteS3(img);
+                    }
                 }
             }
         } else {
@@ -91,12 +95,8 @@ public class BoardService {
        Page<Board> boardList = boardRepository.findAll(pageable);
 
        //Page<Board> -> Page<Dto> 로 변환
-       Page<GetBoardResponseDto> responseDtoList = boardList.map(board -> new GetBoardResponseDto(
-                board.getId(), board.getUser().getNickname(), board.getTitle(), board.getContent(),
-                board.getBoardImageList().get(0).getImage(), board.getRegDate(), board.getBoardCommentList().size(),
-                board.getBoardLikesList().size(),
-               (boardLikesRepository.findByBoardAndUser(board, currentLoginUser) != null)
-       ));
+       Page<GetBoardResponseDto> responseDtoList = boardList.map(board ->
+               new GetBoardResponseDto(board, currentLoginUser, boardLikesRepository));
 
         return responseDtoList;
     }
@@ -117,11 +117,13 @@ public class BoardService {
             String profile = board.getUser().getImage();
             LocalDateTime regDate = board.getRegDate();
             String content = board.getContent();
-            List<BoardImage> boardimageList = board.getBoardImageList();
+            List<BoardImage> boardImageList = board.getBoardImageList();
             List<String> images = new ArrayList<>();
-            for(BoardImage boardImage : boardimageList) {
-                String image = boardImage.getImage();
-                images.add(image);
+            if(board.getBoardImageList().size() > 0) {  //이미지가 있을 경우
+                for(BoardImage boardImage : boardImageList) {
+                    String image = boardImage.getImage();
+                    images.add(image);
+                }
             }
             int likeCount = board.getBoardLikesList().size();
             BoardLikes boardLikes = boardLikesRepository.findByBoardAndUser(board, currentLoginUser);
@@ -263,12 +265,8 @@ public class BoardService {
         Page<Board> boardList = boardRepository.findAllByTitleContainingOrContentContaining(title, content, pageable);
 
         //Page<Board> -> Page<Dto> 로 변환
-        Page<GetBoardResponseDto> responseDtoList = boardList.map(board -> new GetBoardResponseDto(
-                board.getId(), board.getUser().getNickname(), board.getTitle(), board.getContent(),
-                board.getBoardImageList().get(0).getImage(), board.getRegDate(), board.getBoardCommentList().size(),
-                board.getBoardLikesList().size(),
-                (boardLikesRepository.findByBoardAndUser(board, currentLoginUser) != null)
-        ));
+        Page<GetBoardResponseDto> responseDtoList = boardList.map(board ->
+                new GetBoardResponseDto(board, currentLoginUser, boardLikesRepository));
 
         return responseDtoList;
     }
