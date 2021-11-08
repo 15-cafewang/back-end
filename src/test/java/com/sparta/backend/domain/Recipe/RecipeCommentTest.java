@@ -159,8 +159,36 @@ class RecipeCommentTest {
                     //then
                     assertEquals("댓글 달 게시물이 존재하지 않습니다.",exception.getMessage());
                 }
+            }
 
+            @Nested
+            @DisplayName("댓글 인풋 관련")
+            class CommentInputFail{
+                @Test
+                @DisplayName("빈 값")
+                void commentEmpty(){
+                    //given
+                    content = "";
+                    //when
+                    Exception exception = assertThrows(IllegalArgumentException.class, ()->{
+                        RecipeComment comment = new RecipeComment(content,commentWriter,recipe);
+                    });
+                    //then
+                    assertEquals("댓글 내용이 입력되지 않았습니다.",exception.getMessage());
+                }
 
+                @Test
+                @DisplayName("null")
+                void commentNull(){
+                    //given
+                    content = null;
+                    //when
+                    Exception exception = assertThrows(IllegalArgumentException.class, ()->{
+                        RecipeComment comment = new RecipeComment(content,commentWriter,recipe);
+                    });
+                    //then
+                    assertEquals("댓글 내용이 입력되지 않았습니다.",exception.getMessage());
+                }
             }
         }
 
