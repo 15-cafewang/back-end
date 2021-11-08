@@ -55,6 +55,9 @@ public class BoardCommentService {
     //댓글 조회
     public Page<GetBoardCommentResponseDto> getComments(Long id, int page, int size, boolean isAsc,
                                                         String sortBy, UserDetailsImpl userDetails) {
+        //현재 페이지
+        page = page - 1;
+
         //정렬 기준
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
         //어떤 컬럼 기준으로 정렬할 지 결정(sortBy: 컬럼이름)
