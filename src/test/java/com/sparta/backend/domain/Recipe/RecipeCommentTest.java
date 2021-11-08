@@ -59,6 +59,29 @@ class RecipeCommentTest {
             assertEquals(recipe, comment.getRecipe());
         }
 
+        @Nested
+        @DisplayName("실패 케이스")
+        class FailCases{
+            @Nested
+            @DisplayName("권한 관련")
+            class userFail{
+
+                @Test
+                @DisplayName("commentWriter = null")
+                void userNull(){
+                    //given
+                    commentWriter = null;
+
+                    //when
+                    Exception exception = assertThrows(IllegalArgumentException.class, ()->{
+                        RecipeComment comment = new RecipeComment(content, commentWriter, recipe);
+                    });
+                    //then
+                    assertEquals("로그인 되지 않은 사용자입니다", exception.getMessage());
+                }
+            }
+        }
+
 
     }
 }
