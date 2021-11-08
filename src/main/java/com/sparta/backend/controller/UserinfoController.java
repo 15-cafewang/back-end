@@ -1,13 +1,8 @@
 package com.sparta.backend.controller;
 
-import com.sparta.backend.domain.Follow;
 import com.sparta.backend.dto.response.CustomResponseDto;
-import com.sparta.backend.dto.response.userinfo.GetBoardListResponseDto;
-import com.sparta.backend.dto.response.userinfo.GetFollowingListResponseDto;
-import com.sparta.backend.dto.response.userinfo.GetRecipeListResponseDto;
-import com.sparta.backend.dto.response.userinfo.GetUserinfoResponseDto;
+import com.sparta.backend.dto.response.userinfo.*;
 import com.sparta.backend.security.UserDetailsImpl;
-import com.sparta.backend.service.FollowService;
 import com.sparta.backend.service.UserinfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,8 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -101,5 +94,19 @@ public class UserinfoController {
         Page<GetFollowingListResponseDto> followingList = userinfoService.getFollowingListByPage(page, size, isAsc, sortBy, userDetails, nickname);
 
         return new CustomResponseDto<>(1, "팔로잉 목록 조회 성공", followingList);
+    }
+
+    @GetMapping("/userinfo/follows/follower/{nickname}")
+    public CustomResponseDto<?> getFollowerList(@RequestParam("page") int page,
+                                                 @RequestParam("size") int size,
+                                                 @RequestParam("isAsc") boolean isAsc,
+                                                 @RequestParam("sortBy") String sortBy,
+                                                 @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                 @PathVariable String nickname) {
+
+        page -= 1;
+        Page<GetFollowerListResponseDto> followingList = userinfoService.getFollowerListByPage(page, size, isAsc, sortBy, userDetails, nickname);
+
+        return new CustomResponseDto<>(1, "팔로워 목록 조회 성공", followingList);
     }
 }
