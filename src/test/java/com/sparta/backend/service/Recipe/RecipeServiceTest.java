@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class RecipeServiceTest {
 
     //레시피 저장 테스트
-        //권환관련
+        //권한관련
              //로그인 한사람이 저장시도- 성공 -> 모델 테스트에서..
             //로그인 안 한사람이 저장시도- 실패 -> 모델 테스트에서..
         //내용 유무관련
