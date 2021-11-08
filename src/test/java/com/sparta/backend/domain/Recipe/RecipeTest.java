@@ -99,9 +99,23 @@ class RecipeTest {
 
                 @Test
                 @DisplayName("제목 null")
-                void userIdMinus() {
+                void titleNull() {
                     //given
                     title = null;
+
+                    //when
+                    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+                        new Recipe(title, content, price, user);
+                    });
+
+                    assertEquals("제목이 입력되지 않았습니다.",  exception.getMessage());
+                }
+
+                @Test
+                @DisplayName("제목 빈 문자열")
+                void titleEmpty() {
+                    //given
+                    title = "";
 
                     //when
                     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -114,7 +128,6 @@ class RecipeTest {
 
             }
         }
-
     }
 }
 
