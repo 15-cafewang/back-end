@@ -68,7 +68,34 @@ class RecipeTest {
                     //then
                     assertEquals("로그인 되지 않은 사용자입니다", exception.getMessage());
                 }
+
+                //마이너스가 될 일은 없지만, db에서 직접 id를 입력하다 마이너스 입력할 수도 있음.
+                @Test
+                @DisplayName("id마이너스")
+                void userIdMinus(){
+                    //given
+                    user = new User(
+                            -20L,
+                            "abc@gmail.com",
+                            "mock password",
+                            "abc",
+                            null,
+                            UserRole.USER,
+                            "Y"
+                    );
+
+                    //when
+                    Exception exception = assertThrows(IllegalArgumentException.class, ()->{
+                        Recipe recipe = new Recipe(title, content, price, user);
+                    });
+                    //then
+                    assertEquals("회원 id가 유효하지 않습니다.", exception.getMessage());
+                }
             }
+
+
+
+
         }
     }
 
