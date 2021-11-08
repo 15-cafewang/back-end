@@ -43,9 +43,9 @@ public class RecipeService {
     private final RecipeImageRepository recipeImageRepository;
 
     //레시피 저장
-    public Recipe saveRecipe(PostRecipeRequestDto requestDto, UserDetailsImpl userDetails) throws IOException {
+    public Recipe saveRecipe(PostRecipeRequestDto requestDto, User user) throws IOException {
         List<String> imageUrlList= uploadManyImagesToS3(requestDto, "recipeImage");
-        Recipe recipe = uploadManyImagesToDB(imageUrlList,requestDto,userDetails);
+        Recipe recipe = uploadManyImagesToDB(imageUrlList,requestDto,user);
         return recipeRepository.save(recipe);
     }
 
@@ -75,8 +75,8 @@ public class RecipeService {
         return savedImages;
     }
     //여러장의 이미지를 db에 저장하는 기능
-    public Recipe uploadManyImagesToDB(List<String> imageUrlList, PostRecipeRequestDto requestDto, UserDetailsImpl userDetails){
-        Recipe recipe = new Recipe(requestDto.getTitle(),requestDto.getContent(),requestDto.getPrice(),userDetails.getUser());
+    public Recipe uploadManyImagesToDB(List<String> imageUrlList, PostRecipeRequestDto requestDto, User user){
+        Recipe recipe = new Recipe(requestDto.getTitle(),requestDto.getContent(),requestDto.getPrice(),user);
         //디비에 이미지url저장
         List<RecipeImage> recipeImages = new ArrayList<>();
         imageUrlList.forEach((image)-> recipeImages.add(new RecipeImage(image,recipe)));

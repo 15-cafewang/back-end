@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sparta.backend.domain.BaseEntity;
 import com.sparta.backend.domain.User;
+import com.sparta.backend.validator.RecipeCommentValidator;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -39,12 +40,14 @@ public class RecipeComment extends BaseEntity {
     private List<RecipeCommentLikes> commentLikes;
 
     public RecipeComment(String content, User user, Recipe recipe) {
+        RecipeCommentValidator.validateCommentInput(content, user, recipe);
         this.content = content;
         this.user = user;
         this.recipe = recipe;
     }
 
     public void updateComment(String content){
+        RecipeCommentValidator.validateCommentInput(content);
         this.content = content;
     }
 }

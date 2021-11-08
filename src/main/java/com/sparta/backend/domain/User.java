@@ -87,6 +87,17 @@ public class User extends BaseEntity {
         this.status = status;
     }
 
+    //test용- id주입받기 위해
+    public User(Long id, String email, String password, String nickname, String image, UserRole role, String status) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.nickname = nickname;
+        this.image = image;
+        this.role = role;
+        this.status = status;
+    }
+
     public User(String email, String password, String nickname, String image, UserRole role, Long kakaoId, String status) {
         this.email = email;
         this.password = password;
