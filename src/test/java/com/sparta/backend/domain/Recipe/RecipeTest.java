@@ -44,6 +44,9 @@ class RecipeTest {
 
             //then
             assertEquals(title,recipe.getTitle());
+            assertEquals(content, recipe.getContent());
+            assertEquals(price, recipe.getPrice());
+            assertEquals(user, recipe.getUser());
         }
     }
 
