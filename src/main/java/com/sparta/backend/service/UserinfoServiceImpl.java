@@ -66,7 +66,7 @@ public class UserinfoServiceImpl implements UserinfoService {
 
         User user;
 
-        // 조회화는 회원이 로그인한 회원일 때
+        // 조회하는 회원이 로그인한 회원일 때
         if (nickname.equals(userDetails.getUser().getNickname())) {
             user = userDetails.getUser();
         } else { // 다른 회원일 때
@@ -89,7 +89,7 @@ public class UserinfoServiceImpl implements UserinfoService {
 
         User user;
 
-        // 조회화는 회원이 로그인한 회원일 때
+        // 조회하는 회원이 로그인한 회원일 때
         if (nickname.equals(userDetails.getUser().getNickname())) {
             user = userDetails.getUser();
         } else { // 다른 회원일 때
@@ -113,7 +113,7 @@ public class UserinfoServiceImpl implements UserinfoService {
 
         User user;
 
-        // 조회화는 회원이 로그인한 회원일 때
+        // 조회하는 회원이 로그인한 회원일 때
         if (nickname.equals(userDetails.getUser().getNickname())) {
             user = userDetails.getUser();
         } else { // 다른 회원일 때
@@ -138,7 +138,7 @@ public class UserinfoServiceImpl implements UserinfoService {
 
         User user;
 
-        // 조회화는 회원이 로그인한 회원일 때
+        // 조회하는 회원이 로그인한 회원일 때
         if (nickname.equals(userDetails.getUser().getNickname())) {
             user = userDetails.getUser();
         } else { // 다른 회원일 때
@@ -161,7 +161,7 @@ public class UserinfoServiceImpl implements UserinfoService {
 
         User user;
 
-        // 조회화는 회원이 로그인한 회원일 때
+        // 조회하는 회원이 로그인한 회원일 때
         if (nickname.equals(userDetails.getUser().getNickname())) {
             user = userDetails.getUser();
         } else { // 다른 회원일 때
@@ -186,7 +186,7 @@ public class UserinfoServiceImpl implements UserinfoService {
 
         User user;
 
-        // 조회화는 회원이 로그인한 회원일 때
+        // 조회하는 회원이 로그인한 회원일 때
         if (nickname.equals(userDetails.getUser().getNickname())) {
             user = userDetails.getUser();
         } else { // 다른 회원일 때
