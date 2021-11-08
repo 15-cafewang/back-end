@@ -78,6 +78,8 @@ public class BoardService {
     //전체 게시물 조회
     public Page<GetBoardResponseDto> getBoards(int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails) {
         User currentLoginUser = userDetails.getUser();
+        //현재 페이지
+        page = page - 1;
 
         //정렬 기준
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
@@ -243,6 +245,9 @@ public class BoardService {
     //게시물 검색
     public Page<GetBoardResponseDto> searchBoards(String keword, int page, int size, boolean isAsc, String sortBy,
                                                   UserDetailsImpl userDetails) {
+        //현재 페이지
+        page = page - 1;
+
         User currentLoginUser = userDetails.getUser();
 
         //정렬 기준
