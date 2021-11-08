@@ -4,9 +4,11 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sparta.backend.domain.BaseEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 
+@ToString(exclude = "recipe")
 @Getter
 @NoArgsConstructor
 @Entity

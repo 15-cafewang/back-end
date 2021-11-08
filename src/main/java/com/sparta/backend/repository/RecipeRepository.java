@@ -1,12 +1,14 @@
 package com.sparta.backend.repository;
 
 import com.sparta.backend.domain.Recipe.Recipe;
+import com.sparta.backend.domain.Recipe.RecipeLikes;
 import com.sparta.backend.domain.User;
 import com.sparta.backend.dto.queryInterface.PopularRecipeInterface;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -71,4 +73,7 @@ public interface RecipeRepository extends JpaRepository<Recipe,Long> {
 //    List<Recipe> findPopularRecipe3(LocalDateTime startDate, LocalDateTime endDdate);
 
     Page<Recipe> findAllByUser(Pageable pageable, User user);
+
+    @Query("select r from Recipe r where r.id in (select rl.recipe.id from RecipeLikes rl where rl.user.id = :userId)")
+    Page<Recipe> findAllByRecipeLikesList(@Param("userId") Long userId, Pageable pageable);
 }
