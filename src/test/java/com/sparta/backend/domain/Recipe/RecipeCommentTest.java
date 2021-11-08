@@ -79,6 +79,50 @@ class RecipeCommentTest {
                     //then
                     assertEquals("로그인 되지 않은 사용자입니다", exception.getMessage());
                 }
+
+                @Test
+                @DisplayName("commentWriter의 id < 0")
+                void userIdMinus(){
+                    //given
+                    commentWriter = new User(
+                            -20L,
+                            "comment@gmail.com",
+                            "mock password",
+                            "commentWriter",
+                            null,
+                            UserRole.USER,
+                            "Y"
+                    );
+
+                    //when
+                    Exception exception = assertThrows(IllegalArgumentException.class, ()->{
+                        RecipeComment comment = new RecipeComment(content, commentWriter, recipe);
+                    });
+                    //then
+                    assertEquals("회원 id가 유효하지 않습니다.", exception.getMessage());
+                }
+
+                @Test
+                @DisplayName("commentWriter의 id == null")
+                void userIdNull(){
+                    //given
+                    commentWriter = new User(
+                            null,
+                            "comment@gmail.com",
+                            "mock password",
+                            "commentWriter",
+                            null,
+                            UserRole.USER,
+                            "Y"
+                    );
+
+                    //when
+                    Exception exception = assertThrows(IllegalArgumentException.class, ()->{
+                        RecipeComment comment = new RecipeComment(content, commentWriter, recipe);
+                    });
+                    //then
+                    assertEquals("회원 id가 유효하지 않습니다.", exception.getMessage());
+                }
             }
         }
 
