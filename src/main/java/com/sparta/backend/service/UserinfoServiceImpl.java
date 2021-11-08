@@ -6,6 +6,7 @@ import com.sparta.backend.domain.Recipe.Recipe;
 import com.sparta.backend.domain.Recipe.RecipeLikes;
 import com.sparta.backend.domain.User;
 import com.sparta.backend.dto.response.userinfo.GetBoardListResponseDto;
+import com.sparta.backend.dto.response.userinfo.GetFollowingListResponseDto;
 import com.sparta.backend.dto.response.userinfo.GetRecipeListResponseDto;
 import com.sparta.backend.dto.response.userinfo.GetUserinfoResponseDto;
 import com.sparta.backend.repository.*;
@@ -155,5 +156,30 @@ public class UserinfoServiceImpl implements UserinfoService {
         Page<Board> likedBoardList = boardRepository.findAllByBoardLikesList(user.getId(), pageable);
 
         return likedBoardList.map(board -> new GetBoardListResponseDto(board, userDetails));
+    }
+
+    // 팔로잉 목록
+    public Page<GetFollowingListResponseDto> getFollowingListByPage(int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails, String nickname) {
+
+        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        User user;
+
+        // 조회화는 회원이 로그인한 회원일 때
+        if (nickname.equals(userDetails.getUser().getNickname())) {
+            user = userDetails.getUser();
+        } else { // 다른 회원일 때
+            user = userRepository.findByNickname(nickname).orElseThrow(
+                    () -> new NullPointerException("존재하지 않는 회원입니다")
+            );
+        }
+
+        Page<Follow> followingList = followRepository.findAllByFromUser(pageable, user);
+
+
+
+        return followingList.map(GetFollowingListResponseDto::new);
     }
 }

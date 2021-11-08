@@ -1,6 +1,7 @@
 package com.sparta.backend.service;
 
 import com.sparta.backend.dto.response.userinfo.GetBoardListResponseDto;
+import com.sparta.backend.dto.response.userinfo.GetFollowingListResponseDto;
 import com.sparta.backend.dto.response.userinfo.GetRecipeListResponseDto;
 import com.sparta.backend.dto.response.userinfo.GetUserinfoResponseDto;
 import com.sparta.backend.security.UserDetailsImpl;
@@ -22,4 +23,7 @@ public interface UserinfoService {
 
     // 내가 좋아요한 게시글 목록 조회
     Page<GetBoardListResponseDto> getLikedBoardListByPage(int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails, String nickname);
+
+    // 팔로잉 목록 조회
+    Page<GetFollowingListResponseDto> getFollowingListByPage(int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails, String nickname);
 }
