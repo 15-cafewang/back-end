@@ -13,7 +13,7 @@ class RecipeTest {
 
     @Nested
     @DisplayName("레시피 객체 생성")
-    class CreateRecipe{
+    class CreateRecipe {
 
         private String title;
         private String content;
@@ -21,7 +21,7 @@ class RecipeTest {
         private User user;
 
         @BeforeEach
-        void setup(){
+        void setup() {
             title = "normal title";
             content = "normal content";
             price = 5000;
@@ -38,12 +38,12 @@ class RecipeTest {
 
         @Test
         @DisplayName("정상 케이스")
-        void createRecipe_Normal(){
+        void createRecipe_Normal() {
             //given, when
-            Recipe recipe = new Recipe(title, content,price,user);
+            Recipe recipe = new Recipe(title, content, price, user);
 
             //then
-            assertEquals(title,recipe.getTitle());
+            assertEquals(title, recipe.getTitle());
             assertEquals(content, recipe.getContent());
             assertEquals(price, recipe.getPrice());
             assertEquals(user, recipe.getUser());
@@ -51,19 +51,19 @@ class RecipeTest {
 
         @Nested
         @DisplayName("실패 케이스")
-        class FailCases{
+        class FailCases {
             @Nested
             @DisplayName("권한 관련")
-            class userFail{
+            class userFail {
                 @Test
                 @DisplayName("null")
-                void userNull(){
+                void userNull() {
                     //given
                     user = null;
 
                     //when
-                    Exception exception = assertThrows(IllegalArgumentException.class, ()->{
-                        Recipe recipe = new Recipe(title, content,price,user);
+                    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+                        Recipe recipe = new Recipe(title, content, price, user);
                     });
                     //then
                     assertEquals("로그인 되지 않은 사용자입니다", exception.getMessage());
@@ -72,7 +72,7 @@ class RecipeTest {
                 //마이너스가 될 일은 없지만, db에서 직접 id를 입력하다 마이너스 입력할 수도 있음.
                 @Test
                 @DisplayName("id마이너스")
-                void userIdMinus(){
+                void userIdMinus() {
                     //given
                     user = new User(
                             -20L,
@@ -85,7 +85,7 @@ class RecipeTest {
                     );
 
                     //when
-                    Exception exception = assertThrows(IllegalArgumentException.class, ()->{
+                    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
                         Recipe recipe = new Recipe(title, content, price, user);
                     });
                     //then
@@ -93,12 +93,29 @@ class RecipeTest {
                 }
             }
 
+            @Nested
+            @DisplayName("입력값 관련")
+            class InputFail {
+
+                @Test
+                @DisplayName("제목 null")
+                void userIdMinus() {
+                    //given
+                    title = null;
+
+                    //when
+                    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+                        new Recipe(title, content, price, user);
+                    });
+
+                    assertEquals("제목이 입력되지 않았습니다.",  exception.getMessage());
+                }
 
 
-
+            }
         }
-    }
 
+    }
 }
 
 
