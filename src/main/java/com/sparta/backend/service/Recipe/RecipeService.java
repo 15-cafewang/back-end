@@ -16,6 +16,7 @@ import com.sparta.backend.repository.RecipeLikesRepository;
 import com.sparta.backend.repository.RecipeRepository;
 import com.sparta.backend.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -41,6 +42,21 @@ public class RecipeService {
     private final AmazonS3Client amazonS3Client;
     private final String bucket = "99final";
     private final RecipeImageRepository recipeImageRepository;
+
+    @Autowired
+    public RecipeService(
+            RecipeRepository recipeRepository,
+            RecipeLikesRepository recipeLikesRepository,
+            AmazonS3Client amazonS3Client,
+            S3Uploader s3Uploader,
+            RecipeImageRepository recipeImageRepository
+    ){
+        this.recipeRepository = recipeRepository;
+        this.recipeLikesRepository = recipeLikesRepository;
+        this.amazonS3Client = amazonS3Client;
+        this.s3Uploader = s3Uploader;
+        this.recipeImageRepository = recipeImageRepository;
+    }
 
     //레시피 저장
     public Recipe saveRecipe(PostRecipeRequestDto requestDto, User user) throws IOException {

@@ -54,7 +54,7 @@ public class Recipe extends BaseEntity {
 
     public Recipe(String title, String content, int price, User user){
         //Edge케이스들 validation
-        RecipeValidator.validateRecipeInput(title,content,user);
+//        RecipeValidator.validateRecipeInput(title,content,user);
         this.title = title;
         this.content = content;
         this.price = price;

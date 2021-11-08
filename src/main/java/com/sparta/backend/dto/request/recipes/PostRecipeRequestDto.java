@@ -17,7 +17,7 @@ public class PostRecipeRequestDto {
     private MultipartFile image4;
     private MultipartFile image5;
 
-    public PostRecipeRequestDto(String title, String content, int price, List<String> tag, MultipartFile image1, MultipartFile image2, MultipartFile image3, MultipartFile image4, MultipartFile image5) {
+    public PostRecipeRequestDto(String title, String content,int price, List<String> tag, MultipartFile image1, MultipartFile image2, MultipartFile image3, MultipartFile image4, MultipartFile image5) {
         this.title = title;
         this.content = content;
         this.price = price;
