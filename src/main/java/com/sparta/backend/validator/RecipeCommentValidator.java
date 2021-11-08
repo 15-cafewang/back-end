@@ -14,7 +14,7 @@ public class RecipeCommentValidator {
             throw new IllegalArgumentException("회원 id가 유효하지 않습니다.");
         }
         //댓글 달 게시물 관련
-        if(recipe == null || recipe.getId() <0 || recipe.getId() == null){
+        if(recipe == null || recipe.getId() <0){
             throw new IllegalArgumentException("댓글 달 게시물이 존재하지 않습니다.");
         }
 

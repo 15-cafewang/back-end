@@ -124,6 +124,44 @@ class RecipeCommentTest {
                     assertEquals("회원 id가 유효하지 않습니다.", exception.getMessage());
                 }
             }
+
+            @Nested
+            @DisplayName("댓글 달 게시물 관련")
+            class RecipeFail {
+                @Test
+                @DisplayName("댓글 달 게시물이 null")
+                void RecipeNull(){
+                    //given
+                    recipe = null;
+                    //when
+                    Exception exception = assertThrows(IllegalArgumentException.class, ()->{
+                        RecipeComment comment = new RecipeComment(content,commentWriter,recipe);
+                    });
+                    //then
+                    assertEquals("댓글 달 게시물이 존재하지 않습니다.",exception.getMessage());
+                }
+
+                @Test
+                @DisplayName("댓글 달 게시물 id 마이너스")
+                void RecipeIdMinus(){
+                    //given
+                    recipe = new Recipe(
+                            -1L,
+                            "test recipe title",
+                            "test recipe content",
+                            5000,
+                            recipeOwner
+                    );
+                    //when
+                    Exception exception = assertThrows(IllegalArgumentException.class, ()->{
+                        RecipeComment comment = new RecipeComment(content,commentWriter,recipe);
+                    });
+                    //then
+                    assertEquals("댓글 달 게시물이 존재하지 않습니다.",exception.getMessage());
+                }
+
+
+            }
         }
 
 
