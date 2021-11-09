@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sparta.backend.domain.BaseEntity;
 import com.sparta.backend.domain.Tag;
 import com.sparta.backend.domain.User;
+import com.sparta.backend.validator.RecipeValidator;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -53,7 +54,7 @@ public class Recipe extends BaseEntity {
 
     public Recipe(String title, String content, Integer price, User user){
         //Edge케이스들 validation
-//        RecipeValidator.validateRecipeInput(title,content,user);
+        RecipeValidator.validateRecipeInput(title,content,user);
         this.title = title;
         this.content = content;
         this.price = price;
