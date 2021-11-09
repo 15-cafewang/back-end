@@ -199,6 +199,20 @@ class RecipeTest {
 
                     assertEquals("내용의 길이가 1000자를 초과하였습니다",  exception.getMessage());
                 }
+
+
+                @Test
+                @DisplayName("가격 음수")
+                void priceMinus() {
+                    //given
+                    price = -1000;
+                    //when
+                    Exception exception = assertThrows(IllegalArgumentException.class, ()->{
+                        new Recipe(title, content,price, user);
+                    });
+
+                    assertEquals("가격은 0보다 작을 수 없습니다.", exception.getMessage());
+                }
             }
         }
     }
