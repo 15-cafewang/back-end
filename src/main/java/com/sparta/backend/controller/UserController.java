@@ -45,10 +45,12 @@ public class UserController {
 
         int result = userService.validCheckEmail(requestDto.getEmail());
 
-        if (result > 0) {
+        if (result == 0) {
+            return new CustomResponseDto<>(1, "사용할 수 있는 이메일입니다", "");
+        } else if (result == 1) {
             return new CustomResponseDto<>(-1, "이미 존재하는 이메일입니다", "");
         } else {
-            return new CustomResponseDto<>(1, "사용할 수 있는 이메일입니다", "");
+            return new CustomResponseDto<>(-1, "이메일 형식이 아닙니다", "");
         }
     }
 
