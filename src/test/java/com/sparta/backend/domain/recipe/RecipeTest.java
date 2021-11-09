@@ -17,7 +17,7 @@ class RecipeTest {
 
         private String title;
         private String content;
-        private int price;
+        private Integer price;
         private User user;
 
         @BeforeEach
@@ -36,18 +36,40 @@ class RecipeTest {
             );
         }
 
-        @Test
+        @Nested
         @DisplayName("정상 케이스")
-        void createRecipe_Normal() {
-            //given, when
-            Recipe recipe = new Recipe(title, content, price, user);
+        class SuccessCases{
+            @Test
+            @DisplayName("일반적인 레시피등록")
+            void createRecipe_Normal() {
+                //given, when
+                Recipe recipe = new Recipe(title, content, price, user);
 
-            //then
-            assertEquals(title, recipe.getTitle());
-            assertEquals(content, recipe.getContent());
-            assertEquals(price, recipe.getPrice());
-            assertEquals(user, recipe.getUser());
+                //then
+                assertEquals(title, recipe.getTitle());
+                assertEquals(content, recipe.getContent());
+                assertEquals(price, recipe.getPrice());
+                assertEquals(user, recipe.getUser());
+            }
+
+            @Test
+            @DisplayName("가격 null")
+            void priceNull(){
+                //given
+                price = null;
+                // when
+                Recipe recipe = new Recipe(title, content, price, user);
+
+                //then
+                assertEquals(title, recipe.getTitle());
+                assertEquals(content, recipe.getContent());
+                assertEquals(price, recipe.getPrice());
+                assertEquals(user, recipe.getUser());
+            }
+
         }
+
+
 
         @Nested
         @DisplayName("실패 케이스")
