@@ -91,13 +91,15 @@ public class RecipeService {
         //게시글 존재여부확인
         Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(()->new CustomErrorException("해당 게시물을 찾을 수 없습니다"));
 
+        //수정할 이미지 S3에 업로드
+        MultipartFile[] imageList = requestDto.getImage();
+        List<String> imageUrlList = uploadManyImagesToS3(requestDto,"recipeImage");
+
         //S3에 있는 사진 삭제
         for(int i=0; i<recipe.getRecipeImagesList().size();i++){
             RecipeImage recipeImage = recipe.getRecipeImagesList().get(i);
             if(recipeImage!= null) deleteS3(recipeImage.getImage());
         }
-        //S3에 이미지 업로드
-        List<String> imageUrlList= uploadManyImagesToS3(requestDto, "recipeImage");
 
         //DB의 recipe_image 기존 row들 삭제(그냥 update하면 더 작은 개수로 image업뎃할때 outOfInedex에러남)
         recipeImageRepository.deleteAllByRecipe(recipe);
@@ -109,7 +111,7 @@ public class RecipeService {
         //이미지 외 다른 내용들 수정
         String title = requestDto.getTitle();
         String content = requestDto.getContent();
-        int price = requestDto.getPrice();
+        Integer price = requestDto.getPrice();
 
         return recipe.updateRecipe(title,content,price);
     }
