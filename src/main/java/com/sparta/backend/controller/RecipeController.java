@@ -1,14 +1,14 @@
 package com.sparta.backend.controller;
 
-import com.sparta.backend.domain.Recipe.Recipe;
+import com.sparta.backend.domain.recipe.Recipe;
 import com.sparta.backend.dto.request.recipes.PostRecipeRequestDto;
 import com.sparta.backend.dto.response.CustomResponseDto;
 import com.sparta.backend.dto.response.recipes.RecipeDetailResponsetDto;
 import com.sparta.backend.dto.response.recipes.RecipeListResponseDto;
 import com.sparta.backend.exception.CustomErrorException;
 import com.sparta.backend.security.UserDetailsImpl;
-import com.sparta.backend.service.Recipe.RecipeService;
-import com.sparta.backend.service.Recipe.TagService;
+import com.sparta.backend.service.recipe.RecipeService;
+import com.sparta.backend.service.recipe.TagService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

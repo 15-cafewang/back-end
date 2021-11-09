@@ -1,7 +1,6 @@
 package com.sparta.backend.repository;
 
-import com.sparta.backend.domain.Recipe.Recipe;
-import com.sparta.backend.domain.Recipe.RecipeLikes;
+import com.sparta.backend.domain.recipe.Recipe;
 import com.sparta.backend.domain.User;
 import com.sparta.backend.dto.queryInterface.PopularRecipeInterface;
 import org.springframework.data.domain.Page;

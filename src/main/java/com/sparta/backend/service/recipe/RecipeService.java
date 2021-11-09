@@ -1,11 +1,11 @@
-package com.sparta.backend.service.Recipe;
+package com.sparta.backend.service.recipe;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.sparta.backend.awsS3.S3Uploader;
-import com.sparta.backend.domain.Recipe.Recipe;
-import com.sparta.backend.domain.Recipe.RecipeImage;
-import com.sparta.backend.domain.Recipe.RecipeLikes;
+import com.sparta.backend.domain.recipe.Recipe;
+import com.sparta.backend.domain.recipe.RecipeImage;
+import com.sparta.backend.domain.recipe.RecipeLikes;
 import com.sparta.backend.domain.User;
 import com.sparta.backend.dto.request.recipes.PostRecipeRequestDto;
 import com.sparta.backend.dto.response.recipes.RecipeDetailResponsetDto;

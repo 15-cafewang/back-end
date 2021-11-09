@@ -1,7 +1,7 @@
 package com.sparta.backend.dto.response.recipes;
 
-import com.sparta.backend.domain.Recipe.RecipeComment;
-import com.sparta.backend.domain.Recipe.RecipeCommentLikes;
+import com.sparta.backend.domain.recipe.RecipeComment;
+import com.sparta.backend.domain.recipe.RecipeCommentLikes;
 import com.sparta.backend.repository.RecipeCommentLikeRepository;
 import com.sparta.backend.security.UserDetailsImpl;
 import lombok.AllArgsConstructor;

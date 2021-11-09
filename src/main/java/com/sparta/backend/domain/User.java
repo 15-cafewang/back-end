@@ -1,9 +1,9 @@
 package com.sparta.backend.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.sparta.backend.domain.Recipe.Recipe;
-import com.sparta.backend.domain.Recipe.RecipeComment;
-import com.sparta.backend.domain.Recipe.RecipeLikes;
+import com.sparta.backend.domain.recipe.Recipe;
+import com.sparta.backend.domain.recipe.RecipeComment;
+import com.sparta.backend.domain.recipe.RecipeLikes;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
