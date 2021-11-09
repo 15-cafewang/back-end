@@ -37,7 +37,6 @@ public class BoardService {
     private final S3Uploader s3Uploader;
     private final AmazonS3Client amazonS3Client;
     private final String bucket = "99final";
-    private final int maxImageCount = 5;    //사진 업로드 최대 개수
 
     //게시물 등록
     @Transactional
@@ -152,58 +151,41 @@ public class BoardService {
             String writterEmail = board.getUser().getEmail();   //게시물을 작성한 계정 아이디: 이메일
 
             if(currentLoginEmail.equals(writterEmail)) {    //작성자가 현재 로그인한 사용자일 때
-                String[] imageUrlList =  requestDto.getImageUrl();  //ex: [https://...aaa.png, "", "" , https://...aab.png, https://...aac.png]
-                MultipartFile[] imageList = requestDto.getImage();  //ex: filename: ["", "abc.png", "def.png", "", ""]
+                MultipartFile[] imageList = requestDto.getImage();
 
-                //수정할 이미지를 S3에 올림
-                for(int i=0; i<imageList.length; i++) {
-                    MultipartFile image = imageList[i];
-                    if(!image.getOriginalFilename().equals("") || image.getSize() > 0) {    //업로드한 이미지가 있을 때
-                        String uploadImageUrl = s3Uploader.upload(image, "boardImage");
-                        if(uploadImageUrl == null)    //이미지 업로드에 실패했을 때
-                            throw new NullPointerException("이미지 업로드에 실패하였습니다.");
-                        imageUrlList[i] = uploadImageUrl;
+                if(imageList != null) {   //업로드할 이미지가 존재할 떄
+                    List<BoardImage> boardImageList = boardImageRepository.findAllByBoard(board);
+
+                    //기존 이미지들을 S3에서 삭제
+                    for(BoardImage boardImage : boardImageList) {
+                        String deleteUrl = boardImage.getImage();
+                        deleteS3(deleteUrl);
                     }
-                }
+                    //기존 이미지들을 DB에서 삭제
+                    boardImageRepository.deleteAllByBoard(board);
 
-                //imageUrlList에는 수정한 결과 이미지 URL이 담겨있는 상태
-                //imageUrlList에 있는 모든 Url을 반영해야 함
-                List<BoardImage> boardImageList = boardImageRepository.findAllByBoard(board);
+                    int imageListLength = imageList.length;
+                    String[] uploadImageList = new String[imageListLength]; //URL로 변환한 이미지들을 담을 배열
 
-                //outOfIndex를 피하기 위해 저장 공간의 개수를 맞춰줌
-                String[] exisitImageList = new String[maxImageCount];
-
-                for(int i=0; i<boardImageList.size(); i++) {
-                    BoardImage boardImage = boardImageList.get(i);  //게시물 작성 시 첨부했던 이미지
-                    String image = boardImage.getImage();
-                    exisitImageList[i] = image;
-                }
-
-                for(int i=0; i<exisitImageList.length; i++) {
-                    if(!imageUrlList[i].equals(exisitImageList[i])) {
-
-                        //사용자가 게시물 수정 시 기존에 있던 이미지를 삭제한 경우
-                        if(imageUrlList[i].equals("") && exisitImageList[i] != null) {
-                            deleteS3(exisitImageList[i]);
-                            Long boardImageId = boardImageList.get(i).getId();
-                            boardImageRepository.deleteById(boardImageId);
-                        }
-                        //사용자가 새 이미지를 추가한 경우
-                        else if(imageUrlList[i].length() > 0 && exisitImageList[i] == null) {
-                            BoardImage newBoardImage = new BoardImage(imageUrlList[i], board);
-                            boardImageRepository.save(newBoardImage);
-                        }
-                        //게시물 작성 시 올린 이미지도, 새롭게 올린 이미지도 없을 경우
-                        else if(imageUrlList[i].equals("") && exisitImageList[i] == null) {
-                            break;
-                        }
-                        //사용자가 게시물 수정 시 기존에 있던 이미지를 수정한 경우
-                        else {
-                            BoardImage boardImage = boardImageList.get(i);
-                            deleteS3(exisitImageList[i]);    //기존에 올린 이미지는 삭제
-                            boardImage.updateImage(imageUrlList[i]);  //새로 올린 이미지로 update
+                    //수정할 이미지를 S3에 올림
+                    for(int i=0; i<imageListLength; i++) {
+                        MultipartFile image = imageList[i];
+                        if(!image.getOriginalFilename().equals("") || image.getSize() > 0) {    //업로드한 이미지가 있을 때
+                            String uploadImageUrl = s3Uploader.upload(image, "boardImage");
+                            if(uploadImageUrl == null)    //이미지 업로드에 실패했을 때
+                                throw new NullPointerException("이미지 업로드에 실패하였습니다.");
+                            uploadImageList[i] = uploadImageUrl;
                         }
                     }
+
+                    //새로 첨부한 이미지들을 DB에 넣기
+                    for(String url : uploadImageList) {
+                        BoardImage boardImage = new BoardImage(url, board);
+                        boardImageRepository.save(boardImage);
+                    }
+                } else {    //수정 시 업로드할 이미지를 첨부 안 하고 수정완료 버튼을 누를 시 기존 이미지들을 모두 삭제
+                    //기존 이미지들을 DB에서 삭제
+                    boardImageRepository.deleteAllByBoard(board);
                 }
             } else {    //작성자와 현재 로그인한 사용자가 다를 때
                 throw new IllegalArgumentException("게시물을 작성한 사용자만 수정 가능합니다.");
@@ -231,8 +213,8 @@ public class BoardService {
                 for(BoardImage bi : boardImageList) {
                     String image = bi.getImage();
                     deleteS3(image);
-                    boardImageRepository.deleteAllByBoard(board);
                 }
+                boardImageRepository.deleteAllByBoard(board);
                 boardRepository.deleteById(id);
             } else { //현재 로그인한 사용자 계정이 작성자가 아닐 때
                 throw new IllegalArgumentException("게시물을 작성한 사용자만 삭제 가능합니다.");
