@@ -23,6 +23,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -66,12 +67,11 @@ public class RecipeService {
     public List<String> uploadManyImagesToS3(PostRecipeRequestDto requestDto, String dirName) throws IOException {
         List<String> savedImages = new ArrayList<>();
         //s3에 이미지저장
-        if(requestDto.getImage1() != null) savedImages.add(s3Uploader.upload(requestDto.getImage1(),dirName));
-        if(requestDto.getImage2() != null) savedImages.add(s3Uploader.upload(requestDto.getImage2(),dirName));
-        if(requestDto.getImage3() != null) savedImages.add(s3Uploader.upload(requestDto.getImage3(),dirName));
-        if(requestDto.getImage4() != null) savedImages.add(s3Uploader.upload(requestDto.getImage4(),dirName));
-        if(requestDto.getImage5() != null) savedImages.add(s3Uploader.upload(requestDto.getImage5(),dirName));
-
+        for(MultipartFile img : requestDto.getImage()){
+            String imageUrl = s3Uploader.upload(img, dirName);
+            if(imageUrl == null) throw new NullPointerException("이미지를 s3에 업로드하는 과정 실패");
+            savedImages.add(imageUrl);
+        }
         return savedImages;
     }
     //여러장의 이미지를 db에 저장하는 기능
