@@ -13,8 +13,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -28,9 +30,12 @@ public class RecipeController {
 
     //레시피 등록
     @PostMapping("/recipes")
-    public CustomResponseDto<?> postRecipe(PostRecipeRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+    public CustomResponseDto<?> postRecipe(@Valid PostRecipeRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails, Errors errors) throws IOException {
         //todo:IOException처리
         checkLogin(userDetails);
+        if(errors.hasErrors()){
+            return new CustomResponseDto<>(-1, "레시피 형식에 맞지 않음", errors.getAllErrors());
+        }
         //레시피 먼저 생성, 등록
         Recipe savedRecipe = recipeService.saveRecipe(requestDto, userDetails.getUser());
         //태그 등록할때 저장한 레시피객체도 넣어줌
