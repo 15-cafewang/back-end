@@ -45,10 +45,12 @@ public class UserController {
 
         int result = userService.validCheckEmail(requestDto.getEmail());
 
-        if (result > 0) {
+        if (result == 0) {
+            return new CustomResponseDto<>(1, "사용할 수 있는 이메일입니다", "");
+        } else if (result == 1) {
             return new CustomResponseDto<>(-1, "이미 존재하는 이메일입니다", "");
         } else {
-            return new CustomResponseDto<>(1, "사용할 수 있는 이메일입니다", "");
+            return new CustomResponseDto<>(-1, "이메일 형식이 아닙니다", "");
         }
     }
 
@@ -60,10 +62,12 @@ public class UserController {
 
         int result = userService.validCheckNickname(requestDto.getNickname());
 
-        if (result > 0) {
+        if (result == 0) {
+            return new CustomResponseDto<>(1, "사용할 수 있는 닉네임입니다", "");
+        } else if (result == 1) {
             return new CustomResponseDto<>(-1, "이미 존재하는 닉네임입니다", "");
         } else {
-            return new CustomResponseDto<>(1, "사용할 수 있는 닉네임입니다", "");
+            return new CustomResponseDto<>(-1, "잘못된 닉네임 형식입니다", "");
         }
     }
 
@@ -99,9 +103,7 @@ public class UserController {
     @PutMapping("/user/info")
     public CustomResponseDto<?> updateUser(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody UpdateUserRequestDto requestDto) throws IOException {
 
-        Long userId = userDetails.getUser().getId();
-
-        userService.updateUser(userId, requestDto);
+        userService.updateUser(userDetails, requestDto);
 
         return new CustomResponseDto<>(1, "회원 정보 수정 성공", "");
     }
@@ -110,9 +112,7 @@ public class UserController {
     @PutMapping("/user/delete")
     public CustomResponseDto<?> deleteUser(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody DeleteUserRequestDto requestDto) {
 
-        Long userId = userDetails.getUser().getId();
-
-        userService.deleteUser(userId, requestDto);
+        userService.deleteUser(userDetails, requestDto);
 
         return new CustomResponseDto<>(1, "회원 탈퇴 성공", "");
     }
