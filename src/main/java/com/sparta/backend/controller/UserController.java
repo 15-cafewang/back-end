@@ -1,10 +1,12 @@
 package com.sparta.backend.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.sparta.backend.domain.User;
 import com.sparta.backend.dto.request.user.*;
 import com.sparta.backend.dto.response.CustomResponseDto;
 import com.sparta.backend.dto.response.user.GetUserInfoResponseDto;
 import com.sparta.backend.dto.response.user.UserInfoResponseDto;
+import com.sparta.backend.security.JwtTokenProvider;
 import com.sparta.backend.security.UserDetailsImpl;
 import com.sparta.backend.service.KakaoUserService;
 import com.sparta.backend.service.UserService;
@@ -26,6 +28,7 @@ public class UserController {
 
     private final UserService userService;
     private final KakaoUserService kakaoUserService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     // 회원가입 요청
     @PostMapping("/user/signup")
@@ -85,9 +88,15 @@ public class UserController {
     @GetMapping("/user/kakao/callback")
     public CustomResponseDto<?> kakaoLogin(@RequestParam String code) throws JsonProcessingException {
 
-        kakaoUserService.kakaoLogin(code);
+        User kakaoUser = kakaoUserService.kakaoLogin(code);
 
-        return new CustomResponseDto<>(1, "로그인 성공", "");
+        String token = jwtTokenProvider.createToken(kakaoUser.getEmail());
+        String nickname = kakaoUser.getNickname();
+        String image = kakaoUser.getImage();
+
+        GetUserInfoResponseDto responseDto = new GetUserInfoResponseDto(token, nickname, image);
+
+        return new CustomResponseDto<>(1, "로그인 성공", responseDto);
     }
 
     // 회원 정보 조회
