@@ -11,6 +11,7 @@ import com.sparta.backend.dto.request.user.UpdateUserRequestDto;
 import com.sparta.backend.dto.response.user.GetUserInfoResponseDto;
 import com.sparta.backend.repository.UserRepository;
 import com.sparta.backend.security.JwtTokenProvider;
+import com.sparta.backend.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -94,18 +95,14 @@ public class UserService {
         String nickname = user.getNickname();
         String image = user.getImage();
 
-        GetUserInfoResponseDto responseDto = new GetUserInfoResponseDto(token, nickname, image);
-
-        return responseDto;
+        return new GetUserInfoResponseDto(token, nickname, image);
     }
 
     // 회원 정보 수정
     @Transactional
-    public void updateUser(Long userId, UpdateUserRequestDto requestDto) throws IOException {
+    public void updateUser(UserDetailsImpl userDetails, UpdateUserRequestDto requestDto) throws IOException {
 
-        User user = userRepository.findById(userId).orElseThrow(
-                () -> new NullPointerException("존재하지 않는 회원입니다")
-        );
+        User user = userDetails.getUser();
 
         Optional<User> foundNickname = userRepository.findByNickname(requestDto.getNickname());
 
@@ -128,11 +125,9 @@ public class UserService {
     }
 
     // 회원 탈퇴
-    public void deleteUser(Long userId, DeleteUserRequestDto requestDto) {
+    public void deleteUser(UserDetailsImpl userDetails, DeleteUserRequestDto requestDto) {
 
-        User user = userRepository.findById(userId).orElseThrow(
-                () -> new NullPointerException("존재하지 않는 회원입니다")
-        );
+        User user = userDetails.getUser();
 
         if (!passwordEncoder.matches(requestDto.getPassword(),user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
@@ -141,13 +136,14 @@ public class UserService {
         user.deleteUser("N");
     }
 
-    //S3 이미지 삭제
+    // S3 이미지 삭제
     public void deleteS3(@RequestParam String imageName){
 
         //https://S3 버킷 URL/버킷에 생성한 폴더명/이미지이름
         String keyName = imageName.split("/")[4]; // 이미지이름만 추출
 
-        try {amazonS3Client.deleteObject(bucket + "/userImage", keyName);
+        try {
+            amazonS3Client.deleteObject(bucket + "/userImage", keyName);
         }catch (AmazonServiceException e){
             e.printStackTrace();
             throw new AmazonServiceException(e.getMessage());

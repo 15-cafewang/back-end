@@ -103,9 +103,7 @@ public class UserController {
     @PutMapping("/user/info")
     public CustomResponseDto<?> updateUser(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody UpdateUserRequestDto requestDto) throws IOException {
 
-        Long userId = userDetails.getUser().getId();
-
-        userService.updateUser(userId, requestDto);
+        userService.updateUser(userDetails, requestDto);
 
         return new CustomResponseDto<>(1, "회원 정보 수정 성공", "");
     }
@@ -114,9 +112,7 @@ public class UserController {
     @PutMapping("/user/delete")
     public CustomResponseDto<?> deleteUser(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody DeleteUserRequestDto requestDto) {
 
-        Long userId = userDetails.getUser().getId();
-
-        userService.deleteUser(userId, requestDto);
+        userService.deleteUser(userDetails, requestDto);
 
         return new CustomResponseDto<>(1, "회원 탈퇴 성공", "");
     }
