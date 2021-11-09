@@ -48,9 +48,8 @@ public class UserService {
 
         Optional<User> found = userRepository.findByNickname(nickname);
 
-        if (found.isPresent()) {
-            return 1;
-        }
+        if (found.isPresent()) return 1;
+        if (!isNickname(nickname)) return 2;
 
         return 0;
     }
@@ -159,6 +158,12 @@ public class UserService {
     public boolean isEmail(String str) {
 
         return Pattern.matches("^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$", str);
+    }
+
+    // 닉네임 검사
+    public boolean isNickname(String str) {
+
+        return Pattern.matches("^([^\\W]{2,8})$", str);
     }
 
 }

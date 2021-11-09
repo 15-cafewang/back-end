@@ -62,10 +62,12 @@ public class UserController {
 
         int result = userService.validCheckNickname(requestDto.getNickname());
 
-        if (result > 0) {
+        if (result == 0) {
+            return new CustomResponseDto<>(1, "사용할 수 있는 닉네임입니다", "");
+        } else if (result == 1) {
             return new CustomResponseDto<>(-1, "이미 존재하는 닉네임입니다", "");
         } else {
-            return new CustomResponseDto<>(1, "사용할 수 있는 닉네임입니다", "");
+            return new CustomResponseDto<>(-1, "잘못된 닉네임 형식입니다", "");
         }
     }
 
