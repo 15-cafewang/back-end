@@ -40,7 +40,7 @@ public class KakaoUserService {
     @Value("${kakao.client_id}")
     String clientId;
 
-    public void kakaoLogin(String code) throws JsonProcessingException {
+    public User kakaoLogin(String code) throws JsonProcessingException {
 
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getAccessToken(code);
@@ -53,6 +53,8 @@ public class KakaoUserService {
 
         // 4. 강제 로그인 처리
         forceLogin(kakaoUser);
+
+        return kakaoUser;
     }
 
     private String getAccessToken(String code) throws JsonProcessingException {
@@ -65,7 +67,7 @@ public class KakaoUserService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", clientId);
-        body.add("redirect_uri", "http://localhost:8888/user/kakao/callback");
+        body.add("redirect_uri", "http://localhost:3000/user/kakao/callback");
         body.add("code", code);
 
         // HTTP 요청 보내기
@@ -134,7 +136,9 @@ public class KakaoUserService {
             // role: 일반 사용자
 //            UserRoleEnum role = UserRoleEnum.USER;
 
-            kakaoUser = new User(email, encodedPassword, nickname, null, UserRole.USER, kakaoId, "Y");
+            String image = "https://user-images.githubusercontent.com/76515226/140890775-30641b72-226a-4068-8a0a-9a306e8c68b4.png";
+
+            kakaoUser = new User(email, encodedPassword, nickname, image, UserRole.USER, kakaoId, "Y");
             userRepository.save(kakaoUser);
         }
         return kakaoUser;

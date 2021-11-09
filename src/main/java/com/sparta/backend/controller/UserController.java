@@ -1,10 +1,12 @@
 package com.sparta.backend.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.sparta.backend.domain.User;
 import com.sparta.backend.dto.request.user.*;
 import com.sparta.backend.dto.response.CustomResponseDto;
 import com.sparta.backend.dto.response.user.GetUserInfoResponseDto;
 import com.sparta.backend.dto.response.user.UserInfoResponseDto;
+import com.sparta.backend.security.JwtTokenProvider;
 import com.sparta.backend.security.UserDetailsImpl;
 import com.sparta.backend.service.KakaoUserService;
 import com.sparta.backend.service.UserService;
@@ -26,6 +28,7 @@ public class UserController {
 
     private final UserService userService;
     private final KakaoUserService kakaoUserService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     // 회원가입 요청
     @PostMapping("/user/signup")
@@ -45,10 +48,12 @@ public class UserController {
 
         int result = userService.validCheckEmail(requestDto.getEmail());
 
-        if (result > 0) {
+        if (result == 0) {
+            return new CustomResponseDto<>(1, "사용할 수 있는 이메일입니다", "");
+        } else if (result == 1) {
             return new CustomResponseDto<>(-1, "이미 존재하는 이메일입니다", "");
         } else {
-            return new CustomResponseDto<>(1, "사용할 수 있는 이메일입니다", "");
+            return new CustomResponseDto<>(-1, "이메일 형식이 아닙니다", "");
         }
     }
 
@@ -60,10 +65,12 @@ public class UserController {
 
         int result = userService.validCheckNickname(requestDto.getNickname());
 
-        if (result > 0) {
+        if (result == 0) {
+            return new CustomResponseDto<>(1, "사용할 수 있는 닉네임입니다", "");
+        } else if (result == 1) {
             return new CustomResponseDto<>(-1, "이미 존재하는 닉네임입니다", "");
         } else {
-            return new CustomResponseDto<>(1, "사용할 수 있는 닉네임입니다", "");
+            return new CustomResponseDto<>(-1, "잘못된 닉네임 형식입니다", "");
         }
     }
 
@@ -81,9 +88,15 @@ public class UserController {
     @GetMapping("/user/kakao/callback")
     public CustomResponseDto<?> kakaoLogin(@RequestParam String code) throws JsonProcessingException {
 
-        kakaoUserService.kakaoLogin(code);
+        User kakaoUser = kakaoUserService.kakaoLogin(code);
 
-        return new CustomResponseDto<>(1, "로그인 성공", "");
+        String token = jwtTokenProvider.createToken(kakaoUser.getEmail());
+        String nickname = kakaoUser.getNickname();
+        String image = kakaoUser.getImage();
+
+        GetUserInfoResponseDto responseDto = new GetUserInfoResponseDto(token, nickname, image);
+
+        return new CustomResponseDto<>(1, "로그인 성공", responseDto);
     }
 
     // 회원 정보 조회
@@ -99,9 +112,7 @@ public class UserController {
     @PutMapping("/user/info")
     public CustomResponseDto<?> updateUser(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody UpdateUserRequestDto requestDto) throws IOException {
 
-        Long userId = userDetails.getUser().getId();
-
-        userService.updateUser(userId, requestDto);
+        userService.updateUser(userDetails, requestDto);
 
         return new CustomResponseDto<>(1, "회원 정보 수정 성공", "");
     }
@@ -110,9 +121,7 @@ public class UserController {
     @PutMapping("/user/delete")
     public CustomResponseDto<?> deleteUser(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody DeleteUserRequestDto requestDto) {
 
-        Long userId = userDetails.getUser().getId();
-
-        userService.deleteUser(userId, requestDto);
+        userService.deleteUser(userDetails, requestDto);
 
         return new CustomResponseDto<>(1, "회원 탈퇴 성공", "");
     }
