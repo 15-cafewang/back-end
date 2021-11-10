@@ -73,10 +73,10 @@ public class ReviewServiceImpl implements ReviewService {
                 String image = review.getImage();
                 String content = review.getContent();
                 int star = review.getStar();
-                LocalDateTime regdate = review.getRegDate();
+                LocalDateTime regDate = review.getRegDate();
 
                 GetReviewResponseDto responseDto =
-                        new GetReviewResponseDto(reviewId, title, nickname, image, content, star, regdate);
+                        new GetReviewResponseDto(reviewId, title, nickname, image, content, star, regDate);
 
                 responseDtoList.add(responseDto);
             }
