@@ -24,6 +24,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -123,9 +124,8 @@ public class KakaoUserService {
         User kakaoUser = userRepository.findByKakaoId(kakaoId)
                 .orElse(null);
         if (kakaoUser == null) {
-            // 회원가입
-            // username: kakao nickname
-            String nickname = kakaoUserInfo.getNickname();
+
+            String nickname = nicknameGenerator();
 
             // password: random UUID
             String password = UUID.randomUUID().toString();
@@ -149,5 +149,19 @@ public class KakaoUserService {
         UserDetails userDetails = new UserDetailsImpl(kakaoUser);
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    // 닉네임 생성기
+    public String nicknameGenerator() {
+
+        String nickname =  "user" + (int) (Math.random() * 10000 + 1);
+
+        Optional<User> foundNickname = userRepository.findByNickname(nickname);
+
+        if (foundNickname.isPresent()) {
+            nicknameGenerator();
+        }
+
+        return nickname;
     }
 }
