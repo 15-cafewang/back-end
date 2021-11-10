@@ -207,4 +207,102 @@ class UserTest {
         }
     }
 
+    @Nested
+    @DisplayName("닉네임 검증 테스트")
+    class NicknameTest {
+
+        @Nested
+        @DisplayName("성공 케이스")
+        class NicknameSuccess {
+
+            @Test
+            @DisplayName("숫자만 사용하는 경우")
+            void nicknameSuccess_onlyDigit() {
+
+                // given
+                String nickname = "12345678";
+
+                // when then
+                assertThat(UserValidator.validateNickname(nickname)).isTrue();
+            }
+
+            @Test
+            @DisplayName("영문만 사용하는 경우")
+            void nicknameSuccess_onlyEnglish() {
+
+                // given
+                String nickname = "nickName";
+
+                // when then
+                assertThat(UserValidator.validateNickname(nickname)).isTrue();
+            }
+
+            @Test
+            @DisplayName("한글만 사용하는 경우")
+            void nicknameSuccess_onlyKorean() {
+
+                // given
+                String nickname = "한글도가능";
+
+                // when then
+                assertThat(UserValidator.validateNickname(nickname)).isTrue();
+            }
+
+            @Test
+            @DisplayName("복합으로 사용하는 경우")
+            void nicknameSuccess_mixed() {
+
+                // given
+                String nickname = "qW무야호123";
+
+                // when then
+                assertThat(UserValidator.validateNickname(nickname)).isTrue();
+            }
+        }
+
+        @Nested
+        @DisplayName("실패 케이스")
+        class NicknameFail {
+
+            @Test
+            @DisplayName("길이가 2보다 작은 경우")
+            void nicknameFail_lessThan2() {
+
+                // given
+                String nickname = "1";
+
+                // when then
+                assertThatThrownBy(() -> {
+                    UserValidator.validateNickname(nickname);
+                }).isInstanceOf(IllegalArgumentException.class);
+            }
+
+            @Test
+            @DisplayName("길이가 8보다 큰 경우")
+            void nicknameFail_moreThan8() {
+
+                // given
+                String nickname = "asdqwe121";
+
+                // when then
+                assertThatThrownBy(() -> {
+                    UserValidator.validateNickname(nickname);
+                }).isInstanceOf(IllegalArgumentException.class);
+            }
+
+            @Test
+            @DisplayName("특수문자를 포함한 경우")
+            void nicknameFail_withSpecialSymbol() {
+
+                // given
+                String nickname = "qwe123@";
+
+                // when then
+                assertThatThrownBy(() -> {
+                    UserValidator.validateNickname(nickname);
+                }).isInstanceOf(IllegalArgumentException.class);
+            }
+        }
+    }
+
 }
