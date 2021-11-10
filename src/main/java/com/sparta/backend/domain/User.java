@@ -115,6 +115,7 @@ public class User extends BaseEntity {
 
     // 정보 수정
     public void changeProfile(String nickname, String image) {
+        validateNickname(nickname);
         this.nickname = nickname;
         this.image = image;
     }
