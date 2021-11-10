@@ -138,7 +138,7 @@ public class RecipeService {
         LocalDateTime regDate = recipe.getRegDate();
         int likeCount = recipe.getRecipeLikesList().size();
 //        String image = recipe.getImage();
-
+        Integer price = recipe.getPrice();
         Optional<RecipeLikes> foundRecipeLike = recipeLikesRepository.findByRecipeIdAndUserId(recipe.getId(),userDetails.getUser().getId());
         Boolean likeStatus = foundRecipeLike.isPresent();
 
@@ -148,7 +148,7 @@ public class RecipeService {
         List<String> images =new ArrayList<>();
         recipe.getRecipeImagesList().forEach((recipeImage)->images.add(recipeImage.getImage()));
         RecipeDetailResponsetDto responsetDto = new RecipeDetailResponsetDto(
-                recipeId, nickname, title, content, regDate, likeCount, likeStatus, images, tagNames);
+                recipeId, nickname, title, content, regDate, likeCount, likeStatus, images, tagNames, price);
 
         return responsetDto;
     }
