@@ -95,17 +95,18 @@ public class RecipeControllerTest {
         mockPrincipal = new UsernamePasswordAuthenticationToken(testUserDetails, "", testUserDetails.getAuthorities());
     }
 
-    @Test
-    @DisplayName("레시피 등록")
-    void saveRecipe() throws Exception {
-        this.mockUserSetup();
-
-        MockMultipartFile image = new MockMultipartFile("image","imagefile.jpeg", "image/jpeg","<<jpeg data>>".getBytes());
-        mockMvc.perform(MockMultipartHttpServletRequestBuilder.("/recipes")
-                .file(image)
-                .param("title","this is title"))
-
-    }
+    //todo:
+//    @Test
+//    @DisplayName("레시피 등록")
+//    void saveRecipe() throws Exception {
+//        this.mockUserSetup();
+//src/test/java/com/sparta/backend/images/puppy1.jpg
+//        MockMultipartFile image = new MockMultipartFile("image","imagefile.jpeg", "image/jpeg","<<jpeg data>>".getBytes());
+//        mockMvc.perform(MockMultipartHttpServletRequestBuilder.("/recipes")
+//                .file(image)
+//                .param("title","this is title"))
+//
+//    }
 
 //    @Test
 //    @DisplayName("레시피등록-validator")
