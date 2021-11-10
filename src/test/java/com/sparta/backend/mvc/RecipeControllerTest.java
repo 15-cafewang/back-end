@@ -3,10 +3,12 @@ package com.sparta.backend.mvc;
 import com.sparta.backend.controller.RecipeController;
 import com.sparta.backend.domain.User;
 import com.sparta.backend.domain.UserRole;
+import com.sparta.backend.dto.request.recipes.PostRecipeRequestDto;
 import com.sparta.backend.security.UserDetailsImpl;
 import com.sparta.backend.security.WebSecurityConfig;
 import com.sparta.backend.service.recipe.RecipeService;
 import com.sparta.backend.service.recipe.TagService;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +18,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,6 +32,12 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.MultiValueMapAdapter;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -37,7 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.security.Principal;
-import java.util.Arrays;
+import java.util.*;
 
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
@@ -64,6 +73,9 @@ public class RecipeControllerTest {
     @MockBean
     TagService tagService;
 
+    @Autowired
+    private Validator validatorInjected;
+
     @BeforeEach
     public void setup() {
         mockMvc = MockMvcBuilders.webAppContextSetup(context)
@@ -87,17 +99,38 @@ public class RecipeControllerTest {
     @DisplayName("레시피 등록")
     void saveRecipe() throws Exception {
         this.mockUserSetup();
-        InputStream is = this.getClass().getResourceAsStream("/images/puppyy1.jpg");
-        MockMultipartFile mockMultipartFile = new MockMultipartFile("image","test.jpg","text/plain","hihi".getBytes());
-        MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/recipes");
-        builder.with(request -> {request.setMethod("POST"); return request;});
 
-        mockMvc.perform(builder.file(mockMultipartFile)
-                        .param("title","this is title")
-                        .param("content","this is content")
-                        .principal(mockPrincipal)
-                )
-                .andExpect(status().isOk());
+        MockMultipartFile image = new MockMultipartFile("image","imagefile.jpeg", "image/jpeg","<<jpeg data>>".getBytes());
+        mockMvc.perform(MockMultipartHttpServletRequestBuilder.("/recipes")
+                .file(image)
+                .param("title","this is title"))
 
     }
+
+//    @Test
+//    @DisplayName("레시피등록-validator")
+//    void validTest(){
+//        //given
+//        String title = "제목입니다";
+//        String content = "내용입니다";
+//        Integer price = 5000;
+//        List<String> tag = Arrays.asList("tagA","tagB");
+//        MultipartFile[] image = null;
+//        PostRecipeRequestDto requestDto = new PostRecipeRequestDto(title,content,price,tag, image);
+//
+//        //when
+//        Set<ConstraintViolation<PostRecipeRequestDto>> validate = validatorInjected.validate(requestDto);
+//
+//        // then
+//        Iterator<ConstraintViolation<PostRecipeRequestDto>> iterator = validate.iterator();
+//        List<String> messages = new ArrayList<>();
+//        while (iterator.hasNext()) {
+//            ConstraintViolation<PostRecipeRequestDto> next = iterator.next();
+//            messages.add(next.getMessage());
+//            System.out.println("message = " + next.getMessage());
+//        }
+//
+//        Assertions.assertThat(messages).contains("제목은 필수 입력 값입니다.","레시피 형식에 맞지 않음");
+//        assertEquals("제목이 입력되지 않았습니다.",  exception.getMessage());
+//    }
 }
