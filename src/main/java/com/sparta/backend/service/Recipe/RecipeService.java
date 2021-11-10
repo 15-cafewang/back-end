@@ -153,11 +153,12 @@ public class RecipeService {
         return responsetDto;
     }
 
-    public Page<RecipeListResponseDto> getRecipesByPage(int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails) {
+    public Page<RecipeListResponseDto> getRecipesByPage(int page, int size, boolean isAsc, String sortBy, Boolean sortByLike ,UserDetailsImpl userDetails) {
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(direction, sortBy);
         Pageable pageable = PageRequest.of(page,size,sort);
-        Page<Recipe> recipes = recipeRepository.findAll(pageable);
+
+        Page<Recipe> recipes = sortByLike? recipeRepository.findRecipesOrderByLikeCountDesc(pageable): recipeRepository.findAll(pageable);
 
         Page<RecipeListResponseDto> responseDtos = recipes.map((recipe)->new RecipeListResponseDto(recipe, userDetails,recipeLikesRepository));
 

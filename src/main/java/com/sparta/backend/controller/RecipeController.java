@@ -79,10 +79,11 @@ public class RecipeController {
                                            @RequestParam("size") int size,
                                            @RequestParam("isAsc") boolean isAsc,
                                            @RequestParam("sortBy") String sortBy,
+                                           @RequestParam("sortByLike") Boolean sortByLike,
                                            @AuthenticationPrincipal UserDetailsImpl userDetails){
         checkLogin(userDetails);
         page = page-1;
-        Page<RecipeListResponseDto> recipesByPage = recipeService.getRecipesByPage(page, size, isAsc, sortBy, userDetails);
+        Page<RecipeListResponseDto> recipesByPage = recipeService.getRecipesByPage(page, size, isAsc, sortBy,sortByLike, userDetails);
         return new CustomResponseDto<>(1, "레시피 리스트 성공", recipesByPage);
     }
 
