@@ -23,7 +23,7 @@ public class SignupRequestDto {
     private String passwordCheck;
 
     @NotBlank(message = "닉네임은 필수 입력 값입니다.")
-    @Pattern(regexp = "^([^\\W]{2,8})$",
-            message = "닉네임은 2글자 이상 8글자 이하면서 특수문자를 포함하지 않아야 합니다.")
+    @Pattern(regexp = "^([0-9a-zA-Z가-힣]{2,8})$",
+            message = "닉네임은 특수문자를 포함하지 않은 2자 이상 8자 이하여야합니다.")
     private String nickname;
 }
