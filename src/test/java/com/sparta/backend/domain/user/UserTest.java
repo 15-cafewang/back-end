@@ -108,4 +108,103 @@ class UserTest {
         }
     }
 
+    @Nested
+    @DisplayName("비밀번호 검증 테스트")
+    class PasswordTest {
+
+        @Test
+        @DisplayName("성공 테스트")
+        void passwordSuccess() {
+
+            // given
+            String password = "qweQWE123!@#";
+
+            // when then
+            assertThat(UserValidator.validatePassword(password)).isTrue();
+        }
+
+        @Nested
+        @DisplayName("실패 케이스")
+        class PasswordFail {
+
+            @Test
+            @DisplayName("길이가 8보다 작은 경우")
+            void passwordFail_lessThan8() {
+
+                // given
+                String password = "qweQW1!";
+
+                // when then
+                assertThatThrownBy(() -> {
+                    UserValidator.validatePassword(password);
+                }).isInstanceOf(IllegalArgumentException.class);
+            }
+
+            @Test
+            @DisplayName("길이가 20보다 큰 경우")
+            void passwordFail_moreThan20() {
+
+                // given
+                String password = "qqwweeQQWWEE112233!!@";
+
+                // when then
+                assertThatThrownBy(() -> {
+                    UserValidator.validatePassword(password);
+                }).isInstanceOf(IllegalArgumentException.class);
+            }
+
+            @Test
+            @DisplayName("숫자가 포함되지 않은 경우")
+            void passwordFail_withoutDigit() {
+
+                // given
+                String password = "qweQWE!@#";
+
+                // when then
+                assertThatThrownBy(() -> {
+                    UserValidator.validatePassword(password);
+                }).isInstanceOf(IllegalArgumentException.class);
+            }
+
+            @Test
+            @DisplayName("영문 소문자가 포함되지 않은 경우")
+            void passwordFail_withoutLowerCase() {
+
+                // given
+                String password = "QWE123!@#";
+
+                // when then
+                assertThatThrownBy(() -> {
+                    UserValidator.validatePassword(password);
+                }).isInstanceOf(IllegalArgumentException.class);
+            }
+
+            @Test
+            @DisplayName("영문 대문자가 포함되지 않은 경우")
+            void passwordFail_withoutUpperCase() {
+
+                // given
+                String password = "qwe123!@#";
+
+                // when then
+                assertThatThrownBy(() -> {
+                    UserValidator.validatePassword(password);
+                }).isInstanceOf(IllegalArgumentException.class);
+            }
+
+            @Test
+            @DisplayName("특수문자가 포함되지 않은 경우")
+            void passwordFail_withoutSpecialSymbol  () {
+
+                // given
+                String password = "qweQWE123";
+
+                // when then
+                assertThatThrownBy(() -> {
+                    UserValidator.validatePassword(password);
+                }).isInstanceOf(IllegalArgumentException.class);
+            }
+        }
+    }
+
 }
