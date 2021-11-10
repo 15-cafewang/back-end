@@ -155,24 +155,11 @@ class UserValidatorTest {
             }
 
             @Test
-            @DisplayName("영문 소문자가 포함되지 않은 경우")
+            @DisplayName("영문 대소문자가 포함되지 않은 경우")
             void passwordFail_withoutLowerCase() {
 
                 // given
-                String password = "QWE123!@#";
-
-                // when then
-                assertThatThrownBy(() -> {
-                    validatePassword(password);
-                }).isInstanceOf(IllegalArgumentException.class);
-            }
-
-            @Test
-            @DisplayName("영문 대문자가 포함되지 않은 경우")
-            void passwordFail_withoutUpperCase() {
-
-                // given
-                String password = "qwe123!@#";
+                String password = "123123!@#";
 
                 // when then
                 assertThatThrownBy(() -> {
