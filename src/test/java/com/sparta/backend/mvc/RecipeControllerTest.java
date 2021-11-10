@@ -38,8 +38,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
@@ -90,23 +89,29 @@ public class RecipeControllerTest {
         String email = "hope@sparta.com";
         UserRole role = UserRole.USER;
         String image = "https://user-images.githubusercontent.com/76515226/140890775-30641b72-226a-4068-8a0a-9a306e8c68b4.png";
-        User testUser = new User(email, password,nickname, image, role, "Y");
+        User testUser = new User(email, password, nickname, image, role, "Y");
         UserDetailsImpl testUserDetails = new UserDetailsImpl(testUser);
         mockPrincipal = new UsernamePasswordAuthenticationToken(testUserDetails, "", testUserDetails.getAuthorities());
     }
 
     //todo:
-//    @Test
-//    @DisplayName("레시피 등록")
-//    void saveRecipe() throws Exception {
-//        this.mockUserSetup();
-//src/test/java/com/sparta/backend/images/puppy1.jpg
-//        MockMultipartFile image = new MockMultipartFile("image","imagefile.jpeg", "image/jpeg","<<jpeg data>>".getBytes());
-//        mockMvc.perform(MockMultipartHttpServletRequestBuilder.("/recipes")
-//                .file(image)
-//                .param("title","this is title"))
-//
-//    }
+    @Test
+    @DisplayName("레시피 등록")
+    void saveRecipe() throws Exception {
+        this.mockUserSetup();
+        MockMultipartFile image = new MockMultipartFile("image", "imagefile.jpeg", "image/jpg", new FileInputStream("src/test/java/com/sparta/backend/images/puppy1.jpg"));
+        MockMultipartFile image2 = new MockMultipartFile("image", "imagefile2.jpeg", "image/jpg", new FileInputStream("src/test/java/com/sparta/backend/images/puppy1.jpg"));
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/recipes")
+                        .file(image)
+                        .file(image2)
+//                        .param("title", "this is title")
+                        .param("content", "this is content")
+                        .principal(mockPrincipal))
+//                .andExpect(status().isOk());
+                .andExpect(status().is4xxClientError())
+                .andExpect(result -> assertEquals("제목은 필수입니다.",result.getResolvedException().getMessage()));
+
+    }
 
 //    @Test
 //    @DisplayName("레시피등록-validator")
@@ -122,7 +127,7 @@ public class RecipeControllerTest {
 //        //when
 //        Set<ConstraintViolation<PostRecipeRequestDto>> validate = validatorInjected.validate(requestDto);
 //
-//        // then
+        // then
 //        Iterator<ConstraintViolation<PostRecipeRequestDto>> iterator = validate.iterator();
 //        List<String> messages = new ArrayList<>();
 //        while (iterator.hasNext()) {

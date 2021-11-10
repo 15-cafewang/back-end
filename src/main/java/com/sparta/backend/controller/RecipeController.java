@@ -16,9 +16,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -31,17 +33,18 @@ public class RecipeController {
 
     //레시피 등록
     @PostMapping("/recipes")
-    public CustomResponseDto<?> postRecipe(@ModelAttribute PostRecipeRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails, Errors errors) throws IOException {
+    public CustomResponseDto<?> postRecipe(PostRecipeRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         //todo:IOException처리
+//        System.out.println("레시피 테스트:"+requestDto.getTitle()+"///"+ requestDto.getContent()+"///"+ requestDto.getImage());
+//        System.out.println("테스트 title:"+requestDto.getTitle());
+//        System.out.println("테스트 image:"+ Arrays.toString(requestDto.getImage()));
         checkLogin(userDetails);
-//        PostRecipeRequestDtoValidator.validateRecipeInput(requestDto);
-//        if(errors.hasErrors()){
-//            return new CustomResponseDto<>(-1, "레시피 형식에 맞지 않음", errors.getAllErrors());
-//        }
-        //레시피 먼저 생성, 등록
+        PostRecipeRequestDtoValidator.validateRecipeInput(requestDto);
+
+//        레시피 먼저 생성, 등록
         Recipe savedRecipe = recipeService.saveRecipe(requestDto, userDetails.getUser());
-        //태그 등록할때 저장한 레시피객체도 넣어줌
-//        System.out.println(requestDto.getTag());
+//        태그 등록할때 저장한 레시피객체도 넣어줌
+        System.out.println(requestDto.getTag());
         tagService.saveTags(requestDto.getTag(), savedRecipe);
 
         return new CustomResponseDto<>(1, "레시피 등록 성공", "");
