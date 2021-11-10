@@ -12,5 +12,14 @@ public class UserValidator {
 
         return true;
     }
+
+    public static boolean validatePassword(String password) {
+
+        if (!Pattern.matches("^((?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[\\W]).{8,20})$", password)) {
+            throw new IllegalArgumentException("비밀번호는 숫자, 영문 소문자, 대문자, 특수문자를 하나씩 포함한 8자이상 20자 이하여야합니다");
+        }
+
+        return true;
+    }
     
 }
