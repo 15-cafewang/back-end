@@ -4,11 +4,14 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.sparta.backend.domain.Recipe.Recipe;
 import com.sparta.backend.domain.Recipe.RecipeComment;
 import com.sparta.backend.domain.Recipe.RecipeLikes;
+import com.sparta.backend.validator.UserValidator;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import java.util.List;
+
+import static com.sparta.backend.validator.UserValidator.*;
 
 @ToString
 @Getter
@@ -79,6 +82,9 @@ public class User extends BaseEntity {
 
     @Builder
     public User(String email, String password, String nickname, String image, UserRole role, String status) {
+        validateEmail(email);
+        validatePassword(password);
+        validateNickname(nickname);
         this.email = email;
         this.password = password;
         this.nickname = nickname;
