@@ -39,7 +39,7 @@ public interface RecipeRepository extends JpaRepository<Recipe,Long> {
     //특정기간&인기레시피 - id만 가져오기..top3..native sql
     @Query(value="SELECT r.recipe_id " +
             "FROM recipe r JOIN recipe_likes l ON r.recipe_id = l.recipe_id " +
-            "WHERE l.regdate BETWEEN :startDate AND :endDate " +
+            "WHERE l.regDate BETWEEN :startDate AND :endDate " +
             "GROUP BY r.recipe_id order by count(l.recipe_id) desc limit 3",
     nativeQuery = true)
     List<Long> findPopularRecipeId2(LocalDateTime startDate, LocalDateTime endDate);
@@ -63,11 +63,11 @@ public interface RecipeRepository extends JpaRepository<Recipe,Long> {
 //            "in " +
 //            "(SELECT r.recipe_id " +
 //            "FROM recipe r JOIN recipe_likes l ON r.recipe_id = l.recipe_id " +
-//            "WHERE l.regdate BETWEEN '2021-11-01' AND '2021-11-08' " +
+//            "WHERE l.regDate BETWEEN '2021-11-01' AND '2021-11-08' " +
 //            "GROUP BY r.recipe_id order by count(l.recipe_id) desc) " +
 //            "ORDER BY FIELD(r2.recipe_id,(SELECT r.recipe_id " +
 //            "                             FROM recipe r JOIN recipe_likes l ON r.recipe_id = l.recipe_id " +
-//            "                             WHERE l.regdate BETWEEN :startDate AND :endDate " +
+//            "                             WHERE l.regDate BETWEEN :startDate AND :endDate " +
 //            "                             GROUP BY r.recipe_id order by count(l.recipe_id) desc))"
 //    ,nativeQuery = true)
 //    List<Recipe> findPopularRecipe3(LocalDateTime startDate, LocalDateTime endDdate);

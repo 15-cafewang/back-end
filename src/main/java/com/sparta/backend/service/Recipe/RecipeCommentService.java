@@ -42,7 +42,7 @@ public class RecipeCommentService {
 
     //레시피에 대한 댓글들 조회- 리스트로 리턴
 //    public List<RecipeCommentResponseDto> getComment(Long recipeId, UserDetailsImpl userDetails){
-//        List<RecipeComment> recipeCommentList = commentRepository.findAllByRecipeIdOrderByRegDateDesc(recipeId);
+//        List<RecipeComment> recipeCommentList = commentRepository.findAllByRecipeIdOrderByregDateDesc(recipeId);
 //        List<RecipeCommentResponseDto> responseDtoList = new ArrayList<>();
 //
 //        recipeCommentList.forEach(comment ->

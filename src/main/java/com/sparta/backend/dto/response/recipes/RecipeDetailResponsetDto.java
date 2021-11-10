@@ -13,7 +13,7 @@ public class RecipeDetailResponsetDto {
     private String nickname;
     private String title;
     private String content;
-    private LocalDateTime regdate;
+    private LocalDateTime regDate;
     private int likeCount;
     private boolean likeStatus;
     private List<String> images;
