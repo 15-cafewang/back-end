@@ -125,7 +125,7 @@ public class KakaoUserService {
                 .orElse(null);
         if (kakaoUser == null) {
 
-            String nickname = nicknameGenerator();
+            String nickname = UUID.randomUUID().toString();
 
             // password: random UUID
             String password = UUID.randomUUID().toString();
@@ -151,17 +151,4 @@ public class KakaoUserService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
-    // 닉네임 생성기
-    public String nicknameGenerator() {
-
-        String nickname =  "user" + (int) (Math.random() * 10000 + 1);
-
-        Optional<User> foundNickname = userRepository.findByNickname(nickname);
-
-        if (foundNickname.isPresent()) {
-            nicknameGenerator();
-        }
-
-        return nickname;
-    }
 }
