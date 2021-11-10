@@ -22,6 +22,10 @@ public interface RecipeRepository extends JpaRepository<Recipe,Long> {
     @Query("select r from Recipe r where r.title like concat('%',:keyword,'%') or r.content like concat('%',:keyword,'%')")
     Page<Recipe> findAllByTitleOrContent(String keyword, Pageable pageable);
 
+    //레시피 목록조회 좋아요 순
+    @Query("select r from Recipe r left join r.recipeLikesList l group by r.id order by count(l.recipe) desc")
+    Page<Recipe> findRecipesOrderByLikeCountDesc(Pageable pageable);
+
 //  특정기간&인기레시피 - 원하는 칼럼만 가져오는 jpql
     @Query("select r.id as recipeId, r.title as title, r.content as content , r.price as price " +
             "from Recipe r join r.recipeLikesList l " +

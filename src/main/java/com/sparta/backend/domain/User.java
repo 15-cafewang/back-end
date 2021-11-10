@@ -83,7 +83,6 @@ public class User extends BaseEntity {
     @Builder
     public User(String email, String password, String nickname, String image, UserRole role, String status) {
         validateEmail(email);
-//        validatePassword(password);
         validateNickname(nickname);
         this.email = email;
         this.password = password;
