@@ -107,11 +107,16 @@ public class UserService {
                 () -> new NullPointerException("존재하지 않는 회원입니다")
         );
 
-        Optional<User> foundNickname = userRepository.findByNickname(requestDto.getNickname());
+        // 닉네임을 변경하지 않아도 dto에 값이 들어오게 되는데 현재 닉네임과 다를 경우에만 수정
+        if (!requestDto.getNickname().equals(user.getNickname())) {
 
-        if (foundNickname.isPresent()) {
-            throw new IllegalArgumentException("이미 사용중인 닉네임 입니다");
+            Optional<User> foundNickname = userRepository.findByNickname(requestDto.getNickname());
+
+            if (foundNickname.isPresent()) {
+                throw new IllegalArgumentException("이미 사용중인 닉네임 입니다");
+            }
         }
+
 
         String imageUrl = user.getImage();
 
