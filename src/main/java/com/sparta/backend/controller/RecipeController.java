@@ -1,21 +1,26 @@
 package com.sparta.backend.controller;
 
-import com.sparta.backend.domain.Recipe.Recipe;
+import com.sparta.backend.domain.recipe.Recipe;
 import com.sparta.backend.dto.request.recipes.PostRecipeRequestDto;
 import com.sparta.backend.dto.response.CustomResponseDto;
 import com.sparta.backend.dto.response.recipes.RecipeDetailResponsetDto;
 import com.sparta.backend.dto.response.recipes.RecipeListResponseDto;
 import com.sparta.backend.exception.CustomErrorException;
 import com.sparta.backend.security.UserDetailsImpl;
-import com.sparta.backend.service.Recipe.RecipeService;
-import com.sparta.backend.service.Recipe.TagService;
+import com.sparta.backend.service.recipe.RecipeService;
+import com.sparta.backend.service.recipe.TagService;
+import com.sparta.backend.validator.PostRecipeRequestDtoValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -30,11 +35,16 @@ public class RecipeController {
     @PostMapping("/recipes")
     public CustomResponseDto<?> postRecipe(PostRecipeRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         //todo:IOException처리
+//        System.out.println("레시피 테스트:"+requestDto.getTitle()+"///"+ requestDto.getContent()+"///"+ requestDto.getImage());
+//        System.out.println("테스트 title:"+requestDto.getTitle());
+//        System.out.println("테스트 image:"+ Arrays.toString(requestDto.getImage()));
         checkLogin(userDetails);
-        //레시피 먼저 생성, 등록
+        PostRecipeRequestDtoValidator.validateRecipeInput(requestDto);
+
+//        레시피 먼저 생성, 등록
         Recipe savedRecipe = recipeService.saveRecipe(requestDto, userDetails.getUser());
-        //태그 등록할때 저장한 레시피객체도 넣어줌
-//        System.out.println(requestDto.getTag());
+//        태그 등록할때 저장한 레시피객체도 넣어줌
+        System.out.println(requestDto.getTag());
         tagService.saveTags(requestDto.getTag(), savedRecipe);
 
         return new CustomResponseDto<>(1, "레시피 등록 성공", "");
