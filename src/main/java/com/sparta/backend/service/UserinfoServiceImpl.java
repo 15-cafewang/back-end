@@ -2,7 +2,7 @@ package com.sparta.backend.service;
 
 import com.sparta.backend.domain.Board;
 import com.sparta.backend.domain.Follow;
-import com.sparta.backend.domain.Recipe.Recipe;
+import com.sparta.backend.domain.recipe.Recipe;
 import com.sparta.backend.domain.User;
 import com.sparta.backend.dto.response.userinfo.*;
 import com.sparta.backend.repository.*;

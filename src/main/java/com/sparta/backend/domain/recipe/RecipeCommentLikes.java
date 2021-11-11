@@ -1,4 +1,4 @@
-package com.sparta.backend.domain.Recipe;
+package com.sparta.backend.domain.recipe;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sparta.backend.domain.BaseEntity;

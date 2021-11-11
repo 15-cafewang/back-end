@@ -1,13 +1,13 @@
 package com.sparta.backend.controller;
 
-import com.sparta.backend.domain.Recipe.RecipeComment;
+import com.sparta.backend.domain.recipe.RecipeComment;
 import com.sparta.backend.dto.request.recipes.PostCommentRequestDto;
 import com.sparta.backend.dto.request.recipes.RecipeCommentUpdateRequestDto;
 import com.sparta.backend.dto.response.CustomResponseDto;
 import com.sparta.backend.dto.response.recipes.RecipeCommentResponseDto;
 import com.sparta.backend.exception.CustomErrorException;
 import com.sparta.backend.security.UserDetailsImpl;
-import com.sparta.backend.service.Recipe.RecipeCommentService;
+import com.sparta.backend.service.recipe.RecipeCommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

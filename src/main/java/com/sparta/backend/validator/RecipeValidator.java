@@ -3,7 +3,7 @@ package com.sparta.backend.validator;
 import com.sparta.backend.domain.User;
 
 public class RecipeValidator {
-    public static void validateRecipeInput(String title, String content, User user){
+    public static void validateRecipeInput(String title, String content, Integer price, User user){
         if(user == null){
             throw  new IllegalArgumentException("로그인 되지 않은 사용자입니다");
         }
@@ -22,5 +22,10 @@ public class RecipeValidator {
         if(content.length()>1000){
             throw new IllegalArgumentException("내용의 길이가 1000자를 초과하였습니다");
         }
+
+        if( price!= null && price < 0){
+            throw new IllegalArgumentException("가격은 0보다 작을 수 없습니다.");
+        }
+
     }
 }

@@ -3,7 +3,7 @@ package com.sparta.backend.domain;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sparta.backend.dto.request.board.PostBoardRequestDto;
-import com.sparta.backend.dto.request.board.PutBoardRequestDto;
+import com.sparta.backend.validator.BoardValidator;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -46,6 +46,16 @@ public class Board extends BaseEntity {
     private List<BoardLikes> boardLikesList;
 
     public Board(PostBoardRequestDto requestDto, User user) {
+        BoardValidator.boardValidatorRequestDto(requestDto, user);
+        this.title = requestDto.getTitle();
+        this.content = requestDto.getContent();
+        this.user = user;
+    }
+
+    //test용 constructor
+    public Board(Long id, PostBoardRequestDto requestDto, User user) {
+        BoardValidator.boardValidatorBoardId(id, requestDto, user);
+        this.id = id;
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
         this.user = user;

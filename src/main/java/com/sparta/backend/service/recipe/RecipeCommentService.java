@@ -1,8 +1,8 @@
-package com.sparta.backend.service.Recipe;
+package com.sparta.backend.service.recipe;
 
-import com.sparta.backend.domain.Recipe.RecipeComment;
-import com.sparta.backend.domain.Recipe.Recipe;
-import com.sparta.backend.domain.Recipe.RecipeCommentLikes;
+import com.sparta.backend.domain.recipe.RecipeComment;
+import com.sparta.backend.domain.recipe.Recipe;
+import com.sparta.backend.domain.recipe.RecipeCommentLikes;
 import com.sparta.backend.domain.User;
 import com.sparta.backend.dto.request.recipes.PostCommentRequestDto;
 import com.sparta.backend.dto.request.recipes.RecipeCommentUpdateRequestDto;
@@ -20,8 +20,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Service

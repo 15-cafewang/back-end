@@ -18,4 +18,5 @@ public class RecipeDetailResponsetDto {
     private boolean likeStatus;
     private List<String> images;
     private List<String> tags;
+    private Integer price;
 }
