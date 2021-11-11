@@ -23,8 +23,11 @@ public class UserinfoServiceImpl implements UserinfoService {
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
     private final RecipeRepository recipeRepository;
+    private final RecipeLikesRepository recipeLikesRepository;
     private final BoardRepository boardRepository;
+    private final BoardLikesRepository boardLikesRepository;
 
+    // 마이페이지
     @Override
     public GetUserinfoResponseDto getUserInfo(UserDetailsImpl userDetails, String nickname) {
 
@@ -76,7 +79,7 @@ public class UserinfoServiceImpl implements UserinfoService {
 
         Page<Recipe> recipeList = recipeRepository.findAllByUser(pageable, user);
 
-        return recipeList.map((recipe -> new GetRecipeListResponseDto(recipe, userDetails)));
+        return recipeList.map((recipe -> new GetRecipeListResponseDto(recipe, userDetails, recipeLikesRepository)));
     }
 
     // 내가 쓴 게시글 목록 조회
@@ -94,7 +97,7 @@ public class UserinfoServiceImpl implements UserinfoService {
 
         Page<Board> boardList = boardRepository.findAllByUser(pageable, user);
 
-        return boardList.map((board -> new GetBoardListResponseDto(board, userDetails)));
+        return boardList.map((board -> new GetBoardListResponseDto(board, userDetails, boardLikesRepository)));
     }
 
     // TODO: N+1 문제 해결
@@ -113,7 +116,7 @@ public class UserinfoServiceImpl implements UserinfoService {
 
         Page<Recipe> likedRecipeList = recipeRepository.findAllByRecipeLikesList(user.getId(), pageable);
 
-        return likedRecipeList.map(recipe -> new GetRecipeListResponseDto(recipe, userDetails));
+        return likedRecipeList.map(recipe -> new GetRecipeListResponseDto(recipe, userDetails, recipeLikesRepository));
     }
 
     // 내가 좋아요한 게시글 목록 조회
@@ -131,7 +134,7 @@ public class UserinfoServiceImpl implements UserinfoService {
 
         Page<Board> likedBoardList = boardRepository.findAllByBoardLikesList(user.getId(), pageable);
 
-        return likedBoardList.map(board -> new GetBoardListResponseDto(board, userDetails));
+        return likedBoardList.map(board -> new GetBoardListResponseDto(board, userDetails, boardLikesRepository));
     }
 
     // 팔로잉 목록 조회
