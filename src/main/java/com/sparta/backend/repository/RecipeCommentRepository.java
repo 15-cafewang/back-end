@@ -1,12 +1,11 @@
 package com.sparta.backend.repository;
 
-import com.sparta.backend.domain.Recipe.RecipeComment;
+import com.sparta.backend.domain.recipe.RecipeComment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface RecipeCommentRepository extends JpaRepository<RecipeComment,Long> {
     List<RecipeComment> findAllByRecipeIdOrderByRegDateDesc(Long recipeId);

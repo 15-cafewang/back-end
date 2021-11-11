@@ -1,19 +1,16 @@
 package com.sparta.backend.controller;
 
-import com.sparta.backend.domain.Recipe.Recipe;
-import com.sparta.backend.dto.queryInterface.PopularRecipeInterface;
 import com.sparta.backend.dto.response.CustomResponseDto;
 import com.sparta.backend.dto.response.recipes.RecipeListResponseDto;
 import com.sparta.backend.exception.CustomErrorException;
 import com.sparta.backend.security.UserDetailsImpl;
-import com.sparta.backend.service.Recipe.RecipeService;
+import com.sparta.backend.service.recipe.RecipeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController

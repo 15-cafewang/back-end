@@ -1,4 +1,4 @@
-package com.sparta.backend.domain.Recipe;
+package com.sparta.backend.domain.recipe;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -54,7 +54,7 @@ public class Recipe extends BaseEntity {
 
     public Recipe(String title, String content, Integer price, User user){
         //Edge케이스들 validation
-        RecipeValidator.validateRecipeInput(title,content,user);
+        RecipeValidator.validateRecipeInput(title,content,price,user);
         this.title = title;
         this.content = content;
         this.price = price;

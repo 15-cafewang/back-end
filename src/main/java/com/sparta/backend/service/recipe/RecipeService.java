@@ -1,11 +1,11 @@
-package com.sparta.backend.service.Recipe;
+package com.sparta.backend.service.recipe;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.sparta.backend.awsS3.S3Uploader;
-import com.sparta.backend.domain.Recipe.Recipe;
-import com.sparta.backend.domain.Recipe.RecipeImage;
-import com.sparta.backend.domain.Recipe.RecipeLikes;
+import com.sparta.backend.domain.recipe.Recipe;
+import com.sparta.backend.domain.recipe.RecipeImage;
+import com.sparta.backend.domain.recipe.RecipeLikes;
 import com.sparta.backend.domain.User;
 import com.sparta.backend.dto.request.recipes.PostRecipeRequestDto;
 import com.sparta.backend.dto.response.recipes.RecipeDetailResponsetDto;
@@ -16,6 +16,7 @@ import com.sparta.backend.repository.RecipeLikesRepository;
 import com.sparta.backend.repository.RecipeRepository;
 import com.sparta.backend.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -42,6 +43,21 @@ public class RecipeService {
     private final AmazonS3Client amazonS3Client;
     private final String bucket = "99final";
     private final RecipeImageRepository recipeImageRepository;
+
+    @Autowired
+    public RecipeService(
+            RecipeRepository recipeRepository,
+            RecipeLikesRepository recipeLikesRepository,
+            AmazonS3Client amazonS3Client,
+            S3Uploader s3Uploader,
+            RecipeImageRepository recipeImageRepository
+    ){
+        this.recipeRepository = recipeRepository;
+        this.recipeLikesRepository = recipeLikesRepository;
+        this.amazonS3Client = amazonS3Client;
+        this.s3Uploader = s3Uploader;
+        this.recipeImageRepository = recipeImageRepository;
+    }
 
     //레시피 저장
     public Recipe saveRecipe(PostRecipeRequestDto requestDto, User user) throws IOException {
