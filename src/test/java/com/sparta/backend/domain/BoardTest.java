@@ -31,7 +31,7 @@ class BoardTest {
             MockMultipartFile file1 = new MockMultipartFile(
                     "image", "choonsik1.png",
                     "multipart/form-data",
-                    new FileInputStream("src/main/resources/static/testImage/choonsik1.png")
+                    new FileInputStream("src/test/java/com/sparta/backend/images/choonsik1.png")
             );
             image = new MultipartFile[]{file1};
 
