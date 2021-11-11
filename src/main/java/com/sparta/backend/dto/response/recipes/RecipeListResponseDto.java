@@ -24,7 +24,7 @@ public class RecipeListResponseDto {
     private LocalDateTime regDate;
     private int commentCount;
     private int likeCount;
-    private int price;
+    private Integer price;
     private boolean likeStatus;
 
 
