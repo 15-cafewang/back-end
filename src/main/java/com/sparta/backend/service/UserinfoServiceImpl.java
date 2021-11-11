@@ -35,13 +35,17 @@ public class UserinfoServiceImpl implements UserinfoService {
 
         // 조회하는 회원이 로그인한 회원일 때
         if (nickname.equals(userDetails.getUser().getNickname())) {
+
             image = userDetails.getUser().getImage();
             followCount = followRepository.findAllByFromUser(userDetails.getUser()).size();
             followingCount = followRepository.findAllByToUser(userDetails.getUser()).size();
+
         } else { // 다른 회원일 때
+
             User foundUser = userRepository.findByNickname(nickname).orElseThrow(
                     () -> new NullPointerException("존재하지 않는 사용자입니다")
             );
+
             image = foundUser.getImage();
             followCount = followRepository.findAllByFromUser(foundUser).size();
             followingCount = followRepository.findAllByToUser(foundUser).size();
@@ -59,7 +63,12 @@ public class UserinfoServiceImpl implements UserinfoService {
 
     // 내가 쓴 레시피 목록 조회
     @Override
-    public Page<GetRecipeListResponseDto> getRecipeListByPage(int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails, String nickname) {
+    public Page<GetRecipeListResponseDto> getRecipeListByPage(int page,
+                                                              int size,
+                                                              boolean isAsc,
+                                                              String sortBy,
+                                                              String nickname,
+                                                              UserDetailsImpl userDetails) {
 
         Pageable pageable = getPageable(page, size, isAsc, sortBy);
 
@@ -72,7 +81,12 @@ public class UserinfoServiceImpl implements UserinfoService {
 
     // 내가 쓴 게시글 목록 조회
     @Override
-    public Page<GetBoardListResponseDto> getBoardListByPage(int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails, String nickname) {
+    public Page<GetBoardListResponseDto> getBoardListByPage(int page,
+                                                            int size,
+                                                            boolean isAsc,
+                                                            String sortBy,
+                                                            String nickname,
+                                                            UserDetailsImpl userDetails) {
 
         Pageable pageable = getPageable(page, size, isAsc, sortBy);
 
@@ -86,7 +100,12 @@ public class UserinfoServiceImpl implements UserinfoService {
     // TODO: N+1 문제 해결
     // 내가 좋아요한 레시피 목록 조회
     @Override
-    public Page<GetRecipeListResponseDto> getLikedRecipeListByPage(int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails, String nickname) {
+    public Page<GetRecipeListResponseDto> getLikedRecipeListByPage(int page,
+                                                                   int size,
+                                                                   boolean isAsc,
+                                                                   String sortBy,
+                                                                   String nickname,
+                                                                   UserDetailsImpl userDetails) {
 
         Pageable pageable = getPageable(page, size, isAsc, sortBy);
 
@@ -94,14 +113,17 @@ public class UserinfoServiceImpl implements UserinfoService {
 
         Page<Recipe> likedRecipeList = recipeRepository.findAllByRecipeLikesList(user.getId(), pageable);
 
-//        likedRecipeList.forEach(System.out::println);
-
         return likedRecipeList.map(recipe -> new GetRecipeListResponseDto(recipe, userDetails));
     }
 
     // 내가 좋아요한 게시글 목록 조회
     @Override
-    public Page<GetBoardListResponseDto> getLikedBoardListByPage(int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails, String nickname) {
+    public Page<GetBoardListResponseDto> getLikedBoardListByPage(int page,
+                                                                 int size,
+                                                                 boolean isAsc,
+                                                                 String sortBy,
+                                                                 String nickname,
+                                                                 UserDetailsImpl userDetails) {
 
         Pageable pageable = getPageable(page, size, isAsc, sortBy);
 
@@ -114,7 +136,12 @@ public class UserinfoServiceImpl implements UserinfoService {
 
     // 팔로잉 목록 조회
     @Override
-    public Page<GetFollowingListResponseDto> getFollowingListByPage(int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails, String nickname) {
+    public Page<GetFollowingListResponseDto> getFollowingListByPage(int page,
+                                                                    int size,
+                                                                    boolean isAsc,
+                                                                    String sortBy,
+                                                                    String nickname,
+                                                                    UserDetailsImpl userDetails) {
 
         Pageable pageable = getPageable(page, size, isAsc, sortBy);
 
@@ -122,14 +149,17 @@ public class UserinfoServiceImpl implements UserinfoService {
 
         Page<Follow> followingList = followRepository.findAllByFromUser(pageable, user);
 
-
-
         return followingList.map(GetFollowingListResponseDto::new);
     }
 
     // 팔로워 목록 조회
     @Override
-    public Page<GetFollowerListResponseDto> getFollowerListByPage(int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails, String nickname) {
+    public Page<GetFollowerListResponseDto> getFollowerListByPage(int page,
+                                                                  int size,
+                                                                  boolean isAsc,
+                                                                  String sortBy,
+                                                                  String nickname,
+                                                                  UserDetailsImpl userDetails) {
 
         Pageable pageable = getPageable(page, size, isAsc, sortBy);
 
@@ -141,6 +171,8 @@ public class UserinfoServiceImpl implements UserinfoService {
     }
 
     private Pageable getPageable(int page, int size, boolean isAsc, String sortBy) {
+
+        page -= 1;
 
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
 
