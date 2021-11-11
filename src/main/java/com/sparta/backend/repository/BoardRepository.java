@@ -18,4 +18,17 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     @Query("select b from Board b where b.id in (select bl.board.id from BoardLikes bl where bl.user.id = :userId)")
     Page<Board> findAllByBoardLikesList(@Param("userId") Long userId, Pageable pageable);
+
+    //전체 게시물 조회(인기순)
+    @Query("select b from Board b left join b.boardLikesList bl group by b.id order by count(bl.user) desc")
+    Page<Board> findBoardsOrderByLikeCountDesc(Pageable pageable);
+
+    //검색(인기순)
+    @Query("select b from Board b " +
+           "left join b.boardLikesList bl " +
+           "where b.title like %:keyword% or b.content like %:keyword% " +
+           "group by b.id order by count(bl.user) desc")
+    Page<Board> findBoardsByTitleContainingOrContentContainingOrderByLikeCountDesc(@Param("keyword") String keyword,
+                                                                                   Pageable pageable);
+
 }
