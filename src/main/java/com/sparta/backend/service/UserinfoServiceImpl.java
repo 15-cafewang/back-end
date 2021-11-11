@@ -57,46 +57,26 @@ public class UserinfoServiceImpl implements UserinfoService {
         return new GetUserinfoResponseDto(image, nickname, followCount, followingCount, followStatus);
     }
 
+    // 내가 쓴 레시피 목록 조회
     @Override
     public Page<GetRecipeListResponseDto> getRecipeListByPage(int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails, String nickname) {
 
-        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Sort sort = Sort.by(direction, sortBy);
-        Pageable pageable = PageRequest.of(page, size, sort);
+        Pageable pageable = getPageable(page, size, isAsc, sortBy);
 
-        User user;
-
-        // 조회하는 회원이 로그인한 회원일 때
-        if (nickname.equals(userDetails.getUser().getNickname())) {
-            user = userDetails.getUser();
-        } else { // 다른 회원일 때
-            user = userRepository.findByNickname(nickname).orElseThrow(
-                    () -> new NullPointerException("존재하지 않는 회원입니다")
-            );
-        }
+        User user = getUser(userDetails, nickname);
 
         Page<Recipe> recipeList = recipeRepository.findAllByUser(pageable, user);
 
         return recipeList.map((recipe -> new GetRecipeListResponseDto(recipe, userDetails)));
     }
 
+    // 내가 쓴 게시글 목록 조회
     @Override
     public Page<GetBoardListResponseDto> getBoardListByPage(int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails, String nickname) {
 
-        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Sort sort = Sort.by(direction, sortBy);
-        Pageable pageable = PageRequest.of(page, size, sort);
+        Pageable pageable = getPageable(page, size, isAsc, sortBy);
 
-        User user;
-
-        // 조회하는 회원이 로그인한 회원일 때
-        if (nickname.equals(userDetails.getUser().getNickname())) {
-            user = userDetails.getUser();
-        } else { // 다른 회원일 때
-            user = userRepository.findByNickname(nickname).orElseThrow(
-                    () -> new NullPointerException("존재하지 않는 회원입니다")
-            );
-        }
+        User user = getUser(userDetails, nickname);
 
         Page<Board> boardList = boardRepository.findAllByUser(pageable, user);
 
@@ -104,23 +84,13 @@ public class UserinfoServiceImpl implements UserinfoService {
     }
 
     // TODO: N+1 문제 해결
+    // 내가 좋아요한 레시피 목록 조회
     @Override
     public Page<GetRecipeListResponseDto> getLikedRecipeListByPage(int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails, String nickname) {
 
-        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Sort sort = Sort.by(direction, sortBy);
-        Pageable pageable = PageRequest.of(page, size, sort);
+        Pageable pageable = getPageable(page, size, isAsc, sortBy);
 
-        User user;
-
-        // 조회하는 회원이 로그인한 회원일 때
-        if (nickname.equals(userDetails.getUser().getNickname())) {
-            user = userDetails.getUser();
-        } else { // 다른 회원일 때
-            user = userRepository.findByNickname(nickname).orElseThrow(
-                    () -> new NullPointerException("존재하지 않는 회원입니다")
-            );
-        }
+        User user = getUser(userDetails, nickname);
 
         Page<Recipe> likedRecipeList = recipeRepository.findAllByRecipeLikesList(user.getId(), pageable);
 
@@ -129,46 +99,26 @@ public class UserinfoServiceImpl implements UserinfoService {
         return likedRecipeList.map(recipe -> new GetRecipeListResponseDto(recipe, userDetails));
     }
 
+    // 내가 좋아요한 게시글 목록 조회
     @Override
     public Page<GetBoardListResponseDto> getLikedBoardListByPage(int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails, String nickname) {
 
-        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Sort sort = Sort.by(direction, sortBy);
-        Pageable pageable = PageRequest.of(page, size, sort);
+        Pageable pageable = getPageable(page, size, isAsc, sortBy);
 
-        User user;
-
-        // 조회하는 회원이 로그인한 회원일 때
-        if (nickname.equals(userDetails.getUser().getNickname())) {
-            user = userDetails.getUser();
-        } else { // 다른 회원일 때
-            user = userRepository.findByNickname(nickname).orElseThrow(
-                    () -> new NullPointerException("존재하지 않는 회원입니다")
-            );
-        }
+        User user = getUser(userDetails, nickname);
 
         Page<Board> likedBoardList = boardRepository.findAllByBoardLikesList(user.getId(), pageable);
 
         return likedBoardList.map(board -> new GetBoardListResponseDto(board, userDetails));
     }
 
-    // 팔로잉 목록
+    // 팔로잉 목록 조회
+    @Override
     public Page<GetFollowingListResponseDto> getFollowingListByPage(int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails, String nickname) {
 
-        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Sort sort = Sort.by(direction, sortBy);
-        Pageable pageable = PageRequest.of(page, size, sort);
+        Pageable pageable = getPageable(page, size, isAsc, sortBy);
 
-        User user;
-
-        // 조회하는 회원이 로그인한 회원일 때
-        if (nickname.equals(userDetails.getUser().getNickname())) {
-            user = userDetails.getUser();
-        } else { // 다른 회원일 때
-            user = userRepository.findByNickname(nickname).orElseThrow(
-                    () -> new NullPointerException("존재하지 않는 회원입니다")
-            );
-        }
+        User user = getUser(userDetails, nickname);
 
         Page<Follow> followingList = followRepository.findAllByFromUser(pageable, user);
 
@@ -177,12 +127,29 @@ public class UserinfoServiceImpl implements UserinfoService {
         return followingList.map(GetFollowingListResponseDto::new);
     }
 
+    // 팔로워 목록 조회
     @Override
     public Page<GetFollowerListResponseDto> getFollowerListByPage(int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails, String nickname) {
 
+        Pageable pageable = getPageable(page, size, isAsc, sortBy);
+
+        User user = getUser(userDetails, nickname);
+
+        Page<Follow> followerList = followRepository.findAllByToUser(pageable, user);
+
+        return followerList.map(GetFollowerListResponseDto::new);
+    }
+
+    private Pageable getPageable(int page, int size, boolean isAsc, String sortBy) {
+
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+
         Sort sort = Sort.by(direction, sortBy);
-        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return PageRequest.of(page, size, sort);
+    }
+
+    private User getUser(UserDetailsImpl userDetails, String nickname) {
 
         User user;
 
@@ -195,8 +162,6 @@ public class UserinfoServiceImpl implements UserinfoService {
             );
         }
 
-        Page<Follow> followerList = followRepository.findAllByToUser(pageable, user);
-
-        return followerList.map(GetFollowerListResponseDto::new);
+        return user;
     }
 }
