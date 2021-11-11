@@ -42,7 +42,7 @@ public interface RecipeRepository extends JpaRepository<Recipe,Long> {
     //특정기간&인기레시피 - id만 가져오기..top3..native sql
     @Query(value="SELECT r.recipe_id " +
             "FROM recipe r JOIN recipe_likes l ON r.recipe_id = l.recipe_id " +
-            "WHERE l.regDate BETWEEN :startDate AND :endDate " +
+            "WHERE l.reg_date BETWEEN :startDate AND :endDate " +
             "GROUP BY r.recipe_id order by count(l.recipe_id) desc limit 3",
     nativeQuery = true)
     List<Long> findPopularRecipeId2(LocalDateTime startDate, LocalDateTime endDate);
@@ -79,4 +79,8 @@ public interface RecipeRepository extends JpaRepository<Recipe,Long> {
 
     @Query("select r from Recipe r where r.id in (select rl.recipe.id from RecipeLikes rl where rl.user.id = :userId)")
     Page<Recipe> findAllByRecipeLikesList(@Param("userId") Long userId, Pageable pageable);
+
+    //최근레시피(메인페이지) top4가져오기
+//    @Query("select r from Recipe r order by r.regDate")
+    List<Recipe> findTop4ByOrderByRegDateDesc();
 }
