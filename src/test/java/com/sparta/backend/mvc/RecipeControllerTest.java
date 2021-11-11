@@ -99,7 +99,7 @@ public class RecipeControllerTest {
     @DisplayName("정상 케이스")
     class SuccessCases {
         @Test
-        @DisplayName("레시피 등록")
+        @DisplayName("일반적인 레시피 등록")
         void saveRecipe() throws Exception {
             mockUserSetup();
             MockMultipartFile image = new MockMultipartFile("image", "imagefile.jpeg", "image/jpg", new FileInputStream("src/test/java/com/sparta/backend/images/puppy1.jpg"));
@@ -111,7 +111,21 @@ public class RecipeControllerTest {
                             .param("content", "this is content")
                             .principal(mockPrincipal))
                     .andExpect(status().isOk());
+        }
 
+        @Test
+        @DisplayName("사진 미등록")
+        void noImage() throws Exception {
+            mockUserSetup();
+            MockMultipartFile image = new MockMultipartFile("image", null, "image/jpg",InputStream.nullInputStream());
+//            MockMultipartFile image2 = new MockMultipartFile("image", "imagefile2.jpeg", "image/jpg", new FileInputStream("src/test/java/com/sparta/backend/images/puppy1.jpg"));
+            mockMvc.perform(MockMvcRequestBuilders.multipart("/recipes")
+                            .file(image)
+//                            .file(image2)
+                            .param("title", "this is title")
+                            .param("content", "this is content")
+                            .principal(mockPrincipal))
+                    .andExpect(status().isOk());
         }
     }
 

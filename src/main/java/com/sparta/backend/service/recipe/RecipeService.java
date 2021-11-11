@@ -61,7 +61,11 @@ public class RecipeService {
 
     //레시피 저장
     public Recipe saveRecipe(PostRecipeRequestDto requestDto, User user) throws IOException {
-        List<String> imageUrlList= uploadManyImagesToS3(requestDto, "recipeImage");
+//        System.out.println("파일내임:"+ requestDto.getImage()[0].getOriginalFilename());
+//        System.out.println("파일사이즈:"+ requestDto.getImage()[0].getSize());
+//        System.out.println("파일바이츠:"+ requestDto.getImage()[0].getBytes());
+//        System.out.println("파일내임:"+ requestDto.getImage()[0].getName());
+        List<String> imageUrlList= requestDto.getImage()[0].getSize() == 0L? null :uploadManyImagesToS3(requestDto, "recipeImage");
         Recipe recipe = uploadManyImagesToDB(imageUrlList,requestDto,user);
         return recipeRepository.save(recipe);
     }
@@ -94,9 +98,11 @@ public class RecipeService {
     public Recipe uploadManyImagesToDB(List<String> imageUrlList, PostRecipeRequestDto requestDto, User user){
         Recipe recipe = new Recipe(requestDto.getTitle(),requestDto.getContent(),requestDto.getPrice(),user);
         //디비에 이미지url저장
-        List<RecipeImage> recipeImages = new ArrayList<>();
-        imageUrlList.forEach((image)-> recipeImages.add(new RecipeImage(image,recipe)));
-        recipeImageRepository.saveAll(recipeImages);
+        if(imageUrlList!=null){
+            List<RecipeImage> recipeImages = new ArrayList<>();
+            imageUrlList.forEach((image)-> recipeImages.add(new RecipeImage(image,recipe)));
+            recipeImageRepository.saveAll(recipeImages);
+        }
         return recipe;
     }
 

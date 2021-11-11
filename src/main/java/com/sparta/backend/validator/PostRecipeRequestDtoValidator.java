@@ -13,6 +13,14 @@ public class PostRecipeRequestDtoValidator {
         if(requestDto.getTitle().length() > 100){
             throw new IllegalArgumentException("제목이 너무 깁니다.");
         }
+
+        if(requestDto.getContent().length()>1000){
+            throw new IllegalArgumentException("내용의 길이가 1000자를 초과하였습니다");
+        }
+
+        if( requestDto.getPrice()!= null && requestDto.getPrice() < 0){
+            throw new IllegalArgumentException("가격은 0보다 작을 수 없습니다.");
+        }
     }
 
 }

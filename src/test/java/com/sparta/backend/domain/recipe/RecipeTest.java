@@ -169,7 +169,7 @@ class RecipeTest {
                         new Recipe(title, content, price, user);
                     });
 
-                    assertEquals("제목의 길이가 200자를 초과하였습니다.",  exception.getMessage());
+                    assertEquals("제목의 길이가 100자를 초과하였습니다.",  exception.getMessage());
                 }
 
                 @Test
