@@ -44,6 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.security.Principal;
 import java.util.*;
@@ -210,6 +211,28 @@ public class RecipeControllerTest {
                         .andExpect(result -> assertEquals("제목이 너무 깁니다.", result.getResolvedException().getMessage()));
             }
 
+            @Nested
+            @DisplayName("이미지 관련")
+            class ImageRelated {
+                @Test
+                @DisplayName("이미지 6장 초과")
+                void imageTooMany() throws Exception {
+                    mockUserSetup();
+                    MockMultipartFile image = new MockMultipartFile("image", "imagefile.jpeg", "image/jpg", new FileInputStream("src/test/java/com/sparta/backend/images/puppy1.jpg"));
+                    MockMultipartFile image2 = new MockMultipartFile("image", "imagefile2.jpeg", "image/jpg", new FileInputStream("src/test/java/com/sparta/backend/images/puppy1.jpg"));
+                    MockMultipartFile image3 = new MockMultipartFile("image", "imagefile2.jpeg", "image/jpg", new FileInputStream("src/test/java/com/sparta/backend/images/puppy1.jpg"));
+                    MockMultipartFile image4 = new MockMultipartFile("image", "imagefile2.jpeg", "image/jpg", new FileInputStream("src/test/java/com/sparta/backend/images/puppy1.jpg"));
+                    MockMultipartFile image5 = new MockMultipartFile("image", "imagefile2.jpeg", "image/jpg", new FileInputStream("src/test/java/com/sparta/backend/images/puppy1.jpg"));
+                    MockMultipartFile image6 = new MockMultipartFile("image", "imagefile2.jpeg", "image/jpg", new FileInputStream("src/test/java/com/sparta/backend/images/puppy1.jpg"));
+                    mockMvc.perform(MockMvcRequestBuilders.multipart("/recipes")
+                                    .file(image).file(image2).file(image3).file(image4).file(image5).file(image6)
+                                    .param("title","this is title")
+                                    .param("content", "this is content")
+                                    .principal(mockPrincipal))
+                            .andExpect(status().is4xxClientError())
+                            .andExpect(result -> assertEquals("사진은 5장을 초과할 수 없습니다.", result.getResolvedException().getMessage()));
+                }
+            }
 
         }
 

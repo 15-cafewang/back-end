@@ -21,6 +21,10 @@ public class PostRecipeRequestDtoValidator {
         if( requestDto.getPrice()!= null && requestDto.getPrice() < 0){
             throw new IllegalArgumentException("가격은 0보다 작을 수 없습니다.");
         }
+
+        if( requestDto.getImage().length >5){
+            throw new IllegalArgumentException("사진은 5장을 초과할 수 없습니다.");
+        }
     }
 
 }
