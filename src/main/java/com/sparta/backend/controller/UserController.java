@@ -110,7 +110,7 @@ public class UserController {
 
     // 회원 정보 수정
     @PutMapping("/user/info")
-    public CustomResponseDto<?> updateUser(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody UpdateUserRequestDto requestDto) throws IOException {
+    public CustomResponseDto<?> updateUser(@AuthenticationPrincipal UserDetailsImpl userDetails, UpdateUserRequestDto requestDto) throws IOException {
 
         userService.updateUser(userDetails, requestDto);
 

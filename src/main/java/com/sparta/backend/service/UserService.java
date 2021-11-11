@@ -103,7 +103,9 @@ public class UserService {
     @Transactional
     public void updateUser(UserDetailsImpl userDetails, UpdateUserRequestDto requestDto) throws IOException {
 
-        User user = userDetails.getUser();
+        User user = userRepository.findById(userDetails.getUser().getId()).orElseThrow(
+                () -> new NullPointerException("존재하지 않는 회원입니다")
+        );
 
         Optional<User> foundNickname = userRepository.findByNickname(requestDto.getNickname());
 

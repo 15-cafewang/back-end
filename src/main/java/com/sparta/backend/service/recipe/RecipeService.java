@@ -154,7 +154,7 @@ public class RecipeService {
         LocalDateTime regDate = recipe.getRegDate();
         int likeCount = recipe.getRecipeLikesList().size();
 //        String image = recipe.getImage();
-
+        Integer price = recipe.getPrice();
         Optional<RecipeLikes> foundRecipeLike = recipeLikesRepository.findByRecipeIdAndUserId(recipe.getId(),userDetails.getUser().getId());
         Boolean likeStatus = foundRecipeLike.isPresent();
 
@@ -164,16 +164,17 @@ public class RecipeService {
         List<String> images =new ArrayList<>();
         recipe.getRecipeImagesList().forEach((recipeImage)->images.add(recipeImage.getImage()));
         RecipeDetailResponsetDto responsetDto = new RecipeDetailResponsetDto(
-                recipeId, nickname, title, content, regDate, likeCount, likeStatus, images, tagNames);
+                recipeId, nickname, title, content, regDate, likeCount, likeStatus, images, tagNames, price);
 
         return responsetDto;
     }
 
-    public Page<RecipeListResponseDto> getRecipesByPage(int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails) {
+    public Page<RecipeListResponseDto> getRecipesByPage(int page, int size, boolean isAsc, String sortBy, Boolean sortByLike ,UserDetailsImpl userDetails) {
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(direction, sortBy);
         Pageable pageable = PageRequest.of(page,size,sort);
-        Page<Recipe> recipes = recipeRepository.findAll(pageable);
+
+        Page<Recipe> recipes = sortByLike? recipeRepository.findRecipesOrderByLikeCountDesc(pageable): recipeRepository.findAll(pageable);
 
         Page<RecipeListResponseDto> responseDtos = recipes.map((recipe)->new RecipeListResponseDto(recipe, userDetails,recipeLikesRepository));
 

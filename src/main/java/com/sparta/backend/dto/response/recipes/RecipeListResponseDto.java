@@ -21,7 +21,7 @@ public class RecipeListResponseDto {
     private String title;
     private String content;
     private List<String> images = new ArrayList<>();
-    private LocalDateTime regdate;
+    private LocalDateTime regDate;
     private int commentCount;
     private int likeCount;
     private int price;
@@ -33,7 +33,7 @@ public class RecipeListResponseDto {
         this.nickname = recipe.getUser().getNickname();
         this.title = recipe.getTitle();
         this.content = recipe.getContent();
-        this.regdate = recipe.getRegDate();
+        this.regDate = recipe.getRegDate();
         this.commentCount = recipe.getRecipeCommentList().size();
         recipe.getRecipeImagesList().forEach((RecipeImage)->this.images.add(RecipeImage.getImage()));
         this.likeCount = recipe.getRecipeLikesList().size();
@@ -48,7 +48,7 @@ public class RecipeListResponseDto {
         this.nickname = recipe.getUser().getNickname(); //todo:N+1 해결하면 될듯
         this.title = recipe.getTitle();
         this.content = recipe.getContent();
-        this.regdate = recipe.getRegDate();
+        this.regDate = recipe.getRegDate();
         this.commentCount = recipe.getRecipeCommentList().size();
         recipe.getRecipeImagesList().forEach((RecipeImage)->this.images.add(RecipeImage.getImage()));
         this.likeCount = recipe.getRecipeLikesList().size();
@@ -62,7 +62,7 @@ public class RecipeListResponseDto {
         this.nickname = recipe.get().getUser().getNickname();
         this.title = recipe.get().getTitle();
         this.content = recipe.get().getContent();
-        this.regdate = recipe.get().getRegDate();
+        this.regDate = recipe.get().getRegDate();
         this.commentCount = recipe.get().getRecipeCommentList().size();
         recipe.get().getRecipeImagesList().forEach((RecipeImage)->this.images.add(RecipeImage.getImage()));
         this.likeCount = recipe.get().getRecipeLikesList().size();
