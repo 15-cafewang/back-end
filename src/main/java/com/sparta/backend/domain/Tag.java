@@ -1,6 +1,6 @@
 package com.sparta.backend.domain;
 
-import com.sparta.backend.domain.Recipe.Recipe;
+import com.sparta.backend.domain.recipe.Recipe;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;

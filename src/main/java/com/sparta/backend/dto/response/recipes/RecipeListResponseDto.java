@@ -1,17 +1,12 @@
 package com.sparta.backend.dto.response.recipes;
 
-import com.sparta.backend.domain.Recipe.Recipe;
-import com.sparta.backend.domain.Recipe.RecipeLikes;
+import com.sparta.backend.domain.recipe.Recipe;
+import com.sparta.backend.domain.recipe.RecipeLikes;
 import com.sparta.backend.domain.User;
-import com.sparta.backend.dto.queryInterface.PopularRecipeInterface;
 import com.sparta.backend.repository.RecipeLikesRepository;
-import com.sparta.backend.repository.RecipeRepository;
 import com.sparta.backend.security.UserDetailsImpl;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

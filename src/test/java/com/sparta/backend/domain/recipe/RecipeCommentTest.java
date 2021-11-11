@@ -1,4 +1,4 @@
-package com.sparta.backend.domain.Recipe;
+package com.sparta.backend.domain.recipe;
 
 import com.sparta.backend.domain.User;
 import com.sparta.backend.domain.UserRole;

@@ -83,19 +83,32 @@ public class BoardService {
         User currentLoginUser = userDetails.getUser();
         //현재 페이지
         page = page - 1;
+        boolean isLikeCount = false;
 
         //정렬 기준
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+
+        if(sortBy.equals("likeCount")) {
+            sortBy = "regDate";
+            isLikeCount = true;
+        }
+
         //어떤 컬럼 기준으로 정렬할 지 결정(sortBy: 컬럼이름)
         Sort sort = Sort.by(direction, sortBy);
+
         //페이징
         Pageable pageable = PageRequest.of(page, size, sort);
 
-       Page<Board> boardList = boardRepository.findAll(pageable);
+        Page<Board> boardList = null;
+        if(isLikeCount) {
+            boardList = boardRepository.findBoardsOrderByLikeCountDesc(pageable);
+        } else {
+            boardList = boardRepository.findAll(pageable);
+        }
 
-       //Page<Board> -> Page<Dto> 로 변환
-       Page<GetBoardResponseDto> responseDtoList = boardList.map(board ->
-               new GetBoardResponseDto(board, currentLoginUser, boardLikesRepository));
+        // Page<Board> -> Page<Dto> 로 변환
+        Page<GetBoardResponseDto> responseDtoList = boardList.map(board ->
+                new GetBoardResponseDto(board, currentLoginUser, boardLikesRepository));
 
         return responseDtoList;
     }
@@ -227,12 +240,18 @@ public class BoardService {
     }
 
     //게시물 검색
-    public Page<GetBoardResponseDto> searchBoards(String keword, int page, int size, boolean isAsc, String sortBy,
+    public Page<GetBoardResponseDto> searchBoards(String keyword, int page, int size, boolean isAsc, String sortBy,
                                                   UserDetailsImpl userDetails) {
         //현재 페이지
         page = page - 1;
+        boolean isLikeCount = false;
 
         User currentLoginUser = userDetails.getUser();
+
+        if(sortBy.equals("likeCount")) {
+            sortBy = "regDate";
+            isLikeCount = true;
+        }
 
         //정렬 기준
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
@@ -241,10 +260,16 @@ public class BoardService {
         //페이징
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        //키워드가 제목 또는 내용에 포함되어있어야 검색 결과에 나타남
-        String title = keword;
-        String content = keword;
-        Page<Board> boardList = boardRepository.findAllByTitleContainingOrContentContaining(title, content, pageable);
+        Page<Board> boardList = null;
+        keyword = keyword.trim();   //앞뒤 공백 제거
+        if(isLikeCount) {
+            //키워드가 제목 또는 내용에 포함되어있어야 검색 결과에 나타남
+            boardList =
+                    boardRepository.findBoardsByTitleContainingOrContentContainingOrderByLikeCountDesc(keyword, pageable);
+        } else {
+            //키워드가 제목 또는 내용에 포함되어있어야 검색 결과에 나타남
+            boardList = boardRepository.findAllByTitleContainingOrContentContaining(keyword, keyword, pageable);
+        }
 
         //Page<Board> -> Page<Dto> 로 변환
         Page<GetBoardResponseDto> responseDtoList = boardList.map(board ->
