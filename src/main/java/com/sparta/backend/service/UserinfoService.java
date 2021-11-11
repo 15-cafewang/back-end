@@ -10,21 +10,51 @@ public interface UserinfoService {
     GetUserinfoResponseDto getUserInfo(UserDetailsImpl userDetails, String nickname);
 
     // 내가 쓴 레시피 목록 조회
-    Page<GetRecipeListResponseDto> getRecipeListByPage(int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails, String nickname);
+    Page<GetRecipeListResponseDto> getRecipeListByPage(int page,
+                                                       int size,
+                                                       boolean isAsc,
+                                                       String sortBy,
+                                                       String nickname,
+                                                       UserDetailsImpl userDetails);
 
     // 내가 쓴 게시글 목록 조회
-    Page<GetBoardListResponseDto> getBoardListByPage(int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails, String nickname);
+    Page<GetBoardListResponseDto> getBoardListByPage(int page,
+                                                     int size,
+                                                     boolean isAsc,
+                                                     String sortBy,
+                                                     String nickname,
+                                                     UserDetailsImpl userDetails);
 
     // 내가 좋아요한 레시피 목록 조회
-    Page<GetRecipeListResponseDto> getLikedRecipeListByPage(int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails, String nickname);
+    Page<GetRecipeListResponseDto> getLikedRecipeListByPage(int page,
+                                                            int size,
+                                                            boolean isAsc,
+                                                            String sortBy,
+                                                            String nickname,
+                                                            UserDetailsImpl userDetails);
 
     // 내가 좋아요한 게시글 목록 조회
-    Page<GetBoardListResponseDto> getLikedBoardListByPage(int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails, String nickname);
+    Page<GetBoardListResponseDto> getLikedBoardListByPage(int page,
+                                                          int size,
+                                                          boolean isAsc,
+                                                          String sortBy,
+                                                          String nickname,
+                                                          UserDetailsImpl userDetails);
 
     // 팔로잉 목록 조회
-    Page<GetFollowingListResponseDto> getFollowingListByPage(int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails, String nickname);
+    Page<GetFollowingListResponseDto> getFollowingListByPage(int page,
+                                                             int size,
+                                                             boolean isAsc,
+                                                             String sortBy,
+                                                             String nickname,
+                                                             UserDetailsImpl userDetails);
 
     // 팔로워 목록 조회
-    Page<GetFollowerListResponseDto> getFollowerListByPage(int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails, String nickname);
+    Page<GetFollowerListResponseDto> getFollowerListByPage(int page,
+                                                           int size,
+                                                           boolean isAsc,
+                                                           String sortBy,
+                                                           String nickname,
+                                                           UserDetailsImpl userDetails);
 
 }
