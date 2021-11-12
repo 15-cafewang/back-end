@@ -56,5 +56,58 @@ class BoardImageTest {
             assertEquals(image, boardImage.getImage());
             assertEquals(board, boardImage.getBoard());
         }
+
+        @Nested
+        @DisplayName("실패 케이스")
+        class FailCases {
+            @Nested
+            @DisplayName("이미지 URL")
+            class ImageUrl {
+                @Test
+                @DisplayName("null")
+                void fail1() {
+                    /* given */
+                    image = null;
+
+                    /* when */
+                    Exception exception = assertThrows(NullPointerException.class, () -> {
+                        BoardImage boardImage = new BoardImage(image, board);
+                    });
+
+                    /* then */
+                    assertEquals("이미지가 존재하지 않습니다.", exception.getMessage());
+                }
+
+                @Test
+                @DisplayName("빈 문자열")
+                void fail2() {
+                    /* given */
+                    image = "";
+
+                    /* when */
+                    Exception exception = assertThrows(NullPointerException.class, () -> {
+                        BoardImage boardImage = new BoardImage(image, board);
+                    });
+
+                    /* then */
+                    assertEquals("이미지가 존재하지 않습니다.", exception.getMessage());
+                }
+
+                @Test
+                @DisplayName("URL 형식이 아닐 경우")
+                void fail3() {
+                    /* given */
+                    image = "99final.s3.ap-northeast-2.amazonaws.com/boardImage/836fe1eb-d4a0-4563-be62-26099f1b11e1choonsik2.png";
+
+                    /* when */
+                    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+                        BoardImage boardImage = new BoardImage(image, board);
+                    });
+
+                    /* then */
+                    assertEquals("URL 형식이 아닙니다.", exception.getMessage());
+                }
+            }
+        }
     }
 }
