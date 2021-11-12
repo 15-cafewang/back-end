@@ -11,6 +11,9 @@ import lombok.ToString;
 import javax.persistence.*;
 import java.util.List;
 
+import static com.sparta.backend.validator.BoardCommentValidator.boardCommentValidatorId;
+import static com.sparta.backend.validator.BoardCommentValidator.boardCommentValidatorRequestDto;
+
 @ToString(exclude = {"user", "board"})
 @Getter
 @NoArgsConstructor
@@ -40,6 +43,16 @@ public class BoardComment extends BaseEntity {
     private List<BoardCommentLikes> boardCommentLikesList;
 
     public BoardComment(PostBoardCommentRequestDto requestDto, Board board, User user) {
+        boardCommentValidatorRequestDto(requestDto, board, user);
+        this.content = requestDto.getContent();
+        this.board = board;
+        this.user = user;
+    }
+
+    //test용
+    public BoardComment(Long id, PostBoardCommentRequestDto requestDto, Board board, User user) {
+        boardCommentValidatorId(id, requestDto, board, user);
+        this.id = id;
         this.content = requestDto.getContent();
         this.board = board;
         this.user = user;
