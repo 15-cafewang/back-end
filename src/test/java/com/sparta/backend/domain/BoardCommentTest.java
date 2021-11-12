@@ -15,7 +15,7 @@ class BoardCommentTest {
     @DisplayName("사용자가 request한 값으로 객체 생성")
     class CreateBoardComment {
         private String content;
-        private User user;
+        private User boardWriteUser;
         private Board board;
 
         private User loginUser;
@@ -26,15 +26,15 @@ class BoardCommentTest {
             //작성자
             String profile =
                     "https://user-images.githubusercontent.com/76515226/140890775-30641b72-226a-4068-8a0a-9a306e8c68b4.png";
-            user = new User(1L, "aaa@aaa.com", "abab1234!",
+            boardWriteUser = new User(1L, "aaa@aaa.com", "abab1234!",
                     "nao", profile, USER, "Y");
 
             PostBoardRequestDto requestDto =
                     new PostBoardRequestDto("다들 뭐하세용?", "저는 스타벅스에서 자몽 허니 블랙티 먹고 있어요!", null);
-            board = new Board(1L, requestDto, user);
+            board = new Board(1L, requestDto, boardWriteUser);
 
             //현재 로그인한 사용자
-            loginUser = new User(1L, "aaa@aaa.com", "abab1234!",
+            loginUser = new User(1L, "bbb@bbb.com", "abab1234!",
                     "nao", profile, USER, "Y");
         }
 
@@ -46,11 +46,11 @@ class BoardCommentTest {
                     new PostBoardCommentRequestDto(1L, content);
 
             /* when */
-            BoardComment boardComment = new BoardComment(requestDto, board, user);
+            BoardComment boardComment = new BoardComment(requestDto, board, loginUser);
 
             /* then */
             assertEquals(content, boardComment.getContent());
-            assertEquals(user, boardComment.getUser());
+            assertEquals(loginUser, boardComment.getUser());
             assertEquals(board, boardComment.getBoard());
 
         }
@@ -67,13 +67,13 @@ class BoardCommentTest {
                     /* given */
                     Long commentId = null;
                     PostBoardRequestDto boardRequestDto = new PostBoardRequestDto("제목", "내용", null);
-                    board = new Board(1L, boardRequestDto, user);
+                    board = new Board(1L, boardRequestDto, boardWriteUser);
                     PostBoardCommentRequestDto commentRequestDto =
                             new PostBoardCommentRequestDto(1L, content);
 
                     /* when */
                     Exception exception = assertThrows(NullPointerException.class, () -> {
-                        BoardComment boardComment = new BoardComment(commentId, commentRequestDto, board, user);
+                        BoardComment boardComment = new BoardComment(commentId, commentRequestDto, board, loginUser);
                     });
 
                     /* then */
@@ -87,13 +87,13 @@ class BoardCommentTest {
                     /* given */
                     Long commentId = 0L;
                     PostBoardRequestDto boardRequestDto = new PostBoardRequestDto("제목", "내용", null);
-                    board = new Board(1L, boardRequestDto, user);
+                    board = new Board(1L, boardRequestDto, boardWriteUser);
                     PostBoardCommentRequestDto commentRequestDto =
                             new PostBoardCommentRequestDto(1L, content);
 
                     /* when */
                     Exception exception = assertThrows(NullPointerException.class, () -> {
-                        BoardComment boardComment = new BoardComment(commentId, commentRequestDto, board, user);
+                        BoardComment boardComment = new BoardComment(commentId, commentRequestDto, board, loginUser);
                     });
 
                     /* then */
@@ -107,13 +107,13 @@ class BoardCommentTest {
                     /* given */
                     Long commentId = -1L;
                     PostBoardRequestDto boardRequestDto = new PostBoardRequestDto("제목", "내용", null);
-                    board = new Board(1L, boardRequestDto, user);
+                    board = new Board(1L, boardRequestDto, boardWriteUser);
                     PostBoardCommentRequestDto commentRequestDto =
                             new PostBoardCommentRequestDto(1L, content);
 
                     /* when */
                     Exception exception = assertThrows(NullPointerException.class, () -> {
-                        BoardComment boardComment = new BoardComment(commentId, commentRequestDto, board, user);
+                        BoardComment boardComment = new BoardComment(commentId, commentRequestDto, board, loginUser);
                     });
 
                     /* then */
@@ -131,13 +131,13 @@ class BoardCommentTest {
                     /* given */
                     content = null;
                     PostBoardRequestDto boardRequestDto = new PostBoardRequestDto("제목", "내용", null);
-                    board = new Board(1L, boardRequestDto, user);
+                    board = new Board(1L, boardRequestDto, boardWriteUser);
                     PostBoardCommentRequestDto commentRequestDto =
                             new PostBoardCommentRequestDto(1L, content);
 
                     /* when */
                     Exception exception = assertThrows(NullPointerException.class, () -> {
-                        BoardComment boardComment = new BoardComment(1L, commentRequestDto, board, user);
+                        BoardComment boardComment = new BoardComment(1L, commentRequestDto, board, loginUser);
                     });
 
                     /* then */
@@ -151,13 +151,13 @@ class BoardCommentTest {
                     /* given */
                     content = "";
                     PostBoardRequestDto boardRequestDto = new PostBoardRequestDto("제목", "내용", null);
-                    board = new Board(1L, boardRequestDto, user);
+                    board = new Board(1L, boardRequestDto, boardWriteUser);
                     PostBoardCommentRequestDto commentRequestDto =
                             new PostBoardCommentRequestDto(1L, content);
 
                     /* when */
                     Exception exception = assertThrows(NullPointerException.class, () -> {
-                        BoardComment boardComment = new BoardComment(1L, commentRequestDto, board, user);
+                        BoardComment boardComment = new BoardComment(1L, commentRequestDto, board, loginUser);
                     });
 
                     /* then */
@@ -191,18 +191,114 @@ class BoardCommentTest {
                             "안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요" +
                             "안녕하세요";
                     PostBoardRequestDto boardRequestDto = new PostBoardRequestDto("제목", "내용", null);
-                    board = new Board(1L, boardRequestDto, user);
+                    board = new Board(1L, boardRequestDto, boardWriteUser);
                     PostBoardCommentRequestDto commentRequestDto =
                             new PostBoardCommentRequestDto(1L, content);
 
                     /* when */
                     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-                        BoardComment boardComment = new BoardComment(1L, commentRequestDto, board, user);
+                        BoardComment boardComment = new BoardComment(1L, commentRequestDto, board, loginUser);
                     });
 
                     /* then */
                     assertEquals("내용은 최대 1000글자 입력 가능합니다.", exception.getMessage());
 
+                }
+            }
+
+            @Nested
+            @DisplayName("게시물")
+            class BoardEntity {
+                @Test
+                @DisplayName("null")
+                void fail1() {
+                    /* given */
+                    board = null;
+                    PostBoardCommentRequestDto commentRequestDto =
+                            new PostBoardCommentRequestDto(null, content);
+
+                    /* when */
+                    Exception exception = assertThrows(NullPointerException.class, () -> {
+                        BoardComment boardComment = new BoardComment(commentRequestDto, board, loginUser);
+                    });
+
+                    /* then */
+                    assertEquals("존재하지 않는 게시물입니다", exception.getMessage());
+                }
+
+                @Test
+                @DisplayName("boardId가 null")
+                void fail2() {
+                    /* given */
+                    Long boardId = null;
+                    PostBoardCommentRequestDto commentRequestDto =
+                            new PostBoardCommentRequestDto(boardId, content);
+
+                    PostBoardRequestDto requestDto =
+                            new PostBoardRequestDto("제목","내용", null);
+
+
+                    /* when */
+                    //BoardComment 엔티티를 생성하기 전에
+                    //Board 엔티티를 생성할 때부터 exception이 발생
+                    Exception exception = assertThrows(NullPointerException.class, () -> {
+                        Board board = new Board(boardId, requestDto, loginUser);
+                        BoardComment boardComment = new BoardComment(commentRequestDto, board, loginUser);
+                    });
+
+                    /* then */
+                    //Board 엔티티에서 발생하는 exception
+                    assertEquals("존재하지 않는 게시물입니다.", exception.getMessage());
+                }
+
+                @Test
+                @DisplayName("boardId가 0")
+                void fail3() {
+                    /* given */
+                    Long boardId = 0L;
+                    PostBoardCommentRequestDto commentRequestDto =
+                            new PostBoardCommentRequestDto(boardId, content);
+
+                    PostBoardRequestDto requestDto =
+                            new PostBoardRequestDto("제목","내용", null);
+
+
+                    /* when */
+                    //BoardComment 엔티티를 생성하기 전에
+                    //Board 엔티티를 생성할 때부터 exception이 발생
+                    Exception exception = assertThrows(NullPointerException.class, () -> {
+                        Board board = new Board(boardId, requestDto, loginUser);
+                        BoardComment boardComment = new BoardComment(commentRequestDto, board, loginUser);
+                    });
+
+                    /* then */
+                    //Board 엔티티에서 발생하는 exception
+                    assertEquals("존재하지 않는 게시물입니다.", exception.getMessage());
+                }
+
+                @Test
+                @DisplayName("boardId가 음수")
+                void fail4() {
+                    /* given */
+                    Long boardId = -1L;
+                    PostBoardCommentRequestDto commentRequestDto =
+                            new PostBoardCommentRequestDto(boardId, content);
+
+                    PostBoardRequestDto requestDto =
+                            new PostBoardRequestDto("제목","내용", null);
+
+
+                    /* when */
+                    //BoardComment 엔티티를 생성하기 전에
+                    //Board 엔티티를 생성할 때부터 exception이 발생
+                    Exception exception = assertThrows(NullPointerException.class, () -> {
+                        Board board = new Board(boardId, requestDto, loginUser);
+                        BoardComment boardComment = new BoardComment(commentRequestDto, board, loginUser);
+                    });
+
+                    /* then */
+                    //Board 엔티티에서 발생하는 exception
+                    assertEquals("존재하지 않는 게시물입니다.", exception.getMessage());
                 }
             }
         }
