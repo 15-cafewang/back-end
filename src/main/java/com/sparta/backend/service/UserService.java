@@ -7,6 +7,7 @@ import com.sparta.backend.domain.User;
 import com.sparta.backend.domain.UserRole;
 import com.sparta.backend.dto.request.user.DeleteUserRequestDto;
 import com.sparta.backend.dto.request.user.SignupRequestDto;
+import com.sparta.backend.dto.request.user.UpdateNicknameRequestDto;
 import com.sparta.backend.dto.request.user.UpdateUserRequestDto;
 import com.sparta.backend.dto.response.user.GetUserInfoResponseDto;
 import com.sparta.backend.repository.UserRepository;
@@ -99,6 +100,26 @@ public class UserService {
         return new GetUserInfoResponseDto(token, nickname, image);
     }
 
+    // 회원 정보 수정(닉네임만)
+    @Transactional
+    public void updateNickname(UserDetailsImpl userDetails, UpdateNicknameRequestDto requestDto) {
+
+        User user = userRepository.findById(userDetails.getUser().getId()).orElseThrow(
+                () -> new NullPointerException("존재하지 않는 회원입니다")
+        );
+
+        if (!requestDto.getNickname().equals(user.getNickname())) {
+
+            Optional<User> foundNickname = userRepository.findByNickname(requestDto.getNickname());
+
+            if (foundNickname.isPresent()) {
+                throw new IllegalArgumentException("이미 사용중인 닉네임 입니다");
+            }
+        }
+
+        user.changeNickname(requestDto.getNickname());
+    }
+
     // 회원 정보 수정
     @Transactional
     public void updateUser(UserDetailsImpl userDetails, UpdateUserRequestDto requestDto) throws IOException {
@@ -107,11 +128,16 @@ public class UserService {
                 () -> new NullPointerException("존재하지 않는 회원입니다")
         );
 
-        Optional<User> foundNickname = userRepository.findByNickname(requestDto.getNickname());
+        // 닉네임을 변경하지 않아도 dto에 값이 들어오게 되는데 현재 닉네임과 다를 경우에만 수정
+        if (!requestDto.getNickname().equals(user.getNickname())) {
 
-        if (foundNickname.isPresent()) {
-            throw new IllegalArgumentException("이미 사용중인 닉네임 입니다");
+            Optional<User> foundNickname = userRepository.findByNickname(requestDto.getNickname());
+
+            if (foundNickname.isPresent()) {
+                throw new IllegalArgumentException("이미 사용중인 닉네임 입니다");
+            }
         }
+
 
         String imageUrl = user.getImage();
 
