@@ -108,6 +108,97 @@ class BoardImageTest {
                     assertEquals("URL 형식이 아닙니다.", exception.getMessage());
                 }
             }
+
+            @Nested
+            @DisplayName("게시물")
+            class BoardClass {
+                @Test
+                @DisplayName("null")
+                void fail1() {
+                    /* given */
+                    board = null;
+
+                    /* when */
+                    Exception exception = assertThrows(NullPointerException.class, () -> {
+                        BoardImage boardImage = new BoardImage(image, board);
+                    });
+
+                    /* then */
+                    assertEquals("존재하지 않는 게시물입니다.", exception.getMessage());
+                }
+
+                @Test
+                @DisplayName("boardId가 null")
+                void fail2() {
+                    /* given */
+                    Long boardId = null;
+
+                    PostBoardRequestDto boardRequestDto = new PostBoardRequestDto("제목", "내용", null);
+                    String profile =
+                            "https://user-images.githubusercontent.com/76515226/140890775-30641b72-226a-4068-8a0a-9a306e8c68b4.png";
+                    //게시물 작성자
+                    User boardWriteUser = new User(1L, "aaa@aaa.com", "abab1234!",
+                            "nao", profile, USER, "Y");
+
+                    /* when */
+                    Exception exception = assertThrows(NullPointerException.class, () -> {
+                        board = new Board(boardId, boardRequestDto, boardWriteUser);
+                        BoardImage boardImage = new BoardImage(image, board);
+                    });
+
+                    /* then */
+                    //Board 엔티티에서 발생한 exception
+                    assertEquals("존재하지 않는 게시물입니다.", exception.getMessage());
+                }
+
+                @Test
+                @DisplayName("boardId가 0")
+                void fail3() {
+                    /* given */
+                    Long boardId = 0L;
+
+                    PostBoardRequestDto boardRequestDto = new PostBoardRequestDto("제목", "내용", null);
+                    String profile =
+                            "https://user-images.githubusercontent.com/76515226/140890775-30641b72-226a-4068-8a0a-9a306e8c68b4.png";
+                    //게시물 작성자
+                    User boardWriteUser = new User(1L, "aaa@aaa.com", "abab1234!",
+                            "nao", profile, USER, "Y");
+
+                    /* when */
+                    Exception exception = assertThrows(NullPointerException.class, () -> {
+                        board = new Board(boardId, boardRequestDto, boardWriteUser);
+                        BoardImage boardImage = new BoardImage(image, board);
+                    });
+
+                    /* then */
+                    //Board 엔티티에서 발생한 exception
+                    assertEquals("존재하지 않는 게시물입니다.", exception.getMessage());
+                }
+
+                @Test
+                @DisplayName("boardId가 음수")
+                void fail4() {
+                    /* given */
+                    Long boardId = -1L;
+
+                    PostBoardRequestDto boardRequestDto = new PostBoardRequestDto("제목", "내용", null);
+                    String profile =
+                            "https://user-images.githubusercontent.com/76515226/140890775-30641b72-226a-4068-8a0a-9a306e8c68b4.png";
+                    //게시물 작성자
+                    User boardWriteUser = new User(1L, "aaa@aaa.com", "abab1234!",
+                            "nao", profile, USER, "Y");
+
+                    /* when */
+                    Exception exception = assertThrows(NullPointerException.class, () -> {
+                        board = new Board(boardId, boardRequestDto, boardWriteUser);
+                        BoardImage boardImage = new BoardImage(image, board);
+                    });
+
+                    /* then */
+                    //Board 엔티티에서 발생한 exception
+                    assertEquals("존재하지 않는 게시물입니다.", exception.getMessage());
+                }
+            }
         }
     }
 }
