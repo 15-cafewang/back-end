@@ -138,7 +138,7 @@ public class RecipeControllerTest {
         @DisplayName("title입력관련")
         class titleRelated{
             @Test
-            @DisplayName("title null")
+            @DisplayName("null 제목")
             void titleNUll() throws Exception {
                 mockUserSetup();
                 MockMultipartFile image = new MockMultipartFile("image", "imagefile.jpeg", "image/jpg", new FileInputStream("src/test/java/com/sparta/backend/images/puppy1.jpg"));
@@ -153,7 +153,7 @@ public class RecipeControllerTest {
             }
 
             @Test
-            @DisplayName("title empty")
+            @DisplayName("빈 제목")
             void titleEmpty() throws Exception {
                 mockUserSetup();
                 MockMultipartFile image = new MockMultipartFile("image", "imagefile.jpeg", "image/jpg", new FileInputStream("src/test/java/com/sparta/backend/images/puppy1.jpg"));
@@ -169,7 +169,7 @@ public class RecipeControllerTest {
             }
 
             @Test
-            @DisplayName("titleTrim empty")
+            @DisplayName("공간만 있는 빈 제목")
             void titleTrimEmpty() throws Exception {
                 mockUserSetup();
                 MockMultipartFile image = new MockMultipartFile("image", "imagefile.jpeg", "image/jpg", new FileInputStream("src/test/java/com/sparta/backend/images/puppy1.jpg"));
@@ -185,7 +185,7 @@ public class RecipeControllerTest {
             }
 
             @Test
-            @DisplayName("title too long")
+            @DisplayName("너무 긴 제목")
             void titleTooLong() throws Exception {
                 mockUserSetup();
                 MockMultipartFile image = new MockMultipartFile("image", "imagefile.jpeg", "image/jpg", new FileInputStream("src/test/java/com/sparta/backend/images/puppy1.jpg"));
@@ -231,6 +231,54 @@ public class RecipeControllerTest {
                                     .principal(mockPrincipal))
                             .andExpect(status().is4xxClientError())
                             .andExpect(result -> assertEquals("사진은 5장을 초과할 수 없습니다.", result.getResolvedException().getMessage()));
+                }
+            }
+
+            @Nested
+            @DisplayName("태그 관련")
+            class TagRelated {
+                @Test
+                @DisplayName("너무 많은 태그")
+                void tagTooMany() throws Exception {
+                    mockUserSetup();
+                    MockMultipartFile image = new MockMultipartFile("image", "imagefile.jpeg", "image/jpg", new FileInputStream("src/test/java/com/sparta/backend/images/puppy1.jpg"));
+                    mockMvc.perform(MockMvcRequestBuilders.multipart("/recipes")
+                                    .file(image)
+                                    .param("title","this is title")
+                                    .param("content", "this is content")
+                                    .param("tag","aa").param("tag","dd").param("tag","gg").param("tag","jj").param("tag","mm")
+                                    .param("tag","bb").param("tag","ee").param("tag","hh").param("tag","kk").param("tag","nn")
+                                    .param("tag","cc").param("tag","ff").param("tag","ii").param("tag","ll").param("tag","oo")
+                                    .principal(mockPrincipal))
+                            .andExpect(status().is4xxClientError())
+                            .andExpect(result -> assertEquals("태그가 너무 많습니다.", result.getResolvedException().getMessage()));
+                }
+
+                @Test
+                @DisplayName("너무 긴 태그")
+                void tagTooLong() throws Exception {
+                    mockUserSetup();
+                    MockMultipartFile image = new MockMultipartFile("image", "imagefile.jpeg", "image/jpg", new FileInputStream("src/test/java/com/sparta/backend/images/puppy1.jpg"));
+                    mockMvc.perform(MockMvcRequestBuilders.multipart("/recipes")
+                                    .file(image)
+                                    .param("title","this is title")
+                                    .param("content", "this is content")
+                                    .param("tag","아침에 눈을 뜨면 네 생각이나\n" +
+                                            "창밖을 바라보다 네 생각이나\n" +
+                                            "그렇게 멍하니 또 하루가 흘러가\n" +
+                                            "너도 날 가끔씩은 떠 올릴까 네 생각이나\n" +
+                                            "어느새 내 주변의 모든 건\n" +
+                                            "익숙한 향기로 너에게 물들어\n" +
+                                            "화초에 꽃이 피어 네 생각이나\n" +
+                                            "예쁜 걸 볼 때마다 네 생각이나\n" +
+                                            "내 취향은 아니지만 네가 좋아하는\n" +
+                                            "그 노랫말 하루 종일 흥얼거려 네 생각이나\n" +
+                                            "사랑이 내게도 찾아왔나 봐\n" +
+                                            "어느새 내 주변의 모든 건\n" +
+                                            "처음 보는 색으로 내 맘처럼 피어나")
+                                    .principal(mockPrincipal))
+                            .andExpect(status().is4xxClientError())
+                            .andExpect(result -> assertEquals("태그가 너무 깁니다.", result.getResolvedException().getMessage()));
                 }
             }
 

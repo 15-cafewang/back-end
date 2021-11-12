@@ -25,6 +25,15 @@ public class PostRecipeRequestDtoValidator {
         if( requestDto.getImage().length >5){
             throw new IllegalArgumentException("사진은 5장을 초과할 수 없습니다.");
         }
+
+        if(requestDto.getTag().size() >10){
+            throw new IllegalArgumentException("태그가 너무 많습니다.");
+        }
+
+        requestDto.getTag().forEach(tag->{
+            if(tag.length()>50) throw new IllegalArgumentException("태그가 너무 깁니다.");
+        });
+
     }
 
 }
