@@ -54,6 +54,74 @@ class BoardCommentTest {
             assertEquals(board, boardComment.getBoard());
 
         }
+
+        @Nested
+        @DisplayName("실패 케이스")
+        class FailCases {
+            @Nested
+            @DisplayName("댓글 id")
+            class BoardCommentId {
+                @Test
+                @DisplayName("null")
+                void fail1() {
+                    /* given */
+                    Long commentId = null;
+                    PostBoardRequestDto boardRequestDto = new PostBoardRequestDto("제목", "내용", null);
+                    board = new Board(1L, boardRequestDto, user);
+                    PostBoardCommentRequestDto commentRequestDto =
+                            new PostBoardCommentRequestDto(1L, content);
+
+                    /* when */
+                    Exception exception = assertThrows(NullPointerException.class, () -> {
+                        BoardComment boardComment = new BoardComment(commentId, commentRequestDto, board, user);
+                    });
+
+                    /* then */
+                    assertEquals("존재하지 않는 댓글입니다.", exception.getMessage());
+
+                }
+
+                @Test
+                @DisplayName("0")
+                void fail2() {
+                    /* given */
+                    Long commentId = 0L;
+                    PostBoardRequestDto boardRequestDto = new PostBoardRequestDto("제목", "내용", null);
+                    board = new Board(1L, boardRequestDto, user);
+                    PostBoardCommentRequestDto commentRequestDto =
+                            new PostBoardCommentRequestDto(1L, content);
+
+                    /* when */
+                    Exception exception = assertThrows(NullPointerException.class, () -> {
+                        BoardComment boardComment = new BoardComment(commentId, commentRequestDto, board, user);
+                    });
+
+                    /* then */
+                    assertEquals("존재하지 않는 댓글입니다.", exception.getMessage());
+
+                }
+
+                @Test
+                @DisplayName("음수")
+                void fail3() {
+                    /* given */
+                    Long commentId = -1L;
+                    PostBoardRequestDto boardRequestDto = new PostBoardRequestDto("제목", "내용", null);
+                    board = new Board(1L, boardRequestDto, user);
+                    PostBoardCommentRequestDto commentRequestDto =
+                            new PostBoardCommentRequestDto(1L, content);
+
+                    /* when */
+                    Exception exception = assertThrows(NullPointerException.class, () -> {
+                        BoardComment boardComment = new BoardComment(commentId, commentRequestDto, board, user);
+                    });
+
+                    /* then */
+                    assertEquals("존재하지 않는 댓글입니다.", exception.getMessage());
+
+                }
+            }
+        }
     }
 
 }
