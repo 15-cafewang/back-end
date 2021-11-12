@@ -121,6 +121,90 @@ class BoardCommentTest {
 
                 }
             }
+
+            @Nested
+            @DisplayName("댓글 내용")
+            class BoardContent {
+                @Test
+                @DisplayName("null")
+                void fail1() {
+                    /* given */
+                    content = null;
+                    PostBoardRequestDto boardRequestDto = new PostBoardRequestDto("제목", "내용", null);
+                    board = new Board(1L, boardRequestDto, user);
+                    PostBoardCommentRequestDto commentRequestDto =
+                            new PostBoardCommentRequestDto(1L, content);
+
+                    /* when */
+                    Exception exception = assertThrows(NullPointerException.class, () -> {
+                        BoardComment boardComment = new BoardComment(1L, commentRequestDto, board, user);
+                    });
+
+                    /* then */
+                    assertEquals("내용을 입력하세요", exception.getMessage());
+
+                }
+
+                @Test
+                @DisplayName("길이가 0 이하")
+                void fail2() {
+                    /* given */
+                    content = "";
+                    PostBoardRequestDto boardRequestDto = new PostBoardRequestDto("제목", "내용", null);
+                    board = new Board(1L, boardRequestDto, user);
+                    PostBoardCommentRequestDto commentRequestDto =
+                            new PostBoardCommentRequestDto(1L, content);
+
+                    /* when */
+                    Exception exception = assertThrows(NullPointerException.class, () -> {
+                        BoardComment boardComment = new BoardComment(1L, commentRequestDto, board, user);
+                    });
+
+                    /* then */
+                    assertEquals("내용을 입력하세요", exception.getMessage());
+
+                }
+
+                @Test
+                @DisplayName("길이가 기준보다 클 떄")
+                void fail3() {
+                    /* given */
+                    content = "안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요" +
+                            "안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요" +
+                            "안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요" +
+                            "안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요" +
+                            "안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요" +
+                            "안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요" +
+                            "안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요" +
+                            "안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요" +
+                            "안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요" +
+                            "안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요" +
+                            "안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요" +
+                            "안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요" +
+                            "안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요" +
+                            "안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요" +
+                            "안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요" +
+                            "안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요" +
+                            "안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요" +
+                            "안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요" +
+                            "안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요" +
+                            "안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요" +
+                            "안녕하세요";
+                    PostBoardRequestDto boardRequestDto = new PostBoardRequestDto("제목", "내용", null);
+                    board = new Board(1L, boardRequestDto, user);
+                    PostBoardCommentRequestDto commentRequestDto =
+                            new PostBoardCommentRequestDto(1L, content);
+
+                    /* when */
+                    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+                        BoardComment boardComment = new BoardComment(1L, commentRequestDto, board, user);
+                    });
+
+                    /* then */
+                    assertEquals("내용은 최대 1000글자 입력 가능합니다.", exception.getMessage());
+
+                }
+            }
         }
     }
 
