@@ -4,13 +4,16 @@ import com.sparta.backend.domain.User;
 import com.sparta.backend.domain.UserRole;
 import com.sparta.backend.domain.recipe.Recipe;
 import com.sparta.backend.dto.request.recipes.PostRecipeRequestDto;
+import com.sparta.backend.dto.request.user.SignupRequestDto;
 import com.sparta.backend.security.UserDetailsImpl;
+import com.sparta.backend.service.UserService;
 import com.sparta.backend.service.recipe.RecipeService;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -28,26 +31,20 @@ public class RecipeIntegrationTest {
     @Autowired
     RecipeService recipeService;
 
-    User testUser;
+    @Autowired
+    UserService userService;
 
-    public void mockUserSetup() {
-// Mock 테스트 유져 생성
-        String nickname = "testUser";
-        String password = "hope!@#";
-        String email = "hope@sparta.com";
-        UserRole role = UserRole.USER;
-        String image = "https://user-images.githubusercontent.com/76515226/140890775-30641b72-226a-4068-8a0a-9a306e8c68b4.png";
-        testUser = new User(email, password, nickname, image, role, "Y");
-//        UserDetailsImpl testUserDetails = new UserDetailsImpl(testUser);
-//        mockPrincipal = new UsernamePasswordAuthenticationToken(testUserDetails, "", testUserDetails.getAuthorities());
-    }
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
+    User user = null;
+    Recipe createdRecipe = null;
 
     @Test
     @Order(1)
     @DisplayName("회원가입 없이 레시피 저장하면 에러발생")
     void test1() throws IOException {
         //given
-        mockUserSetup();
 
         String title = "이것이 레시피다";
         String content = "내용입니다. 맛있다 냠냠냠";
@@ -59,15 +56,37 @@ public class RecipeIntegrationTest {
         PostRecipeRequestDto requestDto = new PostRecipeRequestDto(
                 title, content, price,tag, image
         );
-        User notValidUser = null;
 
         //when
         Exception exception = assertThrows(IllegalArgumentException.class,()->{
-            Recipe recipe = recipeService.saveRecipe(requestDto,notValidUser);
+            Recipe recipe = recipeService.saveRecipe(requestDto,user);
         });
 
         //then
         assertEquals("로그인 되지 않은 사용자입니다", exception.getMessage());
+    }
+
+    @Test
+    @Order(2)
+    @DisplayName("회원가입")
+    void test2() throws IOException {
+        //given
+        String email = "hope@sparta.com";
+        String password= "1234qwer!@";
+        String passwordCheck = "1234qwer!@";
+        String nickname = "alex";
+
+        SignupRequestDto requestDto = new SignupRequestDto(email,password,passwordCheck,nickname);
+
+        //when
+        user = userService.registerUser(requestDto);
+
+        //then
+        assertNotNull(user.getId());
+        assertEquals(nickname, user.getNickname());
+        assertTrue(passwordEncoder.matches(password, user.getPassword()));
+        assertEquals(email, user.getEmail());
+        assertEquals(UserRole.USER, user.getRole());
     }
 
 }

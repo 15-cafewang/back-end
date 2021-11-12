@@ -56,7 +56,7 @@ public class UserService {
     }
 
     //회원등록
-    public void registerUser(SignupRequestDto requestDto) {
+    public User registerUser(SignupRequestDto requestDto) {
 
         String email = requestDto.getEmail();
 
@@ -76,7 +76,7 @@ public class UserService {
 
         User user = new User(email, password, nickname, image, UserRole.USER, "Y");
 
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     // 로그인
