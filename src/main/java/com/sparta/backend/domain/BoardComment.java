@@ -22,7 +22,7 @@ public class BoardComment extends BaseEntity {
     @Column(name = "comment_id")
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1500)
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
