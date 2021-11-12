@@ -223,7 +223,7 @@ class BoardCommentTest {
                     });
 
                     /* then */
-                    assertEquals("존재하지 않는 게시물입니다", exception.getMessage());
+                    assertEquals("존재하지 않는 게시물입니다.", exception.getMessage());
                 }
 
                 @Test
@@ -299,6 +299,70 @@ class BoardCommentTest {
                     /* then */
                     //Board 엔티티에서 발생하는 exception
                     assertEquals("존재하지 않는 게시물입니다.", exception.getMessage());
+                }
+            }
+
+            @Nested
+            @DisplayName("사용자")
+            class UserEntity {
+                @Test
+                @DisplayName("null")
+                void fail1() {
+                    /* given */
+                    loginUser = null;
+                    PostBoardCommentRequestDto requestDto =
+                            new PostBoardCommentRequestDto(1L, content);
+
+
+                    /* when */
+                    Exception exception = assertThrows(NullPointerException.class, () -> {
+                        BoardComment boardComment = new BoardComment(requestDto, board, loginUser);
+                    });
+
+                    /* then */
+                    assertEquals("로그인이 필요합니다.", exception.getMessage());
+                }
+
+                @Test
+                @DisplayName("userId가 0")
+                void fail2() {
+                    /* given */
+                    String profile =
+                            "https://user-images.githubusercontent.com/76515226/140890775-30641b72-226a-4068-8a0a-9a306e8c68b4.png";
+                    loginUser = new User(0L, "bbb@bbb.com", "abab1234!",
+                            "nao", profile, USER, "Y");
+                    PostBoardCommentRequestDto requestDto =
+                            new PostBoardCommentRequestDto(1L, content);
+
+
+                    /* when */
+                    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+                        BoardComment boardComment = new BoardComment(requestDto, board, loginUser);
+                    });
+
+                    /* then */
+                    assertEquals("존재하지 않는 사용자입니다.", exception.getMessage());
+                }
+
+                @Test
+                @DisplayName("userId가 null")
+                void fail3() {
+                    /* given */
+                    String profile =
+                            "https://user-images.githubusercontent.com/76515226/140890775-30641b72-226a-4068-8a0a-9a306e8c68b4.png";
+                    loginUser = new User(null, "bbb@bbb.com", "abab1234!",
+                            "nao", profile, USER, "Y");
+                    PostBoardCommentRequestDto requestDto =
+                            new PostBoardCommentRequestDto(1L, content);
+
+
+                    /* when */
+                    Exception exception = assertThrows(NullPointerException.class, () -> {
+                        BoardComment boardComment = new BoardComment(requestDto, board, loginUser);
+                    });
+
+                    /* then */
+                    assertEquals("존재하지 않는 사용자입니다.", exception.getMessage());
                 }
             }
         }
