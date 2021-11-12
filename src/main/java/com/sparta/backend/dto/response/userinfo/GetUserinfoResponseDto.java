@@ -13,6 +13,6 @@ public class GetUserinfoResponseDto {
     private String nickname;     // 닉네임
     private int followCount;     // 팔로워 수
     private int followingCount;   // 팔로잉 수
-    private String followStatus; // 팔로우 상태
+    private boolean followStatus; // 팔로우 상태
 
 }
