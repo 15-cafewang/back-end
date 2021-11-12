@@ -26,8 +26,7 @@ public class BoardCommentValidator {
         } else {
             if(content.length() <= 0) {
                 throw new NullPointerException("내용을 입력하세요");
-            }
-            if(content.length() > 1000) {
+            } else if(content.length() > 1000) {
                 throw new IllegalArgumentException("내용은 최대 1000글자 입력 가능합니다.");
             }
         }
@@ -49,7 +48,9 @@ public class BoardCommentValidator {
         if(user == null) {
             throw new NullPointerException("로그인이 필요합니다.");
         } else {
-            if(user.getId() <= 0 || user.getId() == null) {
+            if(user.getId() == null) {
+                throw new NullPointerException("존재하지 않는 사용자입니다.");
+            } else if(user.getId() <= 0) {
                 throw new IllegalArgumentException("존재하지 않는 사용자입니다.");
             }
         }
