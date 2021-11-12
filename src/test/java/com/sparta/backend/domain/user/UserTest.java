@@ -66,25 +66,6 @@ class UserTest {
             }
 
             @Test
-            @DisplayName("비밀번호 형식이 잘못된 경우")
-            void passwordError() {
-
-                // given
-                String email = "aaa@aaa.com";
-                String password = "qwe123";
-                String nickname = "test";
-                String image = "image";
-                UserRole role = UserRole.USER;
-                String status = "Y";
-
-                // when then
-                assertThatThrownBy(() -> {
-                    new User(email, password, nickname, image, role, status);
-                }).isInstanceOf(IllegalArgumentException.class)
-                        .hasMessageContaining("비밀번호는 영문 대,소문자와 숫자, 8자 ~ 20자의 비밀번호여야 합니다");
-            }
-
-            @Test
             @DisplayName("닉네임 형식이 잘못된 경우")
             void nicknameError() {
 

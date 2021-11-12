@@ -272,4 +272,12 @@ public class RecipeService {
 
         return responseDtoList;
     }
+
+    public List<RecipeListResponseDto> getRecentRecipe(User user) {
+        List<Recipe> popularRecipeIdList = recipeRepository.findTop4ByOrderByRegDateDesc();
+
+        List<RecipeListResponseDto> responseDtoList = new ArrayList<>();
+        popularRecipeIdList.forEach((recipe -> responseDtoList.add(new RecipeListResponseDto(recipe, user, recipeLikesRepository))));
+        return responseDtoList;
+    }
 }
