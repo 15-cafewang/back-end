@@ -34,12 +34,16 @@ public class BoardCommentValidator {
 
         //게시물
         if(board == null) {
-            throw new NullPointerException("게시물이 없습니다.");
-        } else {
-            if(board.getId() == null || board.getId() <= 0) {
-                throw new NullPointerException("존재하지 않는 게시물입니다.");
-            }
+            throw new NullPointerException("존재하지 않는 게시물입니다.");
         }
+        // Board 엔티티에서 아래와 같은 값이 들어온다면
+        // BoardComment 엔티티에서 exception이 나기 전
+        // BoardValidator에서 exception이 일어남
+//        else {
+//            if(board.getId() == null || board.getId() <= 0) {
+//                throw new NullPointerException("존재하지 않는 게시물입니다");
+//            }
+//        }
 
         //사용자
         if(user == null) {
