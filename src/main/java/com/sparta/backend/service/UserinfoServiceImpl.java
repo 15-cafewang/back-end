@@ -34,7 +34,7 @@ public class UserinfoServiceImpl implements UserinfoService {
         String image;
         int followCount;
         int followingCount;
-        String followStatus = "";
+        boolean followStatus = false;
 
         // 조회하는 회원이 로그인한 회원일 때
         if (nickname.equals(userDetails.getUser().getNickname())) {
@@ -55,9 +55,7 @@ public class UserinfoServiceImpl implements UserinfoService {
 
             Optional<Follow> result = followRepository.findByFromUserAndToUser(userDetails.getUser(), foundUser);
             if (result.isPresent()) {
-                followStatus = "Y";
-            } else {
-                followStatus = "N";
+                followStatus = true;
             }
         }
 

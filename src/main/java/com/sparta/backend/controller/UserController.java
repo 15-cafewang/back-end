@@ -117,6 +117,15 @@ public class UserController {
         return new CustomResponseDto<>(1, "회원 정보 수정 성공", "");
     }
 
+    // 닉네임 수정
+    @PutMapping("/user/info/nickname")
+    public CustomResponseDto<?> updateNickname(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody UpdateNicknameRequestDto requestDto) {
+
+        userService.updateNickname(userDetails, requestDto);
+
+        return new CustomResponseDto<>(1, "닉네임 수정 성공", "");
+    }
+
     // 회원 탈퇴
     @PutMapping("/user/delete")
     public CustomResponseDto<?> deleteUser(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody DeleteUserRequestDto requestDto) {

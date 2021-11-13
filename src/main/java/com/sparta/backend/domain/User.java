@@ -120,6 +120,12 @@ public class User extends BaseEntity {
         this.image = image;
     }
 
+    // 닉네임 수정
+    public void changeNickname(String nickname) {
+        validateNickname(nickname);
+        this.nickname = nickname;
+    }
+
     // 회원 삭제
     public void deleteUser(String status) {
         this.status = status;
