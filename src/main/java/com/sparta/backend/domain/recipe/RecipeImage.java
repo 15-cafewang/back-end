@@ -28,7 +28,12 @@ public class RecipeImage extends BaseEntity {
     public RecipeImage(String image, Recipe recipe){
         this.image = image;
         this.recipe = recipe;
+
+//        addRecipeImage(this);
     }
+//    public void addRecipeImage(RecipeImage recipeImage){
+//        recipe.getRecipeImagesList().add(recipeImage);
+//    }
 
     public RecipeImage updateRecipeImage(String image, Recipe recipe){
         this.image = image;
