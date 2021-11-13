@@ -58,7 +58,7 @@ public class RecipeController {
         checkOwnership(recipeId, userDetails);
 
         //레시피 업데이트
-        Recipe updatedRecipe = recipeService.updateRecipe(recipeId,requestDto,userDetails);
+        Recipe updatedRecipe = recipeService.updateRecipe(recipeId,requestDto);
         //태그 업데이트
         tagService.updateTags(requestDto.getTag(),updatedRecipe);
 

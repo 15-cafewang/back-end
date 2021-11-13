@@ -61,10 +61,7 @@ public class RecipeService {
 
     //레시피 저장
     public Recipe saveRecipe(PostRecipeRequestDto requestDto, User user) throws IOException {
-//        System.out.println("파일내임:"+ requestDto.getImage()[0].getOriginalFilename());
-//        System.out.println("파일사이즈:"+ requestDto.getImage()[0].getSize());
-//        System.out.println("파일바이츠:"+ requestDto.getImage()[0].getBytes());
-//        System.out.println("파일내임:"+ requestDto.getImage()[0].getName());
+
         List<String> imageUrlList= requestDto.getImage()[0].getSize() == 0L? null :uploadManyImagesToS3(requestDto, "recipeImage");
         Recipe recipe = uploadManyImagesToDB(imageUrlList,requestDto,user);
         return recipeRepository.save(recipe);
@@ -103,13 +100,15 @@ public class RecipeService {
             imageUrlList.forEach((image)-> recipeImages.add(new RecipeImage(image,recipe)));
             recipeImageRepository.saveAll(recipeImages);
         }
+//        System.out.println(recipe.getRecipeImagesList());
+//        System.out.println(recipe.getRecipeImagesList().get(0).getImage());
         return recipe;
     }
 
     //레시피 수정
     //todo: 문제점: 중간에 익셉션 터져서 롤백한 상황이라면, S3에서 수정한건 롤백이 안된다.
     @Transactional
-    public Recipe updateRecipe(Long recipeId,PostRecipeRequestDto requestDto, UserDetailsImpl userDetails) throws IOException {
+    public Recipe updateRecipe(Long recipeId,PostRecipeRequestDto requestDto) throws IOException {
         //게시글 존재여부확인
         Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(()->new CustomErrorException("해당 게시물을 찾을 수 없습니다"));
 
