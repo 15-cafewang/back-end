@@ -61,7 +61,8 @@ public class RecipeService {
 
     //레시피 저장
     public Recipe saveRecipe(PostRecipeRequestDto requestDto, User user) throws IOException {
-        List<String> imageUrlList= uploadManyImagesToS3(requestDto, "recipeImage");
+
+        List<String> imageUrlList= requestDto.getImage()[0].getSize() == 0L? null :uploadManyImagesToS3(requestDto, "recipeImage");
         Recipe recipe = uploadManyImagesToDB(imageUrlList,requestDto,user);
         return recipeRepository.save(recipe);
     }
@@ -94,16 +95,20 @@ public class RecipeService {
     public Recipe uploadManyImagesToDB(List<String> imageUrlList, PostRecipeRequestDto requestDto, User user){
         Recipe recipe = new Recipe(requestDto.getTitle(),requestDto.getContent(),requestDto.getPrice(),user);
         //디비에 이미지url저장
-        List<RecipeImage> recipeImages = new ArrayList<>();
-        imageUrlList.forEach((image)-> recipeImages.add(new RecipeImage(image,recipe)));
-        recipeImageRepository.saveAll(recipeImages);
+        if(imageUrlList!=null){
+            List<RecipeImage> recipeImages = new ArrayList<>();
+            imageUrlList.forEach((image)-> recipeImages.add(new RecipeImage(image,recipe)));
+            recipeImageRepository.saveAll(recipeImages);
+        }
+//        System.out.println(recipe.getRecipeImagesList());
+//        System.out.println(recipe.getRecipeImagesList().get(0).getImage());
         return recipe;
     }
 
     //레시피 수정
     //todo: 문제점: 중간에 익셉션 터져서 롤백한 상황이라면, S3에서 수정한건 롤백이 안된다.
     @Transactional
-    public Recipe updateRecipe(Long recipeId,PostRecipeRequestDto requestDto, UserDetailsImpl userDetails) throws IOException {
+    public Recipe updateRecipe(Long recipeId,PostRecipeRequestDto requestDto) throws IOException {
         //게시글 존재여부확인
         Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(()->new CustomErrorException("해당 게시물을 찾을 수 없습니다"));
 
@@ -155,6 +160,7 @@ public class RecipeService {
         int likeCount = recipe.getRecipeLikesList().size();
 //        String image = recipe.getImage();
         Integer price = recipe.getPrice();
+        String profile = recipe.getUser().getImage();
         Optional<RecipeLikes> foundRecipeLike = recipeLikesRepository.findByRecipeIdAndUserId(recipe.getId(),userDetails.getUser().getId());
         Boolean likeStatus = foundRecipeLike.isPresent();
 
@@ -164,7 +170,7 @@ public class RecipeService {
         List<String> images =new ArrayList<>();
         recipe.getRecipeImagesList().forEach((recipeImage)->images.add(recipeImage.getImage()));
         RecipeDetailResponsetDto responsetDto = new RecipeDetailResponsetDto(
-                recipeId, nickname, title, content, regDate, likeCount, likeStatus, images, tagNames, price);
+                recipeId, nickname, title, content, regDate, likeCount, likeStatus, images, tagNames, price,profile);
 
         return responsetDto;
     }
