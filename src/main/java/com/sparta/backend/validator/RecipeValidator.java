@@ -15,8 +15,8 @@ public class RecipeValidator {
             throw new IllegalArgumentException("제목이 입력되지 않았습니다.");
         }
 
-        if(title.length() > 200){
-            throw new IllegalArgumentException("제목의 길이가 200자를 초과하였습니다.");
+        if(title.length() > 100){
+            throw new IllegalArgumentException("제목의 길이가 100자를 초과하였습니다.");
         }
 
         if(content.length()>1000){

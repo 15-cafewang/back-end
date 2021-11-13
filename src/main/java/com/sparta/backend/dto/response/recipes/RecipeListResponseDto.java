@@ -52,6 +52,7 @@ public class RecipeListResponseDto {
         this.commentCount = recipe.getRecipeCommentList().size();
         recipe.getRecipeImagesList().forEach((RecipeImage)->this.images.add(RecipeImage.getImage()));
         this.likeCount = recipe.getRecipeLikesList().size();
+        this.price = recipe.getPrice();
 
         Optional<RecipeLikes> foundRecipeLike = recipeLikesRepository.findByRecipeAndUser(recipe,user);
         this.likeStatus = foundRecipeLike.isPresent();

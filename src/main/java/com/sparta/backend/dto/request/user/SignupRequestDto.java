@@ -1,5 +1,6 @@
 package com.sparta.backend.dto.request.user;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,7 +8,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
-@Getter @Setter
+@Getter @Setter @AllArgsConstructor
 public class SignupRequestDto {
 
     @NotBlank(message = "이메일은 필수 입력 값입니다.")
