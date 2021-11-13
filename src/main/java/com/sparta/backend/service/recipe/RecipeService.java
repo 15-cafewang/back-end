@@ -160,6 +160,7 @@ public class RecipeService {
         int likeCount = recipe.getRecipeLikesList().size();
 //        String image = recipe.getImage();
         Integer price = recipe.getPrice();
+        String profile = recipe.getUser().getImage();
         Optional<RecipeLikes> foundRecipeLike = recipeLikesRepository.findByRecipeIdAndUserId(recipe.getId(),userDetails.getUser().getId());
         Boolean likeStatus = foundRecipeLike.isPresent();
 
@@ -169,7 +170,7 @@ public class RecipeService {
         List<String> images =new ArrayList<>();
         recipe.getRecipeImagesList().forEach((recipeImage)->images.add(recipeImage.getImage()));
         RecipeDetailResponsetDto responsetDto = new RecipeDetailResponsetDto(
-                recipeId, nickname, title, content, regDate, likeCount, likeStatus, images, tagNames, price);
+                recipeId, nickname, title, content, regDate, likeCount, likeStatus, images, tagNames, price,profile);
 
         return responsetDto;
     }

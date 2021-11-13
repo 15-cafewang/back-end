@@ -19,4 +19,5 @@ public class RecipeDetailResponsetDto {
     private List<String> images;
     private List<String> tags;
     private Integer price;
+    private String profile;
 }
