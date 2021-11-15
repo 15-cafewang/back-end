@@ -2,6 +2,7 @@ package com.sparta.backend.controller;
 
 import com.sparta.backend.domain.recipe.Recipe;
 import com.sparta.backend.dto.request.recipes.PostRecipeRequestDto;
+import com.sparta.backend.dto.request.recipes.PutRecipeRequestDto;
 import com.sparta.backend.dto.response.CustomResponseDto;
 import com.sparta.backend.dto.response.recipes.RecipeDetailResponsetDto;
 import com.sparta.backend.dto.response.recipes.RecipeListResponseDto;
@@ -52,7 +53,7 @@ public class RecipeController {
 
     //레시피 수정
     @PutMapping("/recipes/{recipeId}")
-    public CustomResponseDto<?> updateRecipe(@PathVariable Long recipeId, PostRecipeRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+    public CustomResponseDto<?> updateRecipe(@PathVariable Long recipeId, PutRecipeRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         //todo:IOException처리
         checkLogin(userDetails);
         checkOwnership(recipeId, userDetails);

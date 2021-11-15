@@ -4,6 +4,7 @@ import com.sparta.backend.domain.User;
 import com.sparta.backend.domain.UserRole;
 import com.sparta.backend.domain.recipe.Recipe;
 import com.sparta.backend.dto.request.recipes.PostRecipeRequestDto;
+import com.sparta.backend.dto.request.recipes.PutRecipeRequestDto;
 import com.sparta.backend.dto.request.user.SignupRequestDto;
 import com.sparta.backend.security.UserDetailsImpl;
 import com.sparta.backend.service.UserService;
@@ -135,9 +136,10 @@ public class RecipeIntegrationTest {
         List<String> tag = Arrays.asList("가가,나나,다다");
         MockMultipartFile image1 = new MockMultipartFile("image", "imagefile.jpeg", "image/jpg", new FileInputStream("src/test/java/com/sparta/backend/images/puppy1.jpg"));
         MockMultipartFile[] image = {image1};
+        List<String> deleteimage = Arrays.asList("url1,url2");
 
-        PostRecipeRequestDto requestDto = new PostRecipeRequestDto(
-                title, content, price,tag, image
+        PutRecipeRequestDto requestDto = new PutRecipeRequestDto(
+                title, content, price,tag, image,deleteimage
         );
 
         //when
