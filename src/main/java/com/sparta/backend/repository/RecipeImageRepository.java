@@ -10,4 +10,6 @@ import java.util.List;
 public interface RecipeImageRepository extends JpaRepository<RecipeImage,Long> {
 //    @Query("delete from RecipeImage i where i.image in :imageUrls")
     void deleteByImageIn(List<String> imageUrls);
+
+    List<RecipeImage> findByImageIn(List<String> imageUrls);
 }
