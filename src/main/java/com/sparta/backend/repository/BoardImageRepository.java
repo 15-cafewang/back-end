@@ -10,5 +10,7 @@ import java.util.List;
 @Repository
 public interface BoardImageRepository extends JpaRepository<BoardImage, Long> {
     List<BoardImage> findAllByBoard(Board board);
+    List<BoardImage> findAllByImageIn(List<String> deleteImage);
+    void deleteByImageIn(List<String> deleteImage);
     void deleteAllByBoard(Board board);
 }
