@@ -98,6 +98,7 @@ public class RecipeService {
         List<String> savedImages = new ArrayList<>();
         //s3에 이미지저장
         for(MultipartFile img : requestDto.getImage()){
+            System.out.println("빈 이미지??:"+img);
             if(img.isEmpty()) return savedImages;
 
             String imageUrl = s3Uploader.upload(img, dirName);
@@ -127,8 +128,14 @@ public class RecipeService {
         //게시글 존재여부확인
         Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(()->new CustomErrorException("해당 게시물을 찾을 수 없습니다"));
 
+        //사진 총 5장 안넘는지 검사
+        checkIfImageMoreThan5(recipe, requestDto);
+
         //수정할 이미지 S3에 업로드
         List<String> imageUrlList = uploadManyImagesToS3(requestDto,"recipeImage");
+
+        //삭제하려는 사진이 해당게시물의 사진이 맞는지 검사- url만 가지고 다른게시물의 사진을 삭제 못하도록
+        checkDeleteImageOwnership(recipeId, requestDto);
 
         //DB의 recipe_image 기존 row들 삭제(그냥 update하면 더 작은 개수로 image업뎃할때 outOfInedex에러남)
         recipeImageRepository.deleteByImageIn(requestDto.getDeleteImage());
@@ -145,13 +152,31 @@ public class RecipeService {
         String content = requestDto.getContent();
         Integer price = requestDto.getPrice();
 
-        //사진 다 수정되면 기존 사진 s3삭제 -> 중간에 작업하다가 익셉션 터지면 s3에 작업한 건 롤백이 안되니까.
+        Recipe updatedRecipe = recipe.updateRecipe(title,content,price);
+
+        //사진 다 수정되면 기존 사진 s3삭제 -> 중간에 작업하다가 익셉션 터지면 s3에 작업한 건 롤백이 안되니까 일부러 마지막에서 처리
         for(int i=0; i<requestDto.getDeleteImage().size();i++){
             String s3Url = requestDto.getDeleteImage().get(i);
             if(s3Url!= null) deleteS3(s3Url);
         }
 
-        return recipe.updateRecipe(title,content,price);
+        return updatedRecipe;
+    }
+
+    //todo: n+1 문제 해결해야 할 듯
+    private void checkDeleteImageOwnership(Long recipeId, PutRecipeRequestDto requestDto) {
+        List<String> imgUrls = requestDto.getDeleteImage();
+        List<RecipeImage> foundImages = recipeImageRepository.findByImageIn(imgUrls);
+        foundImages.forEach(recipeImage -> {
+            if(!recipeImage.getRecipe().getId().equals(recipeId)) throw new IllegalArgumentException("해당 게시물의 사진만 수정할 수 있습니다.");
+        });
+    }
+
+    private void checkIfImageMoreThan5(Recipe recipe, PutRecipeRequestDto requestDto) {
+        int oldCount = recipe.getRecipeImagesList().size();
+        int deleteCount = requestDto.getDeleteImage().size();
+        int addCount = requestDto.getImage().length;
+        if(oldCount+addCount-deleteCount > 5 ) throw new IllegalArgumentException("사진은 총 5장 이상이 될 수 없습니다");
     }
 
     //S3 이미지 삭제
