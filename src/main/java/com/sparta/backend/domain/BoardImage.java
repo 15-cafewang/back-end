@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+import static com.sparta.backend.validator.BoardImageValidator.boardImageValidator;
+
 @Getter
 @NoArgsConstructor
 @Entity
@@ -24,6 +26,7 @@ public class BoardImage extends BaseEntity {
     private Board board;
 
     public BoardImage(String image, Board board) {
+        boardImageValidator(image, board);
         this.image = image;
         this.board = board;
     }
