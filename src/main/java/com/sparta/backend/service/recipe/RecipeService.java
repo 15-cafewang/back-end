@@ -8,6 +8,7 @@ import com.sparta.backend.domain.recipe.RecipeImage;
 import com.sparta.backend.domain.recipe.RecipeLikes;
 import com.sparta.backend.domain.User;
 import com.sparta.backend.dto.request.recipes.PostRecipeRequestDto;
+import com.sparta.backend.dto.request.recipes.PutRecipeRequestDto;
 import com.sparta.backend.dto.response.recipes.RecipeDetailResponsetDto;
 import com.sparta.backend.dto.response.recipes.RecipeListResponseDto;
 import com.sparta.backend.exception.CustomErrorException;
@@ -85,6 +86,20 @@ public class RecipeService {
         List<String> savedImages = new ArrayList<>();
         //s3에 이미지저장
         for(MultipartFile img : requestDto.getImage()){
+            if(img.isEmpty()) return savedImages;
+
+            String imageUrl = s3Uploader.upload(img, dirName);
+            if(imageUrl == null) throw new NullPointerException("이미지를 s3에 업로드하는 과정 실패");
+            savedImages.add(imageUrl);
+        }
+        return savedImages;
+    }
+    public List<String> uploadManyImagesToS3(PutRecipeRequestDto requestDto, String dirName) throws IOException {
+        List<String> savedImages = new ArrayList<>();
+        //s3에 이미지저장
+        for(MultipartFile img : requestDto.getImage()){
+            if(img.isEmpty()) return savedImages;
+
             String imageUrl = s3Uploader.upload(img, dirName);
             if(imageUrl == null) throw new NullPointerException("이미지를 s3에 업로드하는 과정 실패");
             savedImages.add(imageUrl);
@@ -108,31 +123,33 @@ public class RecipeService {
     //레시피 수정
     //todo: 문제점: 중간에 익셉션 터져서 롤백한 상황이라면, S3에서 수정한건 롤백이 안된다.
     @Transactional
-    public Recipe updateRecipe(Long recipeId,PostRecipeRequestDto requestDto) throws IOException {
+    public Recipe updateRecipe(Long recipeId,PutRecipeRequestDto requestDto) throws IOException {
         //게시글 존재여부확인
         Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(()->new CustomErrorException("해당 게시물을 찾을 수 없습니다"));
 
         //수정할 이미지 S3에 업로드
-        MultipartFile[] imageList = requestDto.getImage();
         List<String> imageUrlList = uploadManyImagesToS3(requestDto,"recipeImage");
 
-        //S3에 있는 사진 삭제
-        for(int i=0; i<recipe.getRecipeImagesList().size();i++){
-            RecipeImage recipeImage = recipe.getRecipeImagesList().get(i);
-            if(recipeImage!= null) deleteS3(recipeImage.getImage());
-        }
-
         //DB의 recipe_image 기존 row들 삭제(그냥 update하면 더 작은 개수로 image업뎃할때 outOfInedex에러남)
-        recipeImageRepository.deleteAllByRecipe(recipe);
+        recipeImageRepository.deleteByImageIn(requestDto.getDeleteImage());
 
-        List<RecipeImage> recipeImageList = new ArrayList<>();
-        imageUrlList.forEach((image)->recipeImageList.add(new RecipeImage(image,recipe)));
-        recipeImageRepository.saveAll(recipeImageList);
+        //recipe_image db에 저장
+        if (imageUrlList.size()>0){
+            List<RecipeImage> recipeImageList = new ArrayList<>();
+            imageUrlList.forEach((image)->recipeImageList.add(new RecipeImage(image,recipe)));
+            recipeImageRepository.saveAll(recipeImageList);
+        }
 
         //이미지 외 다른 내용들 수정
         String title = requestDto.getTitle();
         String content = requestDto.getContent();
         Integer price = requestDto.getPrice();
+
+        //사진 다 수정되면 기존 사진 s3삭제 -> 중간에 작업하다가 익셉션 터지면 s3에 작업한 건 롤백이 안되니까.
+        for(int i=0; i<requestDto.getDeleteImage().size();i++){
+            String s3Url = requestDto.getDeleteImage().get(i);
+            if(s3Url!= null) deleteS3(s3Url);
+        }
 
         return recipe.updateRecipe(title,content,price);
     }
