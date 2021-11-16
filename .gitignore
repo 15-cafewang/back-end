@@ -39,3 +39,4 @@ out/
 application.properties
 application.yml
 *.http
+*.log
