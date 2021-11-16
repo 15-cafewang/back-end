@@ -125,30 +125,30 @@ public class RecipeIntegrationTest {
         createdRecipe = recipe;
     }
 
-    @Test
-    @Order(4)
-    @DisplayName("방금 등록한 레시피 수정업로드")
-    void test4() throws IOException {
-        //given
-        String title = "수정한 제목입니다";
-        String content = "수정한 내용입니다. 맛있다 냠냠냠";
-        Integer price = 5000;
-        List<String> tag = Arrays.asList("가가,나나,다다");
-        MockMultipartFile image1 = new MockMultipartFile("image", "imagefile.jpeg", "image/jpg", new FileInputStream("src/test/java/com/sparta/backend/images/puppy1.jpg"));
-        MockMultipartFile[] image = {image1};
-        List<String> deleteimage = Arrays.asList("url1,url2");
-
-        PutRecipeRequestDto requestDto = new PutRecipeRequestDto(
-                title, content, price,tag, image,deleteimage
-        );
-
-        //when
-        Recipe recipe = recipeService.updateRecipe(createdRecipe.getId(), requestDto);
-
-        //then
-        assertNotNull(recipe.getId());
-        assertEquals(title, recipe.getTitle());
-        assertEquals(content, recipe.getContent());
-    }
+//    @Test
+//    @Order(4)
+//    @DisplayName("방금 등록한 레시피 수정업로드")
+//    void test4() throws IOException {
+//        //given
+//        String title = "수정한 제목입니다";
+//        String content = "수정한 내용입니다. 맛있다 냠냠냠";
+//        Integer price = 5000;
+//        List<String> tag = Arrays.asList("가가,나나,다다");
+//        MockMultipartFile image1 = new MockMultipartFile("image", "imagefile.jpeg", "image/jpg", new FileInputStream("src/test/java/com/sparta/backend/images/puppy1.jpg"));
+//        MockMultipartFile[] image = {image1};
+//        List<String> deleteimage = Arrays.asList("url1,url2");
+//
+//        PutRecipeRequestDto requestDto = new PutRecipeRequestDto(
+//                title, content, price,tag, image,deleteimage
+//        );
+//
+//        //when
+//        Recipe recipe = recipeService.updateRecipe(createdRecipe.getId(), requestDto);
+//
+//        //then
+//        assertNotNull(recipe.getId());
+//        assertEquals(title, recipe.getTitle());
+//        assertEquals(content, recipe.getContent());
+//    }
 
 }
