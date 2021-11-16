@@ -4,6 +4,7 @@ import com.sparta.backend.domain.Follow;
 import com.sparta.backend.domain.User;
 import com.sparta.backend.repository.FollowRepository;
 import com.sparta.backend.repository.UserRepository;
+import com.sparta.backend.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,12 +18,10 @@ public class FollowService {
     private final FollowRepository followRepository;
 
     // 팔로우
-    public void follow(Long userId, String nickname) {
+    public void follow(UserDetailsImpl userDetails, String nickname) {
 
         // 로그인한 사용자
-        User fromUser = userRepository.findById(userId).orElseThrow(
-                () -> new NullPointerException("존재하지 않는 사용자입니다")
-        );
+        User fromUser = userDetails.getUser();
 
         // 팔로우 신청하려는 사용자
         User toUser = userRepository.findByNickname(nickname).orElseThrow(
@@ -41,12 +40,10 @@ public class FollowService {
     }
 
     // 언팔로우
-    public void unFollow(Long userId, String nickname) {
+    public void unFollow(UserDetailsImpl userDetails, String nickname) {
 
         // 로그인한 사용자
-        User fromUser = userRepository.findById(userId).orElseThrow(
-                () -> new NullPointerException("존재하지 않는 사용자입니다")
-        );
+        User fromUser = userDetails.getUser();
 
         // 언팔로우 하려는 사용자
         User toUser = userRepository.findByNickname(nickname).orElseThrow(

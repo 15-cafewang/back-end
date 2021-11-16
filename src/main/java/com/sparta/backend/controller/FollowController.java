@@ -17,17 +17,19 @@ public class FollowController {
     private final FollowService followService;
 
     @PostMapping("/follows/{nickname}")
-    public CustomResponseDto<?> follow(@PathVariable String nickname, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public CustomResponseDto<?> follow(@PathVariable String nickname,
+                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        followService.follow(userDetails.getUser().getId(), nickname);
+        followService.follow(userDetails, nickname);
 
         return new CustomResponseDto<>(1, "팔로우 성공", "");
     }
 
     @DeleteMapping("/follows/{nickname}")
-    public CustomResponseDto<?> unFollow(@PathVariable String nickname, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public CustomResponseDto<?> unFollow(@PathVariable String nickname,
+                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        followService.unFollow(userDetails.getUser().getId(), nickname);
+        followService.unFollow(userDetails, nickname);
 
         return new CustomResponseDto<>(1, "언팔로우 성공", "");
     }
