@@ -96,6 +96,7 @@ public class RecipeService {
     }
     public List<String> uploadManyImagesToS3(PutRecipeRequestDto requestDto, String dirName) throws IOException {
         List<String> savedImages = new ArrayList<>();
+        if(requestDto.getImage() == null) return savedImages;
         //s3에 이미지저장
         for(MultipartFile img : requestDto.getImage()){
             System.out.println("빈 이미지??:"+img);
@@ -138,7 +139,8 @@ public class RecipeService {
         checkDeleteImageOwnership(recipeId, requestDto);
 
         //DB의 recipe_image 기존 row들 삭제(그냥 update하면 더 작은 개수로 image업뎃할때 outOfInedex에러남)
-        recipeImageRepository.deleteByImageIn(requestDto.getDeleteImage());
+        if(requestDto.getDeleteImage() != null) recipeImageRepository.deleteByImageIn(requestDto.getDeleteImage());
+
 
         //recipe_image db에 저장
         if (imageUrlList.size()>0){
@@ -155,16 +157,20 @@ public class RecipeService {
         Recipe updatedRecipe = recipe.updateRecipe(title,content,price);
 
         //사진 다 수정되면 기존 사진 s3삭제 -> 중간에 작업하다가 익셉션 터지면 s3에 작업한 건 롤백이 안되니까 일부러 마지막에서 처리
-        for(int i=0; i<requestDto.getDeleteImage().size();i++){
-            String s3Url = requestDto.getDeleteImage().get(i);
-            if(s3Url!= null) deleteS3(s3Url);
+        if(requestDto.getDeleteImage()!=null){
+            for(int i=0; i<requestDto.getDeleteImage().size();i++){
+                String s3Url = requestDto.getDeleteImage().get(i);
+                if(s3Url!= null) deleteS3(s3Url);
+            }
         }
+
 
         return updatedRecipe;
     }
 
     //todo: n+1 문제 해결해야 할 듯
     private void checkDeleteImageOwnership(Long recipeId, PutRecipeRequestDto requestDto) {
+        if(requestDto.getDeleteImage() == null ) return;
         List<String> imgUrls = requestDto.getDeleteImage();
         List<RecipeImage> foundImages = recipeImageRepository.findByImageIn(imgUrls);
         foundImages.forEach(recipeImage -> {
@@ -174,15 +180,22 @@ public class RecipeService {
 
     private void checkIfImageMoreThan5(Recipe recipe, PutRecipeRequestDto requestDto) {
         int oldCount = recipe.getRecipeImagesList().size();
-        int deleteCount = requestDto.getDeleteImage().size();
-        int addCount = requestDto.getImage().length;
+        int deleteCount = 0;
+        int addCount = 0;
+        if(requestDto.getDeleteImage()!=null) deleteCount = requestDto.getDeleteImage().size();
+        if(requestDto.getImage()!=null) addCount = requestDto.getImage().length;
+
         if(oldCount+addCount-deleteCount > 5 ) throw new IllegalArgumentException("사진은 총 5장 이상이 될 수 없습니다");
     }
 
     //S3 이미지 삭제
     public void deleteS3(@RequestParam String imageName){
         //https://S3 버킷 URL/버킷에 생성한 폴더명/이미지이름
-        String keyName = imageName.split("/")[4]; // 이미지이름만 추출
+        String keyName = "";
+        try {keyName = imageName.split("/")[4]; // 이미지이름만 추출
+        }catch (ArrayIndexOutOfBoundsException e){
+            throw new IllegalArgumentException("S3 url 형식이 아닙니다");
+        }
 
         try {amazonS3Client.deleteObject(bucket + "/recipeImage", keyName);
         }catch (AmazonServiceException e){
