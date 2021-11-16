@@ -67,14 +67,18 @@ public class BoardController {
     @PutMapping("/boards/{boardId}")
     public CustomResponseDto<?> updateBoard(@PathVariable("boardId") Long id,
                                             PutBoardRequestDto requestDto,
-                                            @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        Board board = boardService.updateBoard(id, requestDto, userDetails);
-
-        if(board != null) {
-            return new CustomResponseDto<>(1, "게시물 수정 성공", "");
-        } else {
-            return new CustomResponseDto<>(-1, "게시물 수정 실패", "");
+                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        try {
+            Board board = boardService.updateBoard(id, requestDto, userDetails);
+            if(board != null) {
+                return new CustomResponseDto<>(1, "게시물 수정 성공", "");
+            } else {
+                return new CustomResponseDto<>(-1, "게시물 수정 실패", "");
+            }
+        } catch(Exception exception) {
+            return new CustomResponseDto<>(-1, exception.getMessage(), "");
         }
+
     }
 
     //게시물 삭제
