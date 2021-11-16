@@ -29,6 +29,12 @@ public class FollowService {
                 () -> new NullPointerException("존재하지 않는 사용자입니다")
         );
 
+        Optional<Follow> foundFollow = followRepository.findByFromUserAndToUser(fromUser, toUser);
+
+        if (foundFollow.isPresent()) {
+            throw new IllegalArgumentException("이미 팔로우한 사용자입니다");
+        }
+
         Follow follow = new Follow(fromUser, toUser);
 
         followRepository.save(follow);
