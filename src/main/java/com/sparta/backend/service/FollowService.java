@@ -34,6 +34,10 @@ public class FollowService {
             throw new IllegalArgumentException("이미 팔로우한 사용자입니다");
         }
 
+        if (userDetails.getUser().getNickname().equals(nickname)) {
+            throw new IllegalArgumentException("자기 자신은 팔로우 할 수 없습니다");
+        }
+
         Follow follow = new Follow(fromUser, toUser);
 
         followRepository.save(follow);
