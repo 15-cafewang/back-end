@@ -3,6 +3,7 @@ package com.sparta.backend.service.recipe;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.sparta.backend.awsS3.S3Uploader;
+import com.sparta.backend.domain.Tag;
 import com.sparta.backend.domain.recipe.*;
 import com.sparta.backend.domain.User;
 import com.sparta.backend.dto.request.recipes.PostRecipeRequestDto;
@@ -42,6 +43,7 @@ public class RecipeService {
     private final RecipeImageRepository recipeImageRepository;
     private final RecipeDetailCountRepository recipeDetailCountRepository;
     private final RecipeSearchCountRepository recipeSearchCountRepository;
+    private final TagRepository tagRepository;
 
     @Autowired
     public RecipeService(
@@ -51,7 +53,8 @@ public class RecipeService {
             S3Uploader s3Uploader,
             RecipeImageRepository recipeImageRepository,
             RecipeDetailCountRepository recipeDetailCountRepository,
-            RecipeSearchCountRepository recipeSearchCountRepository
+            RecipeSearchCountRepository recipeSearchCountRepository,
+            TagRepository tagRepository
     ){
         this.recipeRepository = recipeRepository;
         this.recipeLikesRepository = recipeLikesRepository;
@@ -60,6 +63,7 @@ public class RecipeService {
         this.recipeImageRepository = recipeImageRepository;
         this.recipeDetailCountRepository = recipeDetailCountRepository;
         this.recipeSearchCountRepository = recipeSearchCountRepository;
+        this.tagRepository = tagRepository;
     }
 
     //레시피 저장
@@ -301,8 +305,8 @@ public class RecipeService {
     //검색하기
     public Page<RecipeListResponseDto> searchRecipe(boolean withTag, String keyword, int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails) {
 
-        //검색어 등록
-        saveSearchAction(keyword,userDetails.getUser());
+        //검색 히스토리 등록
+        if(withTag) saveSearchAction(keyword,userDetails.getUser());
 
         page = page-1;
         boolean isSortByLikeCount = false;
@@ -361,6 +365,14 @@ public class RecipeService {
 
         List<RecipeListResponseDto> responseDtoList = new ArrayList<>();
         popularRecipeIdList.forEach((recipe -> responseDtoList.add(new RecipeListResponseDto(recipe, user, recipeLikesRepository))));
+        return responseDtoList;
+    }
+
+    public List<RecipeListResponseDto> getRecommendedRecipe(User user) {
+
+        List<Tag> tags = tagRepository.findRecommendedTag(user.getId());
+        System.out.println(tags);
+        List<RecipeListResponseDto> responseDtoList = new ArrayList<>();
         return responseDtoList;
     }
 }

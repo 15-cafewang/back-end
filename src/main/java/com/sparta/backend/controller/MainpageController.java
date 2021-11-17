@@ -33,6 +33,13 @@ public class MainpageController {
         return new CustomResponseDto<>(1, "최근레시피 top4 조회완료" ,recipes);
     }
 
+    @GetMapping("/main/recommend")
+    public CustomResponseDto<?> getRecommendedRecipe(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        checkLogin(userDetails);
+        List<RecipeListResponseDto> recipes = recipeService.getRecommendedRecipe(userDetails.getUser());
+        return new CustomResponseDto<>(1, "추천레시피 조회완료",recipes);
+    }
+
     private void checkLogin(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         if (userDetails == null) {
             throw new CustomErrorException("로그인된 유저만 사용가능한 기능입니다.");
