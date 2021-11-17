@@ -4,8 +4,8 @@
 //import com.sparta.backend.domain.Recipe.Recipe;
 //import com.sparta.backend.domain.Recipe.RecipeComment;
 //import com.sparta.backend.domain.User;
-//import com.sparta.backend.repository.RecipeCommentRepository;
-//import com.sparta.backend.repository.RecipeRepository;
+//import com.sparta.backend.repository.recipe.RecipeCommentRepository;
+//import com.sparta.backend.repository.recipe.RecipeRepository;
 //import com.sparta.backend.repository.UserRepository;
 //import com.sparta.backend.service.Recipe.RecipeService;
 //import com.sparta.backend.service.Recipe.TagService;

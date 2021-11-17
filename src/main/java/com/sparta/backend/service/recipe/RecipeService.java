@@ -3,20 +3,14 @@ package com.sparta.backend.service.recipe;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.sparta.backend.awsS3.S3Uploader;
-import com.sparta.backend.domain.recipe.Recipe;
-import com.sparta.backend.domain.recipe.RecipeDetailCount;
-import com.sparta.backend.domain.recipe.RecipeImage;
-import com.sparta.backend.domain.recipe.RecipeLikes;
+import com.sparta.backend.domain.recipe.*;
 import com.sparta.backend.domain.User;
 import com.sparta.backend.dto.request.recipes.PostRecipeRequestDto;
 import com.sparta.backend.dto.request.recipes.PutRecipeRequestDto;
 import com.sparta.backend.dto.response.recipes.RecipeDetailResponsetDto;
 import com.sparta.backend.dto.response.recipes.RecipeListResponseDto;
 import com.sparta.backend.exception.CustomErrorException;
-import com.sparta.backend.repository.RecipeDetailCountRepository;
-import com.sparta.backend.repository.RecipeImageRepository;
-import com.sparta.backend.repository.RecipeLikesRepository;
-import com.sparta.backend.repository.RecipeRepository;
+import com.sparta.backend.repository.recipe.*;
 import com.sparta.backend.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +41,7 @@ public class RecipeService {
     private final String bucket = "99final";
     private final RecipeImageRepository recipeImageRepository;
     private final RecipeDetailCountRepository recipeDetailCountRepository;
+    private final RecipeSearchCountRepository recipeSearchCountRepository;
 
     @Autowired
     public RecipeService(
@@ -55,7 +50,8 @@ public class RecipeService {
             AmazonS3Client amazonS3Client,
             S3Uploader s3Uploader,
             RecipeImageRepository recipeImageRepository,
-            RecipeDetailCountRepository recipeDetailCountRepository
+            RecipeDetailCountRepository recipeDetailCountRepository,
+            RecipeSearchCountRepository recipeSearchCountRepository
     ){
         this.recipeRepository = recipeRepository;
         this.recipeLikesRepository = recipeLikesRepository;
@@ -63,6 +59,7 @@ public class RecipeService {
         this.s3Uploader = s3Uploader;
         this.recipeImageRepository = recipeImageRepository;
         this.recipeDetailCountRepository = recipeDetailCountRepository;
+        this.recipeSearchCountRepository = recipeSearchCountRepository;
     }
 
     //레시피 저장
@@ -214,7 +211,7 @@ public class RecipeService {
         Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(()->
                 new CustomErrorException("해당 게시물이 존재하지 않습니다"));
 
-        countClickDetail(recipe, userDetails);
+        saveClickDetailAction(recipe, userDetails);
 
         String nickname = recipe.getUser().getNickname();
         String title = recipe.getTitle();
@@ -238,7 +235,8 @@ public class RecipeService {
         return responsetDto;
     }
 
-    private void countClickDetail(Recipe recipe, UserDetailsImpl userDetails) {
+    //상세보기 조횟수 등록
+    private void saveClickDetailAction(Recipe recipe, UserDetailsImpl userDetails) {
         RecipeDetailCount recipeDetailCount = new RecipeDetailCount(userDetails.getUser(), recipe);
         recipeDetailCountRepository.save(recipeDetailCount);
     }
@@ -255,6 +253,7 @@ public class RecipeService {
         return responseDtos;
     }
 
+    //좋아요 등록/취소
     public String likeRecipe(Long postId, User user) {
         Recipe recipe = recipeRepository.findById(postId).orElseThrow(()->
                 new CustomErrorException("해당 게시물이 존재하지 않아요"));
@@ -299,7 +298,12 @@ public class RecipeService {
         return responseDtos;
     }
 
+    //검색하기
     public Page<RecipeListResponseDto> searchRecipe(boolean withTag, String keyword, int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails) {
+
+        //검색어 등록
+        saveSearchAction(keyword,userDetails.getUser());
+
         page = page-1;
         boolean isSortByLikeCount = false;
         if(sortBy.equals("likeCount")){
@@ -319,6 +323,11 @@ public class RecipeService {
         if(!withTag && isSortByLikeCount) recipes = recipeRepository.findAllByTitleOrContentOrderByLikeCount(keyword, pageable);
         Page<RecipeListResponseDto> responseDtos = recipes.map((recipe) -> new RecipeListResponseDto(recipe,userDetails, recipeLikesRepository));
         return responseDtos;
+    }
+
+    private void saveSearchAction(String keyword, User user) {
+        RecipeSearchCount recipeSearchCount = new RecipeSearchCount(user, keyword);
+        recipeSearchCountRepository.save(recipeSearchCount);
     }
 
     public List<RecipeListResponseDto> getPopularRecipe(String sortBy, User user) {

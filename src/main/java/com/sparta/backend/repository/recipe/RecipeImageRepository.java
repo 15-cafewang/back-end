@@ -1,4 +1,4 @@
-package com.sparta.backend.repository;
+package com.sparta.backend.repository.recipe;
 
 import com.sparta.backend.domain.recipe.Recipe;
 import com.sparta.backend.domain.recipe.RecipeImage;
