@@ -33,20 +33,17 @@ public class BoardCommentService {
                               UserDetailsImpl userDetails) {
         Long boardId = requestDto.getBoardId();
         Long commentId = 0L;
-        if(userDetails != null) {
-            User currentLoginUser = userDetails.getUser();
+        loginCheck(userDetails);    //로그인했는지 확인
+        User currentLoginUser = userDetails.getUser();
 
-            Board board = boardRepository.findById(boardId).orElseThrow(
-                    () -> new NullPointerException("찾는 게시물이 없습니다.")
-            );
+        Board board = boardRepository.findById(boardId).orElseThrow(
+                () -> new NullPointerException("찾는 게시물이 없습니다.")
+        );
 
-            if(board != null) {
-                BoardComment boardComment = new BoardComment(requestDto, board, currentLoginUser);
-                BoardComment saveBoardComment = boardCommentRepository.save(boardComment);
-                commentId = saveBoardComment.getId();
-            }
-        } else {
-            throw new NullPointerException("로그인이 필요합니다.");
+        if(board != null) {
+            BoardComment boardComment = new BoardComment(requestDto, board, currentLoginUser);
+            BoardComment saveBoardComment = boardCommentRepository.save(boardComment);
+            commentId = saveBoardComment.getId();
         }
 
         return commentId;
@@ -55,9 +52,9 @@ public class BoardCommentService {
     //댓글 조회
     public Page<GetBoardCommentResponseDto> getComments(Long id, int page, int size, boolean isAsc,
                                                         String sortBy, UserDetailsImpl userDetails) {
+        loginCheck(userDetails);    //로그인했는지 확인
         //현재 페이지
         page = page - 1;
-
         //정렬 기준
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
         //어떤 컬럼 기준으로 정렬할 지 결정(sortBy: 컬럼이름)
@@ -81,22 +78,16 @@ public class BoardCommentService {
     //댓글 수정
     @Transactional
     public Long updateComment(Long id, PutBoardCommentRequestDto requestDto, UserDetailsImpl userDetails) {
-        if(userDetails != null) {
-            Long currentLoginUser = userDetails.getUser().getId();
+        loginCheck(userDetails);    //로그인했는지 확인
+        Long currentLoginUser = userDetails.getUser().getId();
 
-            BoardComment boardComment = boardCommentRepository.findById(id).orElseThrow(
-                    () -> new NullPointerException("찾는 댓글이 없습니다.")
-            );
-            Long writeUser = boardComment.getUser().getId();
+        BoardComment boardComment = boardCommentRepository.findById(id).orElseThrow(
+                () -> new NullPointerException("찾는 댓글이 없습니다.")
+        );
+        Long writeUser = boardComment.getUser().getId();
 
-            if(currentLoginUser.equals(writeUser)) {
-                boardComment.updateComment(requestDto);
-            } else {
-                throw new IllegalArgumentException("작성자만 댓글을 수정할 수 있습니다.");
-            }
-        } else {
-            throw new NullPointerException("로그인이 필요합니다.");
-        }
+        writterCheck(currentLoginUser, writeUser);  //작성자가 맞는지 확인
+        boardComment.updateComment(requestDto);
 
         return id;
     }
@@ -104,24 +95,31 @@ public class BoardCommentService {
     //댓글 삭제
     @Transactional
     public Long deleteComment(Long id, UserDetailsImpl userDetails) {
-        if(userDetails != null) {
-            Long currentLoginUser = userDetails.getUser().getId();
+        loginCheck(userDetails);    //로그인했는지 확인
+        Long currentLoginUser = userDetails.getUser().getId();
 
-            BoardComment boardComment = boardCommentRepository.findById(id).orElseThrow(
-                    () -> new NullPointerException("찾는 댓글이 없습니다.")
-            );
-            Long writeUser = boardComment.getUser().getId();
+        BoardComment boardComment = boardCommentRepository.findById(id).orElseThrow(
+                () -> new NullPointerException("찾는 댓글이 없습니다.")
+        );
+        Long writeUser = boardComment.getUser().getId();
 
-            if(currentLoginUser.equals(writeUser)) {
-                boardCommentRepository.deleteById(id);
-            } else {
-                throw new IllegalArgumentException("작성자만 댓글을 삭제할 수 있습니다.");
-            }
-
-        } else {
-            throw new NullPointerException("로그인이 필요합니다.");
-        }
+        writterCheck(currentLoginUser, writeUser);  //작성자가 맞는지 확인
+        boardCommentRepository.deleteById(id);
 
         return id;
+    }
+
+    //로그인 되어있는지 확인하기
+    private void loginCheck(UserDetailsImpl userDetails) {
+        if(userDetails == null) {   //로그인 안 했을 떄
+            throw new NullPointerException("로그인이 필요합니다.");
+        }
+    }
+
+    //로그인한 계정이 작성자가 맞는지 확인하기
+    private void writterCheck(Long currentLoginUserId, Long writeUserId) {
+        if (!currentLoginUserId.equals(writeUserId)) {  //로그인한 계정이 작성자가 아닐 때
+            throw new IllegalArgumentException("해당 댓글을 작성한 사용자만 수정 가능합니다.");
+        }
     }
 }

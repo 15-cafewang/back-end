@@ -2,6 +2,7 @@ package com.sparta.backend.controller;
 
 import com.sparta.backend.dto.response.CustomResponseDto;
 import com.sparta.backend.dto.response.userinfo.*;
+import com.sparta.backend.exception.CustomErrorException;
 import com.sparta.backend.security.UserDetailsImpl;
 import com.sparta.backend.service.UserinfoService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,8 @@ public class UserinfoController {
     public CustomResponseDto<?> getUserInfo(@PathVariable String nickname,
                                             @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
+        checkLogin(userDetails);
+
         GetUserinfoResponseDto responseDto = userinfoService.getUserInfo(userDetails, nickname);
 
         return new CustomResponseDto<>(1, "마이페이지 조회 성공", responseDto);
@@ -36,6 +39,8 @@ public class UserinfoController {
                                               @RequestParam("sortBy") String sortBy,
                                               @PathVariable String nickname,
                                               @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        checkLogin(userDetails);
 
         Page<GetRecipeListResponseDto> recipeList = userinfoService
                 .getRecipeListByPage(page, size, isAsc, sortBy, nickname, userDetails);
@@ -52,6 +57,8 @@ public class UserinfoController {
                                              @PathVariable String nickname,
                                              @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
+        checkLogin(userDetails);
+
         Page<GetBoardListResponseDto> boardList = userinfoService
                 .getBoardListByPage(page, size, isAsc, sortBy, nickname, userDetails);
 
@@ -66,6 +73,8 @@ public class UserinfoController {
                                                    @RequestParam("sortBy") String sortBy,
                                                    @PathVariable String nickname,
                                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        checkLogin(userDetails);
 
         Page<GetRecipeListResponseDto> likedRecipeList = userinfoService
                 .getLikedRecipeListByPage(page, size, isAsc, sortBy, nickname, userDetails);
@@ -82,6 +91,8 @@ public class UserinfoController {
                                                   @PathVariable String nickname,
                                                   @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
+        checkLogin(userDetails);
+
         Page<GetBoardListResponseDto> likedBoardList = userinfoService
                 .getLikedBoardListByPage(page, size, isAsc, sortBy, nickname, userDetails);
 
@@ -96,6 +107,8 @@ public class UserinfoController {
                                                  @RequestParam("sortBy") String sortBy,
                                                  @PathVariable String nickname,
                                                  @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        checkLogin(userDetails);
 
         Page<GetFollowingListResponseDto> followingList = userinfoService
                 .getFollowingListByPage(page, size, isAsc, sortBy, nickname, userDetails);
@@ -112,9 +125,18 @@ public class UserinfoController {
                                                 @PathVariable String nickname,
                                                 @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
+        checkLogin(userDetails);
+
         Page<GetFollowerListResponseDto> followingList = userinfoService
                 .getFollowerListByPage(page, size, isAsc, sortBy, nickname, userDetails);
 
         return new CustomResponseDto<>(1, "팔로워 목록 조회 성공", followingList);
+    }
+
+    private void checkLogin(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        if (userDetails == null) {
+            throw new CustomErrorException("로그인된 유저만 사용가능한 기능입니다.");
+        }
     }
 }
