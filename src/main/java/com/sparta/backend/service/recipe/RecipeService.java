@@ -4,6 +4,7 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.sparta.backend.awsS3.S3Uploader;
 import com.sparta.backend.domain.recipe.Recipe;
+import com.sparta.backend.domain.recipe.RecipeDetailCount;
 import com.sparta.backend.domain.recipe.RecipeImage;
 import com.sparta.backend.domain.recipe.RecipeLikes;
 import com.sparta.backend.domain.User;
@@ -12,6 +13,7 @@ import com.sparta.backend.dto.request.recipes.PutRecipeRequestDto;
 import com.sparta.backend.dto.response.recipes.RecipeDetailResponsetDto;
 import com.sparta.backend.dto.response.recipes.RecipeListResponseDto;
 import com.sparta.backend.exception.CustomErrorException;
+import com.sparta.backend.repository.RecipeDetailCountRepository;
 import com.sparta.backend.repository.RecipeImageRepository;
 import com.sparta.backend.repository.RecipeLikesRepository;
 import com.sparta.backend.repository.RecipeRepository;
@@ -44,6 +46,7 @@ public class RecipeService {
     private final AmazonS3Client amazonS3Client;
     private final String bucket = "99final";
     private final RecipeImageRepository recipeImageRepository;
+    private final RecipeDetailCountRepository recipeDetailCountRepository;
 
     @Autowired
     public RecipeService(
@@ -51,13 +54,15 @@ public class RecipeService {
             RecipeLikesRepository recipeLikesRepository,
             AmazonS3Client amazonS3Client,
             S3Uploader s3Uploader,
-            RecipeImageRepository recipeImageRepository
+            RecipeImageRepository recipeImageRepository,
+            RecipeDetailCountRepository recipeDetailCountRepository
     ){
         this.recipeRepository = recipeRepository;
         this.recipeLikesRepository = recipeLikesRepository;
         this.amazonS3Client = amazonS3Client;
         this.s3Uploader = s3Uploader;
         this.recipeImageRepository = recipeImageRepository;
+        this.recipeDetailCountRepository = recipeDetailCountRepository;
     }
 
     //레시피 저장
@@ -208,12 +213,14 @@ public class RecipeService {
     public RecipeDetailResponsetDto getRecipeDetail(Long recipeId, UserDetailsImpl userDetails) {
         Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(()->
                 new CustomErrorException("해당 게시물이 존재하지 않습니다"));
+
+        countClickDetail(recipe, userDetails);
+
         String nickname = recipe.getUser().getNickname();
         String title = recipe.getTitle();
         String content = recipe.getContent();
         LocalDateTime regDate = recipe.getRegDate();
         int likeCount = recipe.getRecipeLikesList().size();
-//        String image = recipe.getImage();
         Integer price = recipe.getPrice();
         String profile = recipe.getUser().getImage();
         Optional<RecipeLikes> foundRecipeLike = recipeLikesRepository.findByRecipeIdAndUserId(recipe.getId(),userDetails.getUser().getId());
@@ -224,10 +231,16 @@ public class RecipeService {
 
         List<String> images =new ArrayList<>();
         recipe.getRecipeImagesList().forEach((recipeImage)->images.add(recipeImage.getImage()));
+
         RecipeDetailResponsetDto responsetDto = new RecipeDetailResponsetDto(
                 recipeId, nickname, title, content, regDate, likeCount, likeStatus, images, tagNames, price,profile);
 
         return responsetDto;
+    }
+
+    private void countClickDetail(Recipe recipe, UserDetailsImpl userDetails) {
+        RecipeDetailCount recipeDetailCount = new RecipeDetailCount(userDetails.getUser(), recipe);
+        recipeDetailCountRepository.save(recipeDetailCount);
     }
 
     public Page<RecipeListResponseDto> getRecipesByPage(int page, int size, boolean isAsc, String sortBy, Boolean sortByLike ,UserDetailsImpl userDetails) {
