@@ -151,7 +151,7 @@ public class BoardService {
 
     //게시물 수정
     @Transactional
-    public Board updateBoard(Long id, PutBoardRequestDto requestDto, UserDetailsImpl userDetails) throws IOException {
+    public Board updateBoard(Long id, PutBoardRequestDto requestDto, UserDetailsImpl userDetails) throws Exception {
         Board board = null;
         String title = requestDto.getTitle();
         String content = requestDto.getContent();
@@ -289,30 +289,34 @@ public class BoardService {
     }
 
     //게시물 수정 시 새로 첨부한 이미지들은 DB와 S3에 넣기
-    private void updateNewImageFiles(Board board, MultipartFile[] imageList) {
+    private void updateNewImageFiles(Board board, MultipartFile[] imageList) throws Exception {
         if(imageList != null && imageList.length > 0) { //새로 첨부한 이미지가 존재할 때
             //S3에 업로드
             List<String> uploadImageUrlList = new ArrayList<>();    //S3에 업로드된 이미지URL을 담는 용도
             String uploadImageUrl = null;
             try {
                 for(MultipartFile imageFile : imageList) {
-                    uploadImageUrl = s3Uploader.upload(imageFile, "boardImage");
-                    if(uploadImageUrl == null)    //이미지 업로드에 실패했을 때
-                        throw new NullPointerException("이미지 업로드에 실패하였습니다.");
-                    uploadImageUrlList.add(uploadImageUrl);
+                    if(imageFile.getSize() > 0) {     //배열에 실제로 파일이 들어있는 지 확인
+                        uploadImageUrl = s3Uploader.upload(imageFile, "boardImage");
+                        if(uploadImageUrl == null)    //이미지 업로드에 실패했을 때
+                            throw new NullPointerException("이미지 업로드에 실패하였습니다.");
+                        uploadImageUrlList.add(uploadImageUrl);
+                    }
+                }
+
+                //DB에 Insert
+                for(String imageUrl : uploadImageUrlList) {
+                    BoardImage newBoardImage = new BoardImage(imageUrl, board);
+                    boardImageRepository.save(newBoardImage);
                 }
             } catch(Exception exception) {
                 //지금까지 업로드한 이미지들을 롤백: S3에서 삭제
                 for(String url: uploadImageUrlList) {
                     deleteS3(url);
                 }
+                throw new Exception(exception.getMessage());
             }
 
-            //DB에 Insert
-            for(String imageUrl : uploadImageUrlList) {
-                BoardImage newBoardImage = new BoardImage(imageUrl, board);
-                boardImageRepository.save(newBoardImage);
-            }
         }
     }
 
