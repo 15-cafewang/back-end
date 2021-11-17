@@ -13,7 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.io.IOException;
 
 @RequiredArgsConstructor
@@ -33,20 +32,6 @@ public class BoardController {
             return new CustomResponseDto<>(1, "게시물 등록 성공", "");
         } else {
             return new CustomResponseDto<>(-1, "게시물 등록 실패", "");
-        }
-    }
-
-    //게시물 수정
-    @PutMapping("/boards/{boardId}")
-    public CustomResponseDto<?> updateBoard(@PathVariable("boardId") Long id,
-                                            PutBoardRequestDto requestDto,
-                                            @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        Board board = boardService.updateBoard(id, requestDto, userDetails);
-
-        if(board != null) {
-            return new CustomResponseDto<>(1, "게시물 수정 성공", "");
-        } else {
-            return new CustomResponseDto<>(-1, "게시물 수정 실패", "");
         }
     }
 
@@ -75,6 +60,20 @@ public class BoardController {
             return new CustomResponseDto<>(1, "게시물 상세 조회 성공", responseDto);
         } else {
             return new CustomResponseDto<>(-1, "게시물 상세 조회 실패", "");
+        }
+    }
+
+    //게시물 수정
+    @PutMapping("/boards/{boardId}")
+    public CustomResponseDto<?> updateBoard(@PathVariable("boardId") Long id,
+                                            PutBoardRequestDto requestDto,
+                                            @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        Board board = boardService.updateBoard(id, requestDto, userDetails);
+
+        if(board != null) {
+            return new CustomResponseDto<>(1, "게시물 수정 성공", "");
+        } else {
+            return new CustomResponseDto<>(-1, "게시물 수정 실패", "");
         }
     }
 
