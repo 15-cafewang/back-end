@@ -288,16 +288,22 @@ public class RecipeService {
 
     public Page<RecipeListResponseDto> searchRecipe(boolean withTag, String keyword, int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails) {
         page = page-1;
+        boolean isSortByLikeCount = false;
+        if(sortBy.equals("likeCount")){
+            sortBy = "regDate";
+            isSortByLikeCount = true;
+        }
+
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(direction, sortBy);
         Pageable pageable = PageRequest.of(page,size,sort);
 
-        Page<Recipe> recipes;
-        if(withTag){
-            recipes = recipeRepository.findAllByTag(keyword, pageable);
-        }else{
-            recipes = recipeRepository.findAllByTitleOrContent(keyword, pageable);
-        }
+        Page<Recipe> recipes = null;
+        keyword = keyword.trim();
+        if(withTag && !isSortByLikeCount) recipes = recipeRepository.findAllByTag(keyword, pageable);
+        if(withTag && isSortByLikeCount) recipes = recipeRepository.findAllByTagOrderByLikeCount(keyword,pageable);
+        if(!withTag && !isSortByLikeCount) recipes = recipeRepository.findAllByTitleOrContent(keyword, pageable);
+        if(!withTag && isSortByLikeCount) recipes = recipeRepository.findAllByTitleOrContentOrderByLikeCount(keyword, pageable);
         Page<RecipeListResponseDto> responseDtos = recipes.map((recipe) -> new RecipeListResponseDto(recipe,userDetails, recipeLikesRepository));
         return responseDtos;
     }
