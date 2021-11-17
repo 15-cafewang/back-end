@@ -116,7 +116,6 @@ public class RecipeController {
                                              @RequestParam("sortBy") String sortBy,
                                              @AuthenticationPrincipal UserDetailsImpl userDetails){
         checkLogin(userDetails);
-        //태그로 검색
         Page<RecipeListResponseDto> recipeByPage= recipeService.searchRecipe(withTag,keyword, page, size, isAsc, sortBy,userDetails);
         return new CustomResponseDto<>(1, "레시피 리스트 성공", recipeByPage);
     }

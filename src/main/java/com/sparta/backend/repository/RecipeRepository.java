@@ -82,4 +82,13 @@ public interface RecipeRepository extends JpaRepository<Recipe,Long> {
 
     //최근레시피(메인페이지) top4가져오기
     List<Recipe> findTop4ByOrderByRegDateDesc();
+
+    @Query("select r from Recipe r left join r.recipeLikesList rl left join r.tagList tl " +
+            "where tl.name = :keyword group by r.id order by count(rl.user) desc")
+    Page<Recipe> findAllByTagOrderByLikeCount(String keyword, Pageable pageable);
+
+    @Query("select r from Recipe r left join r.recipeLikesList rl " +
+            "where r.title like %:keyword% or r.content like %:keyword% " +
+            "group by r.id order by count(rl.user) desc ")
+    Page<Recipe> findAllByTitleOrContentOrderByLikeCount(@Param("keyword") String keyword, Pageable pageable);
 }
