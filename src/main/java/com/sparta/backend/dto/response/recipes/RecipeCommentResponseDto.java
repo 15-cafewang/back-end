@@ -17,6 +17,7 @@ public class RecipeCommentResponseDto {
     private String nickname;
     private String content;
     private LocalDateTime regDate;
+    private LocalDateTime modDate;
     private int likeCount;
     private boolean likeStatus;
     private String profileImage;
@@ -26,6 +27,7 @@ public class RecipeCommentResponseDto {
         this.nickname = recipeComment.getUser().getNickname();
         this.content = recipeComment.getContent();
         this.regDate = recipeComment.getRegDate();
+        this.modDate = recipeComment.getModDate();
         this.likeCount = recipeComment.getCommentLikes().size();
 
         Optional<RecipeCommentLikes> foundCommentLikes = commentLikeRepository.findByRecipeCommentAndUser(recipeComment,userDetails.getUser());
