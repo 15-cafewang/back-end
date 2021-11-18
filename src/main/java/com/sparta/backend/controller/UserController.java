@@ -6,6 +6,7 @@ import com.sparta.backend.dto.request.user.*;
 import com.sparta.backend.dto.response.CustomResponseDto;
 import com.sparta.backend.dto.response.user.GetUserInfoResponseDto;
 import com.sparta.backend.dto.response.user.UserInfoResponseDto;
+import com.sparta.backend.exception.CustomErrorException;
 import com.sparta.backend.security.JwtTokenProvider;
 import com.sparta.backend.security.UserDetailsImpl;
 import com.sparta.backend.service.KakaoUserService;
@@ -103,6 +104,8 @@ public class UserController {
     @GetMapping("/user/info")
     public CustomResponseDto<?> userInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
 
+        checkLogin(userDetails);
+
         UserInfoResponseDto responseDto = new UserInfoResponseDto(userDetails.getUser().getNickname(), userDetails.getUser().getImage());
 
         return new CustomResponseDto<>(1, "회원 정보 조회 성공", responseDto);
@@ -111,6 +114,8 @@ public class UserController {
     // 회원 정보 수정
     @PutMapping("/user/info")
     public CustomResponseDto<?> updateUser(@AuthenticationPrincipal UserDetailsImpl userDetails, UpdateUserRequestDto requestDto) throws IOException {
+
+        checkLogin(userDetails);
 
         userService.updateUser(userDetails, requestDto);
 
@@ -121,6 +126,8 @@ public class UserController {
     @PutMapping("/user/info/nickname")
     public CustomResponseDto<?> updateNickname(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody UpdateNicknameRequestDto requestDto) {
 
+        checkLogin(userDetails);
+
         userService.updateNickname(userDetails, requestDto);
 
         return new CustomResponseDto<>(1, "닉네임 수정 성공", "");
@@ -130,9 +137,16 @@ public class UserController {
     @PutMapping("/user/delete")
     public CustomResponseDto<?> deleteUser(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody DeleteUserRequestDto requestDto) {
 
+        checkLogin(userDetails);
+
         userService.deleteUser(userDetails, requestDto);
 
         return new CustomResponseDto<>(1, "회원 탈퇴 성공", "");
     }
 
+    private void checkLogin(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        if (userDetails == null) {
+            throw new CustomErrorException("로그인된 유저만 사용가능한 기능입니다.");
+        }
+    }
 }

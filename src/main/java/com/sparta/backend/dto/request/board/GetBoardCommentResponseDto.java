@@ -17,6 +17,7 @@ public class GetBoardCommentResponseDto {
     private Long commentId;
     private String nickname;
     private LocalDateTime regDate;
+    private LocalDateTime modDate;
     private String profile;
     private String content;
     private int likeCount;
@@ -28,6 +29,7 @@ public class GetBoardCommentResponseDto {
         this.commentId = boardComment.getId();
         this.nickname = boardComment.getUser().getNickname();
         this.regDate = boardComment.getRegDate();
+        this.modDate = boardComment.getModDate();
         this.profile = boardComment.getUser().getImage();
         this.content = boardComment.getContent();
         this.likeCount = boardComment.getBoardCommentLikesList().size();
