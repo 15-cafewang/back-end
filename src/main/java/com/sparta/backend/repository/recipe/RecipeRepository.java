@@ -3,6 +3,8 @@ package com.sparta.backend.repository.recipe;
 import com.sparta.backend.domain.recipe.Recipe;
 import com.sparta.backend.domain.User;
 import com.sparta.backend.dto.queryInterface.PopularRecipeInterface;
+import com.sparta.backend.dto.queryInterface.RecommendUserDataCheckDto;
+import com.sparta.backend.dto.queryInterface.RecommendUserDataCheckInteface;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -92,4 +94,68 @@ public interface RecipeRepository extends JpaRepository<Recipe,Long> {
             "group by r.id order by count(rl.user) desc ")
     Page<Recipe> findAllByTitleOrContentOrderByLikeCount(@Param("keyword") String keyword, Pageable pageable);
 
+        @Query(value = "select exists (select * from tag t join recipe_likes rl on t.recipe_id = rl.recipe_id " +
+            "               where rl.user_id = :userId " +
+            "                 and rl.reg_date between  CAST('2021-11-12 19:26:00' AS DATETIME) and CAST('2021-11-18 19:30:00' AS DATETIME) " +
+            "               ) as exist_like, " +
+            "       exists (select sc.keyword, count(sc.keyword) cnt from recipe_search_count sc " +
+            "               where sc.user_id = :userId" +
+            "                 and sc.reg_date between CAST('2021-11-12 19:26:00' AS DATETIME) and CAST('2021-11-18 22:30:00' AS DATETIME) " +
+            "               group by sc.keyword) as exist_search, " +
+            "       exists (select t.name, count(t.name) cnt from tag t join recipe_detail_count dc on t.recipe_id = dc.recipe_id " +
+            "               where dc.user_id = :userId " +
+            "               and dc.reg_date between  CAST('2021-11-12 19:26:00' AS DATETIME) and CAST('2021-11-18 19:30:00' AS DATETIME) " +
+            "               group by t.name) as exsit_detail;", nativeQuery = true)
+    List<Object[]> checkUserHasData(@Param("userId") Long userId);
+
+    @Query(value ="select r.recipe_id from recipe r " +
+            "join tag t on r.recipe_id= t.recipe_id " +
+            "join recipe_detail_count rdc on r.recipe_id= rdc.recipe_id " +
+            "where t.name = (" +
+            "select name from " +
+            "(select t.name, count(t.name) cnt from tag t join recipe_likes rl on t.recipe_id = rl.recipe_id " +
+            "where rl.user_id = :userId " +
+            "and rl.reg_date between  CAST('2021-11-12 19:26:00' AS DATETIME) and CAST('2021-11-18 19:30:00' AS DATETIME) " +
+            "group by t.name " +
+            "union all " +
+            "select sc.keyword, count(sc.keyword) cnt from recipe_search_count sc " +
+            "where user_id = :userId " +
+            "  and sc.reg_date between CAST('2021-11-12 19:26:00' AS DATETIME) and CAST('2021-11-18 22:30:00' AS DATETIME) " +
+            "group by sc.keyword " +
+            "union all " +
+            "select t.name, count(t.name) cnt from tag t join recipe_detail_count dc " +
+            "on t.recipe_id = dc.recipe_id " +
+            "where dc.user_id = :userId " +
+            "and dc.reg_date between  CAST('2021-11-12 19:26:00' AS DATETIME) and CAST('2021-11-18 19:30:00' AS DATETIME) " +
+            "group by t.name) list " +
+            "group by list.name " +
+            "order by  SUM(cnt) desc limit 1 " +
+            ") " +
+            "and rdc.reg_date between CAST('2021-11-12 19:26:00' AS DATETIME) and CAST('2021-11-18 20:02:25' AS DATETIME) " +
+            "group by r.recipe_id limit 1;", nativeQuery = true)
+    Long findRecommendedRecipeIdBasedOne(Long userId);
+
+    @Query(value = "select r.recipe_id from recipe r " +
+            "join tag t on r.recipe_id= t.recipe_id " +
+            "join recipe_detail_count rdc on r.recipe_id= rdc.recipe_id " +
+            "where t.name = (" +
+            "select name from " +
+            "(select t.name, count(t.name) cnt from tag t join recipe_likes rl on t.recipe_id = rl.recipe_id " +
+            "where rl.reg_date between  CAST('2021-11-12 19:26:00' AS DATETIME) and CAST('2021-11-18 19:30:00' AS DATETIME) " +
+            "group by t.name " +
+            "union all " +
+            "select sc.keyword, count(sc.keyword) cnt from recipe_search_count sc " +
+            "where sc.reg_date between CAST('2021-11-12 19:26:00' AS DATETIME) and CAST('2021-11-18 22:30:00' AS DATETIME) " +
+            "group by sc.keyword " +
+            "union all " +
+            "select t.name, count(t.name) cnt from tag t join recipe_detail_count dc " +
+            "on t.recipe_id = dc.recipe_id " +
+            "where dc.reg_date between  CAST('2021-11-12 19:26:00' AS DATETIME) and CAST('2021-11-18 19:30:00' AS DATETIME) " +
+            "group by t.name) list " +
+            "group by list.name " +
+            "order by  SUM(cnt) desc limit 1 " +
+            ") " +
+            "and rdc.reg_date between CAST('2021-11-12 19:26:00' AS DATETIME) and CAST('2021-11-18 20:02:25' AS DATETIME) " +
+            "group by r.recipe_id limit 1;", nativeQuery = true)
+    Long findRecommendedRecipeIdBasedAll();
 }
