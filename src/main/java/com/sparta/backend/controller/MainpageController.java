@@ -36,7 +36,7 @@ public class MainpageController {
     @GetMapping("/main/recommend")
     public CustomResponseDto<?> getRecommendedRecipe(@AuthenticationPrincipal UserDetailsImpl userDetails){
         checkLogin(userDetails);
-        List<RecipeListResponseDto> recipes = recipeService.getRecommendedRecipe(userDetails.getUser());
+        RecipeListResponseDto recipes = recipeService.getRecommendedRecipe(userDetails.getUser());
         return new CustomResponseDto<>(1, "추천레시피 조회완료",recipes);
     }
 

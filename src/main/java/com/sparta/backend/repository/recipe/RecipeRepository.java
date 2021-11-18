@@ -44,7 +44,7 @@ public interface RecipeRepository extends JpaRepository<Recipe,Long> {
     //특정기간&인기레시피 - id만 가져오기..top3..native sql
     @Query(value="SELECT r.recipe_id " +
             "FROM recipe r JOIN recipe_likes l ON r.recipe_id = l.recipe_id " +
-            "WHERE l.regdate BETWEEN :startDate AND :endDate " +
+            "WHERE l.reg_date BETWEEN :startDate AND :endDate " +
             "GROUP BY r.recipe_id order by count(l.recipe_id) desc limit 3",
     nativeQuery = true)
     List<Long> findPopularRecipeId2(LocalDateTime startDate, LocalDateTime endDate);
@@ -96,66 +96,63 @@ public interface RecipeRepository extends JpaRepository<Recipe,Long> {
 
         @Query(value = "select exists (select * from tag t join recipe_likes rl on t.recipe_id = rl.recipe_id " +
             "               where rl.user_id = :userId " +
-            "                 and rl.reg_date between  CAST('2021-11-12 19:26:00' AS DATETIME) and CAST('2021-11-18 19:30:00' AS DATETIME) " +
+            "                 and rl.reg_date between :start and :end " +
             "               ) as exist_like, " +
             "       exists (select sc.keyword, count(sc.keyword) cnt from recipe_search_count sc " +
             "               where sc.user_id = :userId" +
-            "                 and sc.reg_date between CAST('2021-11-12 19:26:00' AS DATETIME) and CAST('2021-11-18 22:30:00' AS DATETIME) " +
+            "                 and sc.reg_date between :start and :end " +
             "               group by sc.keyword) as exist_search, " +
             "       exists (select t.name, count(t.name) cnt from tag t join recipe_detail_count dc on t.recipe_id = dc.recipe_id " +
             "               where dc.user_id = :userId " +
-            "               and dc.reg_date between  CAST('2021-11-12 19:26:00' AS DATETIME) and CAST('2021-11-18 19:30:00' AS DATETIME) " +
+            "               and dc.reg_date between :start and :end " +
             "               group by t.name) as exsit_detail;", nativeQuery = true)
-    List<Object[]> checkUserHasData(@Param("userId") Long userId);
+    List<Object[]> checkUserHasData(@Param("userId") Long userId, LocalDateTime start, LocalDateTime end);
 
     @Query(value ="select r.recipe_id from recipe r " +
-            "join tag t on r.recipe_id= t.recipe_id " +
-            "join recipe_detail_count rdc on r.recipe_id= rdc.recipe_id " +
-            "where t.name = (" +
-            "select name from " +
-            "(select t.name, count(t.name) cnt from tag t join recipe_likes rl on t.recipe_id = rl.recipe_id " +
-            "where rl.user_id = :userId " +
-            "and rl.reg_date between  CAST('2021-11-12 19:26:00' AS DATETIME) and CAST('2021-11-18 19:30:00' AS DATETIME) " +
-            "group by t.name " +
-            "union all " +
-            "select sc.keyword, count(sc.keyword) cnt from recipe_search_count sc " +
-            "where user_id = :userId " +
-            "  and sc.reg_date between CAST('2021-11-12 19:26:00' AS DATETIME) and CAST('2021-11-18 22:30:00' AS DATETIME) " +
-            "group by sc.keyword " +
-            "union all " +
-            "select t.name, count(t.name) cnt from tag t join recipe_detail_count dc " +
-            "on t.recipe_id = dc.recipe_id " +
-            "where dc.user_id = :userId " +
-            "and dc.reg_date between  CAST('2021-11-12 19:26:00' AS DATETIME) and CAST('2021-11-18 19:30:00' AS DATETIME) " +
-            "group by t.name) list " +
-            "group by list.name " +
-            "order by  SUM(cnt) desc limit 1 " +
+            "                            join tag t on r.recipe_id= t.recipe_id " +
+            "                            join recipe_detail_count rdc on r.recipe_id= rdc.recipe_id " +
+            "where t.name = ( " +
+            "    select name from " +
+            "        (select t.name, count(t.name)*2 cnt from tag t join recipe_likes rl on t.recipe_id = rl.recipe_id " +
+            "         where rl.user_id = :userId " +
+            "           and rl.reg_date between :start and :end " +
+            "         group by t.name " +
+            "         union all " +
+            "         select sc.keyword, count(sc.keyword) cnt from recipe_search_count sc " +
+            "         where user_id = :userId " +
+            "           and sc.reg_date between :start and :end " +
+            "         group by sc.keyword " +
+            "         union all " +
+            "         select t.name, count(t.name) cnt from tag t join recipe_detail_count dc on t.recipe_id = dc.recipe_id " +
+            "         where dc.user_id = :userId and dc.reg_date between :start and :end " +
+            "         group by t.name) list " +
+            "    group by list.name " +
+            "    order by  SUM(cnt) desc limit 1 " +
             ") " +
-            "and rdc.reg_date between CAST('2021-11-12 19:26:00' AS DATETIME) and CAST('2021-11-18 20:02:25' AS DATETIME) " +
-            "group by r.recipe_id limit 1;", nativeQuery = true)
-    Long findRecommendedRecipeIdBasedOne(Long userId);
+            "  and rdc.reg_date between :start and :end " +
+            "group by r.recipe_id limit 1", nativeQuery = true)
+    Long findRecommendedRecipeIdBasedOne(Long userId, LocalDateTime start, LocalDateTime end);
 
     @Query(value = "select r.recipe_id from recipe r " +
-            "join tag t on r.recipe_id= t.recipe_id " +
-            "join recipe_detail_count rdc on r.recipe_id= rdc.recipe_id " +
-            "where t.name = (" +
-            "select name from " +
-            "(select t.name, count(t.name) cnt from tag t join recipe_likes rl on t.recipe_id = rl.recipe_id " +
-            "where rl.reg_date between  CAST('2021-11-12 19:26:00' AS DATETIME) and CAST('2021-11-18 19:30:00' AS DATETIME) " +
-            "group by t.name " +
-            "union all " +
-            "select sc.keyword, count(sc.keyword) cnt from recipe_search_count sc " +
-            "where sc.reg_date between CAST('2021-11-12 19:26:00' AS DATETIME) and CAST('2021-11-18 22:30:00' AS DATETIME) " +
-            "group by sc.keyword " +
-            "union all " +
-            "select t.name, count(t.name) cnt from tag t join recipe_detail_count dc " +
-            "on t.recipe_id = dc.recipe_id " +
-            "where dc.reg_date between  CAST('2021-11-12 19:26:00' AS DATETIME) and CAST('2021-11-18 19:30:00' AS DATETIME) " +
-            "group by t.name) list " +
-            "group by list.name " +
-            "order by  SUM(cnt) desc limit 1 " +
+            "                            join tag t on r.recipe_id= t.recipe_id " +
+            "                            join recipe_detail_count rdc on r.recipe_id= rdc.recipe_id " +
+            "where t.name = ( " +
+            "    select name from " +
+            "        (select t.name, count(t.name)*2 cnt from tag t join recipe_likes rl on t.recipe_id = rl.recipe_id " +
+            "         where rl.reg_date between :start and :end " +
+            "         group by t.name " +
+            "         union all " +
+            "         select sc.keyword, count(sc.keyword) cnt from recipe_search_count sc " +
+            "         where sc.reg_date between :start and :end " +
+            "         group by sc.keyword " +
+            "         union all " +
+            "         select t.name, count(t.name) cnt from tag t join recipe_detail_count dc on t.recipe_id = dc.recipe_id " +
+            "         where dc.reg_date between :start and :end " +
+            "         group by t.name) list " +
+            "    group by list.name " +
+            "    order by  SUM(cnt) desc limit 1 " +
             ") " +
-            "and rdc.reg_date between CAST('2021-11-12 19:26:00' AS DATETIME) and CAST('2021-11-18 20:02:25' AS DATETIME) " +
-            "group by r.recipe_id limit 1;", nativeQuery = true)
-    Long findRecommendedRecipeIdBasedAll();
+            "  and rdc.reg_date between :start and :end " +
+            "group by r.recipe_id limit 1", nativeQuery = true)
+    Long findRecommendedRecipeIdBasedAll(LocalDateTime start, LocalDateTime end);
 }

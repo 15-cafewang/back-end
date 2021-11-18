@@ -5,8 +5,6 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.sparta.backend.awsS3.S3Uploader;
 import com.sparta.backend.domain.recipe.*;
 import com.sparta.backend.domain.User;
-import com.sparta.backend.dto.queryInterface.RecommendUserDataCheckDto;
-import com.sparta.backend.dto.queryInterface.RecommendUserDataCheckInteface;
 import com.sparta.backend.dto.request.recipes.PostRecipeRequestDto;
 import com.sparta.backend.dto.request.recipes.PutRecipeRequestDto;
 import com.sparta.backend.dto.response.recipes.RecipeDetailResponsetDto;
@@ -28,9 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Transactional
 @RequiredArgsConstructor
@@ -370,25 +366,63 @@ public class RecipeService {
         return responseDtoList;
     }
 
-    public List<RecipeListResponseDto> getRecommendedRecipe(User user) {
+    public RecipeListResponseDto getRecommendedRecipe(User user) {
 
-        //1.해당 사용자의 기록이 존재하는지 체크
-        List<Object[]> objectList= recipeRepository.checkUserHasData(user.getId());
+        //0.현재 시간대 확인
+        List<LocalDateTime> timeZone = getTimeZone();
+
+        //1.해당 사용자의 기록이 존재하는지 체크(어제~오늘)
+        System.out.println("시간확인:"+timeZone.get(0)+"//"+timeZone.get(1));
+        List<Object[]> objectList= recipeRepository.checkUserHasData(user.getId(), timeZone.get(0),timeZone.get(1));
         boolean hasData =false;
         for(Object[] obj : objectList){
             if( (((BigInteger)obj[0]).intValue() >0 ) || (((BigInteger)obj[1]).intValue() >0 ) ||(((BigInteger)obj[2]).intValue() >0 ) ) hasData = true;
-//            System.out.println("되라:"+((BigInteger)obj[0]));
+            System.out.println("되라:"+((BigInteger)obj[2]));
         }
         //2.존재하는 경우- 해당사용자 기록기반
-        Long recipe_id = recipeRepository.findRecommendedRecipeIdBasedOne(user.getId());
-        System.out.println(recipe_id);
+//        Long recipe_id = recipeRepository.findRecommendedRecipeIdBasedOne(user.getId());
         //3.존재하지 않는 경우- 전체사용자 기록기반
-        Long recipe_id2 = recipeRepository.findRecommendedRecipeIdBasedAll();
-        System.out.println(recipe_id2);
-//        Long recipe_id = hasData? recipeRepository.findRecommendedRecipeIdBasedOne():recipeRepository.findRecommendedRecipeIdBasedAll();
+//        Long recipe_id2 = recipeRepository.findRecommendedRecipeIdBasedAll();
+        Long recipe_id = (hasData)?
+                recipeRepository.findRecommendedRecipeIdBasedOne(user.getId(),timeZone.get(0),timeZone.get(1))
+                : recipeRepository.findRecommendedRecipeIdBasedAll(timeZone.get(0),timeZone.get(1));
 
-
-        List<RecipeListResponseDto> responseDtoList = new ArrayList<>();
+        Recipe recommendedRecipe = recipeRepository.findById(recipe_id).orElseThrow(()->new CustomErrorException("id로 해당 게시물 찾을 수 없음"));
+        RecipeListResponseDto responseDtoList = new RecipeListResponseDto(recommendedRecipe, user, recipeLikesRepository);
         return responseDtoList;
+    }
+
+    private List<LocalDateTime> getTimeZone() {
+        LocalDateTime morningStart = LocalDateTime.of(LocalDateTime.now().getYear(),
+                LocalDateTime.now().getMonth(),
+                LocalDateTime.now().getDayOfMonth(),
+                4,0,0,0);
+        LocalDateTime mornigEnd = LocalDateTime.of(LocalDateTime.now().getYear(),
+                LocalDateTime.now().getMonth(),
+                LocalDateTime.now().getDayOfMonth(),
+                11,0,0,0);
+        LocalDateTime lunchStart = LocalDateTime.of(LocalDateTime.now().getYear(),
+                LocalDateTime.now().getMonth(),
+                LocalDateTime.now().getDayOfMonth(),
+                11,0,0,0);
+        LocalDateTime lunchEnd = LocalDateTime.of(LocalDateTime.now().getYear(),
+                LocalDateTime.now().getMonth(),
+                LocalDateTime.now().getDayOfMonth(),
+                15,0,0,0);
+        LocalDateTime otherStart = LocalDateTime.of(LocalDateTime.now().getYear(),
+                LocalDateTime.now().getMonth(),
+                LocalDateTime.now().getDayOfMonth(),
+                15,0,0,0);
+        LocalDateTime otherEnd = LocalDateTime.of(LocalDateTime.now().getYear(),
+                LocalDateTime.now().getMonth(),
+                LocalDateTime.now().getDayOfMonth()+1,
+                4,0,0,0);
+
+        LocalDateTime now = LocalDateTime.now();
+
+        if(now.isAfter(morningStart) && now.isBefore(mornigEnd)) return Arrays.asList(morningStart,mornigEnd);
+        else if(now.isAfter(lunchStart) && now.isBefore(lunchEnd))  return Arrays.asList(lunchStart,lunchEnd);
+        else return Arrays.asList(otherStart,otherEnd);
+
     }
 }
