@@ -2,6 +2,7 @@ package com.sparta.backend.controller;
 
 import com.sparta.backend.dto.response.CustomResponseDto;
 import com.sparta.backend.dto.response.recipes.RecipeListResponseDto;
+import com.sparta.backend.dto.response.recipes.RecipeRecommendResponseDto;
 import com.sparta.backend.exception.CustomErrorException;
 import com.sparta.backend.security.UserDetailsImpl;
 import com.sparta.backend.service.recipe.RecipeService;
@@ -36,7 +37,7 @@ public class MainpageController {
     @GetMapping("/main/recommend")
     public CustomResponseDto<?> getRecommendedRecipe(@AuthenticationPrincipal UserDetailsImpl userDetails){
         checkLogin(userDetails);
-        RecipeListResponseDto recipes = recipeService.getRecommendedRecipe(userDetails.getUser());
+        RecipeRecommendResponseDto recipes = recipeService.getRecommendedRecipe(userDetails.getUser());
         return new CustomResponseDto<>(1, "추천레시피 조회완료",recipes);
     }
 

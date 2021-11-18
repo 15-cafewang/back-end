@@ -108,7 +108,7 @@ public interface RecipeRepository extends JpaRepository<Recipe,Long> {
             "               group by t.name) as exsit_detail;", nativeQuery = true)
     List<Object[]> checkUserHasData(@Param("userId") Long userId, LocalDateTime start, LocalDateTime end);
 
-    @Query(value ="select r.recipe_id from recipe r " +
+    @Query(value ="select r.recipe_id, t.name from recipe r " +
             "                            left join tag t on r.recipe_id= t.recipe_id " +
             "                            left join recipe_detail_count rdc on r.recipe_id= rdc.recipe_id " +
             "                           left join recipe_likes l on r.recipe_id = l.recipe_id " +
@@ -133,9 +133,9 @@ public interface RecipeRepository extends JpaRepository<Recipe,Long> {
             "  and (rdc.reg_date between :start and :end " +
             " or l.reg_date between :start and :end) " +
             "group by r.recipe_id limit 1", nativeQuery = true)
-    Long findRecommendedRecipeIdBasedOne(Long userId, LocalDateTime start, LocalDateTime end);
+    List<Object[]> findRecommendedRecipeIdBasedOne(Long userId, LocalDateTime start, LocalDateTime end);
 
-    @Query(value = "select r.recipe_id from recipe r " +
+    @Query(value = "select r.recipe_id, t.name from recipe r " +
             "                           left join tag t on r.recipe_id= t.recipe_id " +
             "                           left join recipe_detail_count rdc on r.recipe_id= rdc.recipe_id " +
             "                           left join recipe_likes l on r.recipe_id = l.recipe_id " +
@@ -159,5 +159,5 @@ public interface RecipeRepository extends JpaRepository<Recipe,Long> {
             "  and (rdc.reg_date between :start and :end " +
             "  or l.reg_date between :start and :end) " +
             "group by r.recipe_id limit 1", nativeQuery = true)
-    Long findRecommendedRecipeIdBasedAll(LocalDateTime start, LocalDateTime end);
+    List<Object[]> findRecommendedRecipeIdBasedAll(LocalDateTime start, LocalDateTime end);
 }

@@ -9,6 +9,7 @@ import com.sparta.backend.dto.request.recipes.PostRecipeRequestDto;
 import com.sparta.backend.dto.request.recipes.PutRecipeRequestDto;
 import com.sparta.backend.dto.response.recipes.RecipeDetailResponsetDto;
 import com.sparta.backend.dto.response.recipes.RecipeListResponseDto;
+import com.sparta.backend.dto.response.recipes.RecipeRecommendResponseDto;
 import com.sparta.backend.exception.CustomErrorException;
 import com.sparta.backend.repository.recipe.*;
 import com.sparta.backend.security.UserDetailsImpl;
@@ -366,7 +367,7 @@ public class RecipeService {
         return responseDtoList;
     }
 
-    public RecipeListResponseDto getRecommendedRecipe(User user) {
+    public RecipeRecommendResponseDto getRecommendedRecipe(User user) {
 
         //0.현재 시간대 확인
         List<LocalDateTime> timeZone = getTimeZone();
@@ -379,17 +380,17 @@ public class RecipeService {
             if( (((BigInteger)obj[0]).intValue() >0 ) || (((BigInteger)obj[1]).intValue() >0 ) ||(((BigInteger)obj[2]).intValue() >0 ) ) hasData = true;
             System.out.println("되라:"+((BigInteger)obj[2]));
         }
-        //2.존재하는 경우- 해당사용자 기록기반
-//        Long recipe_id = recipeRepository.findRecommendedRecipeIdBasedOne(user.getId());
-        //3.존재하지 않는 경우- 전체사용자 기록기반
-//        Long recipe_id2 = recipeRepository.findRecommendedRecipeIdBasedAll();
-        Long recipe_id = (hasData)?
+        //2.존재하는 경우 태그와 레시피id 추출- 해당사용자 기록기반, 존재하지 않는 경우- 전체사용자 기록기반
+        List<Object[]> foundRecipeAndTagName = (hasData)?
                 recipeRepository.findRecommendedRecipeIdBasedOne(user.getId(),timeZone.get(0),timeZone.get(1))
                 : recipeRepository.findRecommendedRecipeIdBasedAll(timeZone.get(0),timeZone.get(1));
 
+        //1등으로 뽑힌 레시피id로 레시피 검색
+        Long recipe_id = ((BigInteger)foundRecipeAndTagName.get(0)[0]).longValue();
+        String tagName = (String)foundRecipeAndTagName.get(0)[1];
         Recipe recommendedRecipe = recipeRepository.findById(recipe_id).orElseThrow(()->new CustomErrorException("id로 해당 게시물 찾을 수 없음"));
-        RecipeListResponseDto responseDtoList = new RecipeListResponseDto(recommendedRecipe, user, recipeLikesRepository);
-        return responseDtoList;
+        RecipeRecommendResponseDto responseDto = new RecipeRecommendResponseDto(recommendedRecipe, tagName, user, recipeLikesRepository);
+        return responseDto;
     }
 
     private List<LocalDateTime> getTimeZone() {
