@@ -109,8 +109,9 @@ public interface RecipeRepository extends JpaRepository<Recipe,Long> {
     List<Object[]> checkUserHasData(@Param("userId") Long userId, LocalDateTime start, LocalDateTime end);
 
     @Query(value ="select r.recipe_id from recipe r " +
-            "                            join tag t on r.recipe_id= t.recipe_id " +
-            "                            join recipe_detail_count rdc on r.recipe_id= rdc.recipe_id " +
+            "                            left join tag t on r.recipe_id= t.recipe_id " +
+            "                            left join recipe_detail_count rdc on r.recipe_id= rdc.recipe_id " +
+            "                           left join recipe_likes l on r.recipe_id = l.recipe_id " +
             "where t.name = ( " +
             "    select name from " +
             "        (select t.name, count(t.name)*2 cnt from tag t join recipe_likes rl on t.recipe_id = rl.recipe_id " +
@@ -129,13 +130,16 @@ public interface RecipeRepository extends JpaRepository<Recipe,Long> {
             "    group by list.name " +
             "    order by  SUM(cnt) desc limit 1 " +
             ") " +
-            "  and rdc.reg_date between :start and :end " +
+            "  and (rdc.reg_date between :start and :end " +
+            " or l.reg_date between :start and :end) " +
             "group by r.recipe_id limit 1", nativeQuery = true)
     Long findRecommendedRecipeIdBasedOne(Long userId, LocalDateTime start, LocalDateTime end);
 
     @Query(value = "select r.recipe_id from recipe r " +
-            "                            join tag t on r.recipe_id= t.recipe_id " +
-            "                            join recipe_detail_count rdc on r.recipe_id= rdc.recipe_id " +
+            "                           left join tag t on r.recipe_id= t.recipe_id " +
+            "                           left join recipe_detail_count rdc on r.recipe_id= rdc.recipe_id " +
+            "                           left join recipe_likes l on r.recipe_id = l.recipe_id " +
+
             "where t.name = ( " +
             "    select name from " +
             "        (select t.name, count(t.name)*2 cnt from tag t join recipe_likes rl on t.recipe_id = rl.recipe_id " +
@@ -152,7 +156,8 @@ public interface RecipeRepository extends JpaRepository<Recipe,Long> {
             "    group by list.name " +
             "    order by  SUM(cnt) desc limit 1 " +
             ") " +
-            "  and rdc.reg_date between :start and :end " +
+            "  and (rdc.reg_date between :start and :end " +
+            "  or l.reg_date between :start and :end) " +
             "group by r.recipe_id limit 1", nativeQuery = true)
     Long findRecommendedRecipeIdBasedAll(LocalDateTime start, LocalDateTime end);
 }
