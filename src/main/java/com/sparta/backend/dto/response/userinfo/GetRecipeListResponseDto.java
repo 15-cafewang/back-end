@@ -2,7 +2,7 @@ package com.sparta.backend.dto.response.userinfo;
 
 import com.sparta.backend.domain.recipe.Recipe;
 import com.sparta.backend.domain.recipe.RecipeLikes;
-import com.sparta.backend.repository.RecipeLikesRepository;
+import com.sparta.backend.repository.recipe.RecipeLikesRepository;
 import com.sparta.backend.security.UserDetailsImpl;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -6,6 +6,8 @@ import com.sparta.backend.domain.recipe.Recipe;
 import com.sparta.backend.domain.User;
 import com.sparta.backend.dto.response.userinfo.*;
 import com.sparta.backend.repository.*;
+import com.sparta.backend.repository.recipe.RecipeLikesRepository;
+import com.sparta.backend.repository.recipe.RecipeRepository;
 import com.sparta.backend.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

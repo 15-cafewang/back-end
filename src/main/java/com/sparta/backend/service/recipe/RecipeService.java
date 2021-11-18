@@ -3,18 +3,15 @@ package com.sparta.backend.service.recipe;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.sparta.backend.awsS3.S3Uploader;
-import com.sparta.backend.domain.recipe.Recipe;
-import com.sparta.backend.domain.recipe.RecipeImage;
-import com.sparta.backend.domain.recipe.RecipeLikes;
+import com.sparta.backend.domain.recipe.*;
 import com.sparta.backend.domain.User;
 import com.sparta.backend.dto.request.recipes.PostRecipeRequestDto;
 import com.sparta.backend.dto.request.recipes.PutRecipeRequestDto;
 import com.sparta.backend.dto.response.recipes.RecipeDetailResponsetDto;
 import com.sparta.backend.dto.response.recipes.RecipeListResponseDto;
+import com.sparta.backend.dto.response.recipes.RecipeRecommendResponseDto;
 import com.sparta.backend.exception.CustomErrorException;
-import com.sparta.backend.repository.RecipeImageRepository;
-import com.sparta.backend.repository.RecipeLikesRepository;
-import com.sparta.backend.repository.RecipeRepository;
+import com.sparta.backend.repository.recipe.*;
 import com.sparta.backend.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +25,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Transactional
 @RequiredArgsConstructor
@@ -44,6 +40,9 @@ public class RecipeService {
     private final AmazonS3Client amazonS3Client;
     private final String bucket = "99final";
     private final RecipeImageRepository recipeImageRepository;
+    private final RecipeDetailCountRepository recipeDetailCountRepository;
+    private final RecipeSearchCountRepository recipeSearchCountRepository;
+    private final TagRepository tagRepository;
 
     @Autowired
     public RecipeService(
@@ -51,13 +50,19 @@ public class RecipeService {
             RecipeLikesRepository recipeLikesRepository,
             AmazonS3Client amazonS3Client,
             S3Uploader s3Uploader,
-            RecipeImageRepository recipeImageRepository
+            RecipeImageRepository recipeImageRepository,
+            RecipeDetailCountRepository recipeDetailCountRepository,
+            RecipeSearchCountRepository recipeSearchCountRepository,
+            TagRepository tagRepository
     ){
         this.recipeRepository = recipeRepository;
         this.recipeLikesRepository = recipeLikesRepository;
         this.amazonS3Client = amazonS3Client;
         this.s3Uploader = s3Uploader;
         this.recipeImageRepository = recipeImageRepository;
+        this.recipeDetailCountRepository = recipeDetailCountRepository;
+        this.recipeSearchCountRepository = recipeSearchCountRepository;
+        this.tagRepository = tagRepository;
     }
 
     //레시피 저장
@@ -208,12 +213,14 @@ public class RecipeService {
     public RecipeDetailResponsetDto getRecipeDetail(Long recipeId, UserDetailsImpl userDetails) {
         Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(()->
                 new CustomErrorException("해당 게시물이 존재하지 않습니다"));
+
+        saveClickDetailAction(recipe, userDetails);
+
         String nickname = recipe.getUser().getNickname();
         String title = recipe.getTitle();
         String content = recipe.getContent();
         LocalDateTime regDate = recipe.getRegDate();
         int likeCount = recipe.getRecipeLikesList().size();
-//        String image = recipe.getImage();
         Integer price = recipe.getPrice();
         String profile = recipe.getUser().getImage();
         Optional<RecipeLikes> foundRecipeLike = recipeLikesRepository.findByRecipeIdAndUserId(recipe.getId(),userDetails.getUser().getId());
@@ -224,10 +231,17 @@ public class RecipeService {
 
         List<String> images =new ArrayList<>();
         recipe.getRecipeImagesList().forEach((recipeImage)->images.add(recipeImage.getImage()));
+
         RecipeDetailResponsetDto responsetDto = new RecipeDetailResponsetDto(
                 recipeId, nickname, title, content, regDate, likeCount, likeStatus, images, tagNames, price,profile);
 
         return responsetDto;
+    }
+
+    //상세보기 조횟수 등록
+    private void saveClickDetailAction(Recipe recipe, UserDetailsImpl userDetails) {
+        RecipeDetailCount recipeDetailCount = new RecipeDetailCount(userDetails.getUser(), recipe);
+        recipeDetailCountRepository.save(recipeDetailCount);
     }
 
     public Page<RecipeListResponseDto> getRecipesByPage(int page, int size, boolean isAsc, String sortBy, Boolean sortByLike ,UserDetailsImpl userDetails) {
@@ -242,6 +256,7 @@ public class RecipeService {
         return responseDtos;
     }
 
+    //좋아요 등록/취소
     public String likeRecipe(Long postId, User user) {
         Recipe recipe = recipeRepository.findById(postId).orElseThrow(()->
                 new CustomErrorException("해당 게시물이 존재하지 않아요"));
@@ -286,7 +301,12 @@ public class RecipeService {
         return responseDtos;
     }
 
+    //검색하기
     public Page<RecipeListResponseDto> searchRecipe(boolean withTag, String keyword, int page, int size, boolean isAsc, String sortBy, UserDetailsImpl userDetails) {
+
+        //검색 히스토리 등록
+        if(withTag) saveSearchAction(keyword,userDetails.getUser());
+
         page = page-1;
         boolean isSortByLikeCount = false;
         if(sortBy.equals("likeCount")){
@@ -306,6 +326,11 @@ public class RecipeService {
         if(!withTag && isSortByLikeCount) recipes = recipeRepository.findAllByTitleOrContentOrderByLikeCount(keyword, pageable);
         Page<RecipeListResponseDto> responseDtos = recipes.map((recipe) -> new RecipeListResponseDto(recipe,userDetails, recipeLikesRepository));
         return responseDtos;
+    }
+
+    private void saveSearchAction(String keyword, User user) {
+        RecipeSearchCount recipeSearchCount = new RecipeSearchCount(user, keyword);
+        recipeSearchCountRepository.save(recipeSearchCount);
     }
 
     public List<RecipeListResponseDto> getPopularRecipe(String sortBy, User user) {
@@ -340,5 +365,65 @@ public class RecipeService {
         List<RecipeListResponseDto> responseDtoList = new ArrayList<>();
         popularRecipeIdList.forEach((recipe -> responseDtoList.add(new RecipeListResponseDto(recipe, user, recipeLikesRepository))));
         return responseDtoList;
+    }
+
+    public RecipeRecommendResponseDto getRecommendedRecipe(User user) {
+
+        //0.현재 시간대 확인
+        List<LocalDateTime> timeZone = getTimeZone();
+
+        //1.해당 사용자의 기록이 존재하는지 체크(어제~오늘)
+        System.out.println("시간확인:"+timeZone.get(0)+"//"+timeZone.get(1));
+        List<Object[]> objectList= recipeRepository.checkUserHasData(user.getId(), timeZone.get(0),timeZone.get(1));
+        boolean hasData =false;
+        for(Object[] obj : objectList){
+            if( (((BigInteger)obj[0]).intValue() >0 ) || (((BigInteger)obj[1]).intValue() >0 ) ||(((BigInteger)obj[2]).intValue() >0 ) ) hasData = true;
+            System.out.println("되라:"+((BigInteger)obj[2]));
+        }
+        //2.존재하는 경우 태그와 레시피id 추출- 해당사용자 기록기반, 존재하지 않는 경우- 전체사용자 기록기반
+        List<Object[]> foundRecipeAndTagName = (hasData)?
+                recipeRepository.findRecommendedRecipeIdBasedOne(user.getId(),timeZone.get(0),timeZone.get(1))
+                : recipeRepository.findRecommendedRecipeIdBasedAll(timeZone.get(0),timeZone.get(1));
+
+        //1등으로 뽑힌 레시피id로 레시피 검색
+        Long recipe_id = ((BigInteger)foundRecipeAndTagName.get(0)[0]).longValue();
+        String tagName = (String)foundRecipeAndTagName.get(0)[1];
+        Recipe recommendedRecipe = recipeRepository.findById(recipe_id).orElseThrow(()->new CustomErrorException("id로 해당 게시물 찾을 수 없음"));
+        RecipeRecommendResponseDto responseDto = new RecipeRecommendResponseDto(recommendedRecipe, tagName, user, recipeLikesRepository);
+        return responseDto;
+    }
+
+    private List<LocalDateTime> getTimeZone() {
+        LocalDateTime morningStart = LocalDateTime.of(LocalDateTime.now().getYear(),
+                LocalDateTime.now().getMonth(),
+                LocalDateTime.now().getDayOfMonth(),
+                4,0,0,0);
+        LocalDateTime mornigEnd = LocalDateTime.of(LocalDateTime.now().getYear(),
+                LocalDateTime.now().getMonth(),
+                LocalDateTime.now().getDayOfMonth(),
+                11,0,0,0);
+        LocalDateTime lunchStart = LocalDateTime.of(LocalDateTime.now().getYear(),
+                LocalDateTime.now().getMonth(),
+                LocalDateTime.now().getDayOfMonth(),
+                11,0,0,0);
+        LocalDateTime lunchEnd = LocalDateTime.of(LocalDateTime.now().getYear(),
+                LocalDateTime.now().getMonth(),
+                LocalDateTime.now().getDayOfMonth(),
+                15,0,0,0);
+        LocalDateTime otherStart = LocalDateTime.of(LocalDateTime.now().getYear(),
+                LocalDateTime.now().getMonth(),
+                LocalDateTime.now().getDayOfMonth(),
+                15,0,0,0);
+        LocalDateTime otherEnd = LocalDateTime.of(LocalDateTime.now().getYear(),
+                LocalDateTime.now().getMonth(),
+                LocalDateTime.now().getDayOfMonth()+1,
+                4,0,0,0);
+
+        LocalDateTime now = LocalDateTime.now();
+
+        if(now.isAfter(morningStart) && now.isBefore(mornigEnd)) return Arrays.asList(morningStart,mornigEnd);
+        else if(now.isAfter(lunchStart) && now.isBefore(lunchEnd))  return Arrays.asList(lunchStart,lunchEnd);
+        else return Arrays.asList(otherStart,otherEnd);
+
     }
 }
