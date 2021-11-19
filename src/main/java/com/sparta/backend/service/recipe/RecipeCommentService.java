@@ -31,11 +31,13 @@ public class RecipeCommentService {
     private final RecipeCommentLikeRepository commentLikeReposiotory;
 
     //댓글 저장
-    public void saveComment(PostCommentRequestDto requestDto, UserDetailsImpl userDetails) {
+    public RecipeCommentResponseDto saveComment(PostCommentRequestDto requestDto, UserDetailsImpl userDetails) {
         Recipe recipe = recipeRepository.findById(requestDto.getRecipeId()).orElseThrow(()->
                 new CustomErrorException("해당 댓글의 레시피가 존재하지 않습니다."));
         RecipeComment recipeComment = new RecipeComment(requestDto.getContent(),userDetails.getUser(), recipe);
-        commentRepository.save(recipeComment);
+        RecipeComment savedComment = commentRepository.save(recipeComment);
+        RecipeCommentResponseDto responseDto = new RecipeCommentResponseDto(savedComment, userDetails, commentLikeReposiotory);
+        return responseDto;
     }
 
     //레시피에 대한 댓글들 조회- 리스트로 리턴
