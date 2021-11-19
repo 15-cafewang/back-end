@@ -108,7 +108,6 @@ public interface RecipeRepository extends JpaRepository<Recipe,Long> {
             "               group by t.name) as exsit_detail;", nativeQuery = true)
     List<Object[]> checkUserHasData(Long userId, LocalDateTime start, LocalDateTime end);
 
-<<<<<<< HEAD
     @Query(value ="select recipe_id from( " +
             "                 select rdc.recipe_id recipe_id, count(rdc.recipe_id) cnt from recipe_detail_count rdc join tag t on rdc.recipe_id = t.recipe_id " +
             "                 where t.name = ( " +
@@ -152,33 +151,6 @@ public interface RecipeRepository extends JpaRepository<Recipe,Long> {
             "                 ) " +
             "                 group by t.name) list " +
             "order by cnt desc limit 1;", nativeQuery = true)
-=======
-    @Query(value ="select r.recipe_id, t.name from recipe r " +
-            "                            left join tag t on r.recipe_id= t.recipe_id " +
-            "                            left join recipe_detail_count rdc on r.recipe_id= rdc.recipe_id " +
-            "                           left join recipe_likes l on r.recipe_id = l.recipe_id " +
-            "where t.name = ( " +
-            "    select name from " +
-            "        (select t.name, count(t.name)*2 cnt from tag t join recipe_likes rl on t.recipe_id = rl.recipe_id " +
-            "         where rl.user_id = :userId " +
-            "           and rl.reg_date between :start and :end " +
-            "         group by t.name " +
-            "         union all " +
-            "         select sc.keyword, count(sc.keyword) cnt from recipe_search_count sc " +
-            "         where user_id = :userId " +
-            "           and sc.reg_date between :start and :end " +
-            "         group by sc.keyword " +
-            "         union all " +
-            "         select t.name, count(t.name) cnt from tag t join recipe_detail_count dc on t.recipe_id = dc.recipe_id " +
-            "         where dc.user_id = :userId and dc.reg_date between :start and :end " +
-            "         group by t.name) list " +
-            "    group by list.name " +
-            "    order by  SUM(cnt) desc limit 1 " +
-            ") " +
-            "  and (rdc.reg_date between :start and :end " +
-            " or l.reg_date between :start and :end) " +
-            "group by r.recipe_id limit 1", nativeQuery = true)
->>>>>>> dev
     List<Object[]> findRecommendedRecipeIdBasedOne(Long userId, LocalDateTime start, LocalDateTime end);
 
     @Query(value = "select r.recipe_id, t.name from recipe r " +
