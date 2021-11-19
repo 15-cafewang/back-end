@@ -3,7 +3,7 @@ package com.sparta.backend.service;
 import com.sparta.backend.domain.Board;
 import com.sparta.backend.domain.BoardComment;
 import com.sparta.backend.domain.User;
-import com.sparta.backend.dto.request.board.GetBoardCommentResponseDto;
+import com.sparta.backend.dto.response.board.GetBoardCommentResponseDto;
 import com.sparta.backend.dto.request.board.PostBoardCommentRequestDto;
 import com.sparta.backend.dto.request.board.PutBoardCommentRequestDto;
 import com.sparta.backend.repository.BoardCommentLikesRepository;
