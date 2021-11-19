@@ -14,6 +14,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class RecipeCommentResponseDto {
     private Long commentId;
+    private Long recipeId;
     private String nickname;
     private String content;
     private LocalDateTime regDate;
@@ -24,6 +25,7 @@ public class RecipeCommentResponseDto {
 
     public RecipeCommentResponseDto(RecipeComment recipeComment, UserDetailsImpl userDetails, RecipeCommentLikeRepository commentLikeRepository){
         this.commentId = recipeComment.getId();
+        this.recipeId = recipeComment.getRecipe().getId();
         this.nickname = recipeComment.getUser().getNickname();
         this.content = recipeComment.getContent();
         this.regDate = recipeComment.getRegDate();
