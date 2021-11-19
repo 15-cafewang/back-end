@@ -1,8 +1,8 @@
 package com.sparta.backend.dto.response.recipes;
 
+import com.sparta.backend.domain.User;
 import com.sparta.backend.domain.recipe.Recipe;
 import com.sparta.backend.domain.recipe.RecipeLikes;
-import com.sparta.backend.domain.User;
 import com.sparta.backend.repository.recipe.RecipeLikesRepository;
 import com.sparta.backend.security.UserDetailsImpl;
 import lombok.AllArgsConstructor;
@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @Getter
 @AllArgsConstructor
-public class RecipeListResponseDto {
+public class RecipeRecommendResponseDto {
     private Long recipeId;
     private String nickname;
     private String title;
@@ -26,9 +26,10 @@ public class RecipeListResponseDto {
     private int likeCount;
     private Integer price;
     private boolean likeStatus;
+    private String tagName;
 
 
-    public RecipeListResponseDto(Recipe recipe, UserDetailsImpl userDetails, RecipeLikesRepository recipeLikesRepository){
+    public RecipeRecommendResponseDto(Recipe recipe, UserDetailsImpl userDetails, RecipeLikesRepository recipeLikesRepository){
         this.recipeId = recipe.getId();
         this.nickname = recipe.getUser().getNickname();
         this.title = recipe.getTitle();
@@ -43,7 +44,7 @@ public class RecipeListResponseDto {
         this.likeStatus = foundRecipeLike.isPresent();
     }
 //
-    public RecipeListResponseDto(Recipe recipe, User user, RecipeLikesRepository recipeLikesRepository){
+    public RecipeRecommendResponseDto(Recipe recipe, String tagName,User user, RecipeLikesRepository recipeLikesRepository){
         this.recipeId = recipe.getId();
         this.nickname = recipe.getUser().getNickname(); //todo:N+1 해결하면 될듯
         this.title = recipe.getTitle();
@@ -56,9 +57,10 @@ public class RecipeListResponseDto {
 
         Optional<RecipeLikes> foundRecipeLike = recipeLikesRepository.findByRecipeAndUser(recipe,user);
         this.likeStatus = foundRecipeLike.isPresent();
+        this.tagName = tagName;
     }
 
-    public RecipeListResponseDto(Optional<Recipe> recipe, User user, RecipeLikesRepository likesRepository) {
+    public RecipeRecommendResponseDto(Optional<Recipe> recipe, User user, RecipeLikesRepository likesRepository) {
         this.recipeId = recipe.get().getId();
         this.nickname = recipe.get().getUser().getNickname();
         this.title = recipe.get().getTitle();
