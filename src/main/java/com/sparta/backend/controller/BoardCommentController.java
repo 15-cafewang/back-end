@@ -1,6 +1,6 @@
 package com.sparta.backend.controller;
 
-import com.sparta.backend.dto.request.board.GetBoardCommentResponseDto;
+import com.sparta.backend.dto.response.board.GetBoardCommentResponseDto;
 import com.sparta.backend.dto.request.board.PostBoardCommentRequestDto;
 import com.sparta.backend.dto.request.board.PutBoardCommentRequestDto;
 import com.sparta.backend.dto.response.CustomResponseDto;

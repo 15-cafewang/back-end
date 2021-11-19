@@ -106,7 +106,7 @@ public interface RecipeRepository extends JpaRepository<Recipe,Long> {
             "               where dc.user_id = :userId " +
             "               and dc.reg_date between :start and :end " +
             "               group by t.name) as exsit_detail;", nativeQuery = true)
-    List<Object[]> checkUserHasData(@Param("userId") Long userId, LocalDateTime start, LocalDateTime end);
+    List<Object[]> checkUserHasData(Long userId, LocalDateTime start, LocalDateTime end);
 
     @Query(value ="select r.recipe_id, t.name from recipe r " +
             "                            left join tag t on r.recipe_id= t.recipe_id " +

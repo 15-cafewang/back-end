@@ -1,4 +1,4 @@
-package com.sparta.backend.dto.request.board;
+package com.sparta.backend.dto.response.board;
 
 import com.sparta.backend.domain.BoardComment;
 import com.sparta.backend.domain.BoardCommentLikes;
@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @Getter
 public class GetBoardCommentResponseDto {
     private Long commentId;
+    private Long boardId;
     private String nickname;
     private LocalDateTime regDate;
     private LocalDateTime modDate;
@@ -27,6 +28,7 @@ public class GetBoardCommentResponseDto {
                                       BoardCommentLikesRepository boardCommentLikesRepository,
                                       UserDetailsImpl userDetails) {
         this.commentId = boardComment.getId();
+        this.boardId = boardComment.getBoard().getId();
         this.nickname = boardComment.getUser().getNickname();
         this.regDate = boardComment.getRegDate();
         this.modDate = boardComment.getModDate();
