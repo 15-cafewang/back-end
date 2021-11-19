@@ -72,10 +72,12 @@ public class RecipeCommentService {
     }
 
     //댓글 수정
-    public void updateComment(Long commentId, RecipeCommentUpdateRequestDto updateRequestDto, UserDetailsImpl userDetails) {
+    public RecipeCommentResponseDto updateComment(Long commentId, RecipeCommentUpdateRequestDto updateRequestDto, UserDetailsImpl userDetails) {
         RecipeComment recipeComment = commentRepository.findById(commentId).orElseThrow(()->
                 new CustomErrorException("해당 댓글이 존재하지 않습니다"));
-        recipeComment.updateComment(updateRequestDto.getContent());
+        RecipeComment savedComment = recipeComment.updateComment(updateRequestDto.getContent());
+        RecipeCommentResponseDto responseDto = new RecipeCommentResponseDto(savedComment, userDetails, commentLikeReposiotory);
+        return responseDto;
     }
 
     public Optional<RecipeComment> findById(Long recipeId) {

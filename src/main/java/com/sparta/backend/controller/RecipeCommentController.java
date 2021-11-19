@@ -68,8 +68,8 @@ public class RecipeCommentController {
                                               @AuthenticationPrincipal UserDetailsImpl userDetails){
         checkLogin(userDetails);
         checkOwnership(commentId,userDetails);
-        commentService.updateComment(commentId, updateRequestDto, userDetails);
-        return new CustomResponseDto<>(1,"댓글 수정 성공","");
+        RecipeCommentResponseDto responseDto = commentService.updateComment(commentId, updateRequestDto, userDetails);
+        return new CustomResponseDto<>(1,"댓글 수정 성공", responseDto);
    }
 
    //댓글 좋아요 등록/취소

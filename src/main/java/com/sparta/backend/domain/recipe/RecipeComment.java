@@ -46,8 +46,9 @@ public class RecipeComment extends BaseEntity {
         this.recipe = recipe;
     }
 
-    public void updateComment(String content){
+    public RecipeComment updateComment(String content){
         RecipeCommentValidator.validateCommentInput(content);
         this.content = content;
+        return this;
     }
 }
