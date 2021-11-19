@@ -372,7 +372,7 @@ public class RecipeService {
         //0.현재 시간대 확인
         List<LocalDateTime> timeZone = getTimeZone();
 
-        //1.해당 사용자의 기록이 존재하는지 체크(어제~오늘)
+        //1.해당 사용자의 기록이 존재하는지 체크
         System.out.println("시간확인:"+timeZone.get(0)+"//"+timeZone.get(1));
         List<Object[]> objectList= recipeRepository.checkUserHasData(user.getId(), timeZone.get(0),timeZone.get(1));
         boolean hasData =false;
@@ -386,8 +386,14 @@ public class RecipeService {
                 : recipeRepository.findRecommendedRecipeIdBasedAll(timeZone.get(0),timeZone.get(1));
 
         //1등으로 뽑힌 레시피id로 레시피 검색
-        Long recipe_id = ((BigInteger)foundRecipeAndTagName.get(0)[0]).longValue();
-        String tagName = (String)foundRecipeAndTagName.get(0)[1];
+        Long recipe_id = 1L;
+        String tagName = "";
+        for(Object[] obj : foundRecipeAndTagName){
+            recipe_id = ((BigInteger)obj[0]).longValue();
+//            tagName = (String)obj[1];
+        }
+//        Long recipe_id = ((BigInteger)foundRecipeAndTagName.get(0)[0]).longValue();
+//        String tagName = (String)foundRecipeAndTagName.get(0)[1];
         Recipe recommendedRecipe = recipeRepository.findById(recipe_id).orElseThrow(()->new CustomErrorException("id로 해당 게시물 찾을 수 없음"));
         RecipeRecommendResponseDto responseDto = new RecipeRecommendResponseDto(recommendedRecipe, tagName, user, recipeLikesRepository);
         return responseDto;
