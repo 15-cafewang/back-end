@@ -7,6 +7,8 @@ import com.sparta.backend.security.UserDetailsImpl;
 import com.sparta.backend.service.user.UserinfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,19 +23,92 @@ public class UserinfoController {
 
     // 마이페이지 조회
     @GetMapping("/userinfo/{nickname}")
-    public CustomResponseDto<?> getUserInfo(@PathVariable String nickname,
-                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<?> getUserInfo(@PathVariable String nickname,
+                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         checkLogin(userDetails);
 
         GetUserinfoResponseDto responseDto = userinfoService.getUserInfo(userDetails, nickname);
 
-        return new CustomResponseDto<>(1, "마이페이지 조회 성공", responseDto);
+        return new ResponseEntity<>(
+                new CustomResponseDto<>(1, "마이페이지 조회 성공", responseDto), HttpStatus.OK);
     }
 
     // 내가 쓴 레시피 목록 조회
     @GetMapping("/userinfo/recipes/{nickname}")
-    public CustomResponseDto<?> getRecipeList(@RequestParam("page") int page,
+    public ResponseEntity<?> getRecipeList(@RequestParam("page") int page,
+                                           @RequestParam("size") int size,
+                                           @RequestParam("isAsc") boolean isAsc,
+                                           @RequestParam("sortBy") String sortBy,
+                                           @PathVariable String nickname,
+                                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        checkLogin(userDetails);
+
+        Page<GetRecipeListResponseDto> recipeList = userinfoService
+                .getRecipeListByPage(page, size, isAsc, sortBy, nickname, userDetails);
+
+        return new ResponseEntity<>(
+                new CustomResponseDto<>(1, "레시피 목록 조회 성공", recipeList), HttpStatus.OK);
+    }
+
+    // 내가 쓴 게시글 목록 조회
+    @GetMapping("/userinfo/boards/{nickname}")
+    public ResponseEntity<?> getBoardList(@RequestParam("page") int page,
+                                          @RequestParam("size") int size,
+                                          @RequestParam("isAsc") boolean isAsc,
+                                          @RequestParam("sortBy") String sortBy,
+                                          @PathVariable String nickname,
+                                          @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        checkLogin(userDetails);
+
+        Page<GetBoardListResponseDto> boardList = userinfoService
+                .getBoardListByPage(page, size, isAsc, sortBy, nickname, userDetails);
+
+        return new ResponseEntity<>(
+                new CustomResponseDto<>(1, "게시글 목록 조회 성공", boardList), HttpStatus.OK);
+    }
+
+    // 내가 좋아요한 레시피 목록 조회
+    @GetMapping("/userinfo/recipes/likes/{nickname}")
+    public ResponseEntity<?> getLikedRecipeList(@RequestParam("page") int page,
+                                               @RequestParam("size") int size,
+                                               @RequestParam("isAsc") boolean isAsc,
+                                               @RequestParam("sortBy") String sortBy,
+                                               @PathVariable String nickname,
+                                               @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        checkLogin(userDetails);
+
+        Page<GetRecipeListResponseDto> likedRecipeList = userinfoService
+                .getLikedRecipeListByPage(page, size, isAsc, sortBy, nickname, userDetails);
+
+        return new ResponseEntity<>(
+                new CustomResponseDto<>(1, "좋아요한 레시피 목록 조회 성공", likedRecipeList), HttpStatus.OK);
+    }
+
+    // 내가 좋아요한 게시글 목록 조회
+    @GetMapping("/userinfo/boards/likes/{nickname}")
+    public ResponseEntity<?> getLikedBoardList(@RequestParam("page") int page,
+                                               @RequestParam("size") int size,
+                                               @RequestParam("isAsc") boolean isAsc,
+                                               @RequestParam("sortBy") String sortBy,
+                                               @PathVariable String nickname,
+                                               @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        checkLogin(userDetails);
+
+        Page<GetBoardListResponseDto> likedBoardList = userinfoService
+                .getLikedBoardListByPage(page, size, isAsc, sortBy, nickname, userDetails);
+
+        return new ResponseEntity<>(
+                new CustomResponseDto<>(1, "좋아요한 게시글 목록 조회 성공", likedBoardList), HttpStatus.OK);
+    }
+
+    // 팔로잉 목록 조회
+    @GetMapping("/userinfo/follows/following/{nickname}")
+    public ResponseEntity<?> getFollowingList(@RequestParam("page") int page,
                                               @RequestParam("size") int size,
                                               @RequestParam("isAsc") boolean isAsc,
                                               @RequestParam("sortBy") String sortBy,
@@ -42,15 +117,16 @@ public class UserinfoController {
 
         checkLogin(userDetails);
 
-        Page<GetRecipeListResponseDto> recipeList = userinfoService
-                .getRecipeListByPage(page, size, isAsc, sortBy, nickname, userDetails);
+        Page<GetFollowingListResponseDto> followingList = userinfoService
+                .getFollowingListByPage(page, size, isAsc, sortBy, nickname, userDetails);
 
-        return new CustomResponseDto<>(1, "레시피 목록 조회 성공", recipeList);
+        return new ResponseEntity<>(
+                new CustomResponseDto<>(1, "팔로잉 목록 조회 성공", followingList), HttpStatus.OK);
     }
 
-    // 내가 쓴 게시글 목록 조회
-    @GetMapping("/userinfo/boards/{nickname}")
-    public CustomResponseDto<?> getBoardList(@RequestParam("page") int page,
+    // 팔로워 목록 조회
+    @GetMapping("/userinfo/follows/follower/{nickname}")
+    public ResponseEntity<?> getFollowerList(@RequestParam("page") int page,
                                              @RequestParam("size") int size,
                                              @RequestParam("isAsc") boolean isAsc,
                                              @RequestParam("sortBy") String sortBy,
@@ -59,78 +135,11 @@ public class UserinfoController {
 
         checkLogin(userDetails);
 
-        Page<GetBoardListResponseDto> boardList = userinfoService
-                .getBoardListByPage(page, size, isAsc, sortBy, nickname, userDetails);
-
-        return new CustomResponseDto<>(1, "게시글 목록 조회 성공", boardList);
-    }
-
-    // 내가 좋아요한 레시피 목록 조회
-    @GetMapping("/userinfo/recipes/likes/{nickname}")
-    public CustomResponseDto<?> getLikedRecipeList(@RequestParam("page") int page,
-                                                   @RequestParam("size") int size,
-                                                   @RequestParam("isAsc") boolean isAsc,
-                                                   @RequestParam("sortBy") String sortBy,
-                                                   @PathVariable String nickname,
-                                                   @AuthenticationPrincipal UserDetailsImpl userDetails) {
-
-        checkLogin(userDetails);
-
-        Page<GetRecipeListResponseDto> likedRecipeList = userinfoService
-                .getLikedRecipeListByPage(page, size, isAsc, sortBy, nickname, userDetails);
-
-        return new CustomResponseDto<>(1, "좋아요한 레시피 목록 조회 성공", likedRecipeList);
-    }
-
-    // 내가 좋아요한 게시글 목록 조회
-    @GetMapping("/userinfo/boards/likes/{nickname}")
-    public CustomResponseDto<?> getLikedBoardList(@RequestParam("page") int page,
-                                                  @RequestParam("size") int size,
-                                                  @RequestParam("isAsc") boolean isAsc,
-                                                  @RequestParam("sortBy") String sortBy,
-                                                  @PathVariable String nickname,
-                                                  @AuthenticationPrincipal UserDetailsImpl userDetails) {
-
-        checkLogin(userDetails);
-
-        Page<GetBoardListResponseDto> likedBoardList = userinfoService
-                .getLikedBoardListByPage(page, size, isAsc, sortBy, nickname, userDetails);
-
-        return new CustomResponseDto<>(1, "좋아요한 게시글 목록 조회 성공", likedBoardList);
-    }
-
-    // 팔로잉 목록 조회
-    @GetMapping("/userinfo/follows/following/{nickname}")
-    public CustomResponseDto<?> getFollowingList(@RequestParam("page") int page,
-                                                 @RequestParam("size") int size,
-                                                 @RequestParam("isAsc") boolean isAsc,
-                                                 @RequestParam("sortBy") String sortBy,
-                                                 @PathVariable String nickname,
-                                                 @AuthenticationPrincipal UserDetailsImpl userDetails) {
-
-        checkLogin(userDetails);
-
-        Page<GetFollowingListResponseDto> followingList = userinfoService
-                .getFollowingListByPage(page, size, isAsc, sortBy, nickname, userDetails);
-
-        return new CustomResponseDto<>(1, "팔로잉 목록 조회 성공", followingList);
-    }
-
-    // 팔로워 목록 조회
-    @GetMapping("/userinfo/follows/follower/{nickname}")
-    public CustomResponseDto<?> getFollowerList(@RequestParam("page") int page,
-                                                @RequestParam("size") int size,
-                                                @RequestParam("isAsc") boolean isAsc,
-                                                @RequestParam("sortBy") String sortBy,
-                                                @PathVariable String nickname,
-                                                @AuthenticationPrincipal UserDetailsImpl userDetails) {
-
-        checkLogin(userDetails);
-
         Page<GetFollowerListResponseDto> followingList = userinfoService
                 .getFollowerListByPage(page, size, isAsc, sortBy, nickname, userDetails);
 
-        return new CustomResponseDto<>(1, "팔로워 목록 조회 성공", followingList);
+        return new ResponseEntity<>(
+                new CustomResponseDto<>(1, "팔로워 목록 조회 성공", followingList), HttpStatus.OK);
     }
 
     private void checkLogin(@AuthenticationPrincipal UserDetailsImpl userDetails) {
