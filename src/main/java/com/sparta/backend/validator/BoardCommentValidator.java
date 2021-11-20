@@ -1,7 +1,7 @@
 package com.sparta.backend.validator;
 
-import com.sparta.backend.domain.Board;
-import com.sparta.backend.domain.User;
+import com.sparta.backend.domain.board.Board;
+import com.sparta.backend.domain.user.User;
 import com.sparta.backend.dto.request.board.PostBoardCommentRequestDto;
 
 public class BoardCommentValidator {

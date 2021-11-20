@@ -3,7 +3,7 @@ package com.sparta.backend.domain.recipe;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sparta.backend.domain.BaseEntity;
-import com.sparta.backend.domain.User;
+import com.sparta.backend.domain.user.User;
 import com.sparta.backend.validator.RecipeCommentValidator;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +22,7 @@ public class RecipeComment extends BaseEntity {
     @Column(name = "comment_id")
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1500)
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -37,7 +37,7 @@ public class RecipeComment extends BaseEntity {
 
     @OneToMany(mappedBy = "recipeComment", cascade = CascadeType.ALL)
     @JsonBackReference
-    private List<RecipeCommentLikes> commentLikes;
+    private List<RecipeCommentLike> commentLikes;
 
     public RecipeComment(String content, User user, Recipe recipe) {
         RecipeCommentValidator.validateCommentInput(content, user, recipe);

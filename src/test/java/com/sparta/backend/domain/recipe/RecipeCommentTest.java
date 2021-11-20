@@ -1,7 +1,7 @@
 package com.sparta.backend.domain.recipe;
 
-import com.sparta.backend.domain.User;
-import com.sparta.backend.domain.UserRole;
+import com.sparta.backend.domain.user.User;
+import com.sparta.backend.domain.user.UserRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

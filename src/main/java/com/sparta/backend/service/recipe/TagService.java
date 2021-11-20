@@ -1,7 +1,7 @@
 package com.sparta.backend.service.recipe;
 
 import com.sparta.backend.domain.recipe.Recipe;
-import com.sparta.backend.domain.Tag;
+import com.sparta.backend.domain.recipe.Tag;
 import com.sparta.backend.repository.recipe.TagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

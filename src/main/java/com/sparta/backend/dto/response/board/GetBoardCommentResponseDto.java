@@ -1,8 +1,8 @@
 package com.sparta.backend.dto.response.board;
 
-import com.sparta.backend.domain.BoardComment;
-import com.sparta.backend.domain.BoardCommentLikes;
-import com.sparta.backend.repository.BoardCommentLikesRepository;
+import com.sparta.backend.domain.board.BoardComment;
+import com.sparta.backend.domain.board.BoardCommentLike;
+import com.sparta.backend.repository.board.BoardCommentLikesRepository;
 import com.sparta.backend.security.UserDetailsImpl;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,11 +34,11 @@ public class GetBoardCommentResponseDto {
         this.modDate = boardComment.getModDate();
         this.profile = boardComment.getUser().getImage();
         this.content = boardComment.getContent();
-        this.likeCount = boardComment.getBoardCommentLikesList() == null ?
-                                                    0 : boardComment.getBoardCommentLikesList().size();
-        BoardCommentLikes boardCommentLikesList =
+        this.likeCount = boardComment.getBoardCommentLikeList() == null ?
+                                                    0 : boardComment.getBoardCommentLikeList().size();
+        BoardCommentLike boardCommentLikeList =
                 boardCommentLikesRepository.findByBoardCommentAndUser(boardComment, userDetails.getUser());
-        this.likeStatus = boardCommentLikesList != null;
+        this.likeStatus = boardCommentLikeList != null;
 
     }
 }

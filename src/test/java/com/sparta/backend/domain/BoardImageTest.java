@@ -1,5 +1,8 @@
 package com.sparta.backend.domain;
 
+import com.sparta.backend.domain.board.Board;
+import com.sparta.backend.domain.board.BoardImage;
+import com.sparta.backend.domain.user.User;
 import com.sparta.backend.dto.request.board.PostBoardRequestDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import static com.sparta.backend.domain.UserRole.USER;
+import static com.sparta.backend.domain.user.UserRole.USER;
 import static org.junit.jupiter.api.Assertions.*;
 
 class BoardImageTest {

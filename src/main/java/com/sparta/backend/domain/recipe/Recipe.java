@@ -3,8 +3,7 @@ package com.sparta.backend.domain.recipe;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sparta.backend.domain.BaseEntity;
-import com.sparta.backend.domain.Tag;
-import com.sparta.backend.domain.User;
+import com.sparta.backend.domain.user.User;
 import com.sparta.backend.validator.RecipeValidator;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,10 +22,10 @@ public class Recipe extends BaseEntity {
     @Column(name = "recipe_id")
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 200)
     private String title;
 
-    @Column(nullable = false,length = 1500)
+    @Column(nullable = false, length = 1500)
     private String content;
 
     private Integer price;
@@ -46,7 +45,7 @@ public class Recipe extends BaseEntity {
 
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
     @JsonBackReference
-    private List<RecipeLikes> recipeLikesList;
+    private List<RecipeLike> recipeLikeList;
 
     @OneToMany(mappedBy = "recipe",  cascade = CascadeType.REMOVE)
     @JsonBackReference
