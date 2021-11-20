@@ -34,6 +34,6 @@ public class RecipeCommentResponseDto {
 
         Optional<RecipeCommentLikes> foundCommentLikes = commentLikeRepository.findByRecipeCommentAndUser(recipeComment,userDetails.getUser());
         this.likeStatus = foundCommentLikes.isPresent();
-        profileImage = userDetails.getUser().getImage();
+        profileImage = recipeComment.getUser().getImage();
     }
 }
