@@ -58,7 +58,8 @@ public class BoardComment extends BaseEntity {
         this.user = user;
     }
 
-    public void updateComment(PutBoardCommentRequestDto requestDto) {
+    public BoardComment updateComment(PutBoardCommentRequestDto requestDto) {
         this.content = requestDto.getContent();
+        return this;
     }
 }
