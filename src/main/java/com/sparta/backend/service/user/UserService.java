@@ -182,13 +182,15 @@ public class UserService {
     // 이메일 검사
     public boolean isEmail(String str) {
 
-        return Pattern.matches("^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$", str);
+        return Pattern
+                .matches("^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$", str);
     }
 
     // 닉네임 검사
     public boolean isNickname(String str) {
 
-        return Pattern.matches("^([^\\W]{2,8})$", str);
+        return Pattern
+                .matches("^([0-9a-zA-Z가-힣]{2,8})$", str);
     }
 
 }
