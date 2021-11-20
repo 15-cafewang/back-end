@@ -1,5 +1,8 @@
 package com.sparta.backend.domain;
 
+import com.sparta.backend.domain.board.Board;
+import com.sparta.backend.domain.board.BoardComment;
+import com.sparta.backend.domain.user.User;
 import com.sparta.backend.dto.request.board.PostBoardCommentRequestDto;
 import com.sparta.backend.dto.request.board.PostBoardRequestDto;
 import org.junit.jupiter.api.BeforeEach;
@@ -7,7 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static com.sparta.backend.domain.UserRole.USER;
+import static com.sparta.backend.domain.user.UserRole.USER;
 import static org.junit.jupiter.api.Assertions.*;
 
 class BoardCommentTest {

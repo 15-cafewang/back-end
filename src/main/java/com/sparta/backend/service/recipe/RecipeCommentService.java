@@ -2,11 +2,11 @@ package com.sparta.backend.service.recipe;
 
 import com.sparta.backend.domain.recipe.RecipeComment;
 import com.sparta.backend.domain.recipe.Recipe;
-import com.sparta.backend.domain.recipe.RecipeCommentLikes;
-import com.sparta.backend.domain.User;
-import com.sparta.backend.dto.request.recipes.PostCommentRequestDto;
-import com.sparta.backend.dto.request.recipes.RecipeCommentUpdateRequestDto;
-import com.sparta.backend.dto.response.recipes.RecipeCommentResponseDto;
+import com.sparta.backend.domain.recipe.RecipeCommentLike;
+import com.sparta.backend.domain.user.User;
+import com.sparta.backend.dto.request.recipe.PostCommentRequestDto;
+import com.sparta.backend.dto.request.recipe.RecipeCommentUpdateRequestDto;
+import com.sparta.backend.dto.response.recipe.RecipeCommentResponseDto;
 import com.sparta.backend.exception.CustomErrorException;
 import com.sparta.backend.repository.recipe.RecipeCommentLikeRepository;
 import com.sparta.backend.repository.recipe.RecipeCommentRepository;
@@ -88,13 +88,13 @@ public class RecipeCommentService {
         RecipeComment comment = commentRepository.findById(commentId).orElseThrow(()->
                 new CustomErrorException("해당 게시물이 존재하지 않아요"));
         //이미 좋아요 누른건지 확인하기
-        Optional<RecipeCommentLikes> foundCommentLikes = commentLikeReposiotory.findByRecipeCommentAndUser(comment, user);
+        Optional<RecipeCommentLike> foundCommentLikes = commentLikeReposiotory.findByRecipeCommentAndUser(comment, user);
         if(foundCommentLikes.isPresent()){
             //이미 좋아요를 눌렀으면 좋아요취소
             commentLikeReposiotory.delete(foundCommentLikes.get());
             return "좋아요 취소 성공";
         }else{
-            RecipeCommentLikes commentLikes = new RecipeCommentLikes(user, comment);
+            RecipeCommentLike commentLikes = new RecipeCommentLike(user, comment);
             commentLikeReposiotory.save(commentLikes);
             return "좋아요 등록 성공";
         }

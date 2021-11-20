@@ -1,6 +1,6 @@
 package com.sparta.backend.security;
 
-import com.sparta.backend.domain.User;
+import com.sparta.backend.domain.user.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

@@ -1,5 +1,7 @@
 package com.sparta.backend.domain;
 
+import com.sparta.backend.domain.board.Board;
+import com.sparta.backend.domain.user.User;
 import com.sparta.backend.dto.request.board.PostBoardRequestDto;
 import org.junit.jupiter.api.*;
 import org.springframework.mock.web.MockMultipartFile;
@@ -8,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import static com.sparta.backend.domain.UserRole.USER;
+import static com.sparta.backend.domain.user.UserRole.USER;
 import static org.junit.jupiter.api.Assertions.*;
 
 //Board 엔티티 테스트
@@ -278,7 +280,7 @@ class BoardTest {
                     String profile =
                             "https://user-images.githubusercontent.com/76515226/140890775-30641b72-226a-4068-8a0a-9a306e8c68b4.png";
                     loginUser =
-                            new com.sparta.backend.domain.User(0L, "aaa@aaa.com", "abab1234!", "nao", profile, USER, "Y");
+                            new com.sparta.backend.domain.user.User(0L, "aaa@aaa.com", "abab1234!", "nao", profile, USER, "Y");
                     PostBoardRequestDto requestDto =
                             new PostBoardRequestDto(title, content, image);
 
@@ -298,7 +300,7 @@ class BoardTest {
                     String profile =
                             "https://user-images.githubusercontent.com/76515226/140890775-30641b72-226a-4068-8a0a-9a306e8c68b4.png";
                     loginUser =
-                            new com.sparta.backend.domain.User(null, "aaa@aaa.com", "abab1234!", "nao", profile, USER, "Y");
+                            new com.sparta.backend.domain.user.User(null, "aaa@aaa.com", "abab1234!", "nao", profile, USER, "Y");
                     PostBoardRequestDto requestDto =
                             new PostBoardRequestDto(title, content, image);
 

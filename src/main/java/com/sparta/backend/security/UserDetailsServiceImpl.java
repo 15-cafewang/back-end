@@ -1,8 +1,8 @@
 package com.sparta.backend.security;
 
 
-import com.sparta.backend.domain.User;
-import com.sparta.backend.repository.UserRepository;
+import com.sparta.backend.domain.user.User;
+import com.sparta.backend.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
