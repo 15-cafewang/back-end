@@ -14,6 +14,8 @@ import com.sparta.backend.validator.PostRecipeRequestDtoValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +36,7 @@ public class RecipeController {
 
     //레시피 등록
     @PostMapping("/recipes")
-    public CustomResponseDto<?> postRecipe(PostRecipeRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+    public ResponseEntity<?> postRecipe(PostRecipeRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         //todo:IOException처리
 //        System.out.println("레시피 테스트:"+requestDto.getTitle()+"///"+ requestDto.getContent()+"///"+ requestDto.getImage());
 //        System.out.println("테스트 title:"+requestDto.getTitle());
@@ -48,12 +50,12 @@ public class RecipeController {
         System.out.println(requestDto.getTag());
         tagService.saveTags(requestDto.getTag(), savedRecipe);
 
-        return new CustomResponseDto<>(1, "레시피 등록 성공", "");
+        return new ResponseEntity<>(new CustomResponseDto<>(1, "레시피 등록 성공", ""), HttpStatus.OK);
     }
 
     //레시피 수정
     @PutMapping("/recipes/{recipeId}")
-    public CustomResponseDto<?> updateRecipe(@PathVariable Long recipeId, PutRecipeRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+    public ResponseEntity<?> updateRecipe(@PathVariable Long recipeId, PutRecipeRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         //todo:IOException처리
         checkLogin(userDetails);
         checkOwnership(recipeId, userDetails);
@@ -63,30 +65,30 @@ public class RecipeController {
         //태그 업데이트
         tagService.updateTags(requestDto.getTag(),updatedRecipe);
 
-        return new CustomResponseDto<>(1, "레시피 수정 성공", "");
+        return new ResponseEntity<>(new CustomResponseDto<>(1, "레시피 수정 성공", ""),HttpStatus.OK);
     }
 
     //레시피 삭제
     @DeleteMapping("recipes/{recipeId}")
-    public CustomResponseDto<?> deleteRecipe(@PathVariable Long recipeId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<?> deleteRecipe(@PathVariable Long recipeId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         checkLogin(userDetails);
         checkOwnership(recipeId, userDetails);
 
         recipeService.deleteRecipe(recipeId);
-        return new CustomResponseDto<>(1, "레시피 삭제 성공", "");
+        return new ResponseEntity<>(new CustomResponseDto<>(1, "레시피 삭제 성공", ""),HttpStatus.OK);
     }
 
     //레시피 상세조회
     @GetMapping("recipes/{recipeId}")
-    public CustomResponseDto<?> getRecipeDetail(@PathVariable Long recipeId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    public ResponseEntity<?> getRecipeDetail(@PathVariable Long recipeId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         checkLogin(userDetails);
         RecipeDetailResponsetDto recipeDetailResponsetDto = recipeService.getRecipeDetail(recipeId, userDetails);
-        return new CustomResponseDto<>(1, "레시피 조회 성공", recipeDetailResponsetDto);
+        return new ResponseEntity<>(new CustomResponseDto<>(1, "레시피 조회 성공", recipeDetailResponsetDto),HttpStatus.OK);
     }
 
     //레시피 목록조회
     @GetMapping("recipes/list")
-    public CustomResponseDto<?> getRecipes(@RequestParam("page") int page,
+    public ResponseEntity<?> getRecipes(@RequestParam("page") int page,
                                            @RequestParam("size") int size,
                                            @RequestParam("isAsc") boolean isAsc,
                                            @RequestParam("sortBy") String sortBy,
@@ -95,20 +97,20 @@ public class RecipeController {
         checkLogin(userDetails);
         page = page-1;
         Page<RecipeListResponseDto> recipesByPage = recipeService.getRecipesByPage(page, size, isAsc, sortBy,sortByLike, userDetails);
-        return new CustomResponseDto<>(1, "레시피 리스트 성공", recipesByPage);
+        return new ResponseEntity<>(new CustomResponseDto<>(1, "레시피 리스트 성공", recipesByPage),HttpStatus.OK);
     }
 
     //레시피 좋아요 등록/취소
     @GetMapping("recipes/likes/{postId}")
-    public CustomResponseDto<?> likeRecipe(@PathVariable Long postId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    public ResponseEntity<?> likeRecipe(@PathVariable Long postId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         checkLogin(userDetails);
         String resultMessage = recipeService.likeRecipe(postId, userDetails.getUser());
-        return new CustomResponseDto<>(1, resultMessage,"");
+        return new ResponseEntity<>(new CustomResponseDto<>(1, resultMessage,""),HttpStatus.OK);
     }
 
     //레시피 검색
     @GetMapping("/search/recipe")
-    public CustomResponseDto<?> searchRecipe(@RequestParam("keyword") String keyword,
+    public ResponseEntity<?> searchRecipe(@RequestParam("keyword") String keyword,
                                              @RequestParam("withTag") boolean withTag,
                                              @RequestParam("page") int page,
                                              @RequestParam("size") int size,
@@ -117,7 +119,7 @@ public class RecipeController {
                                              @AuthenticationPrincipal UserDetailsImpl userDetails){
         checkLogin(userDetails);
         Page<RecipeListResponseDto> recipeByPage= recipeService.searchRecipe(withTag,keyword, page, size, isAsc, sortBy,userDetails);
-        return new CustomResponseDto<>(1, "레시피 리스트 성공", recipeByPage);
+        return new ResponseEntity<>(new CustomResponseDto<>(1, "레시피 리스트 성공", recipeByPage),HttpStatus.OK);
     }
 
     private void checkLogin(@AuthenticationPrincipal UserDetailsImpl userDetails) {
