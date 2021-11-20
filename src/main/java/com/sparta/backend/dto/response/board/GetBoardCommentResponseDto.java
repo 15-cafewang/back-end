@@ -34,7 +34,8 @@ public class GetBoardCommentResponseDto {
         this.modDate = boardComment.getModDate();
         this.profile = boardComment.getUser().getImage();
         this.content = boardComment.getContent();
-        this.likeCount = boardComment.getBoardCommentLikesList().size();
+        this.likeCount = boardComment.getBoardCommentLikesList() == null ?
+                                                    0 : boardComment.getBoardCommentLikesList().size();
         BoardCommentLikes boardCommentLikesList =
                 boardCommentLikesRepository.findByBoardCommentAndUser(boardComment, userDetails.getUser());
         this.likeStatus = boardCommentLikesList != null;

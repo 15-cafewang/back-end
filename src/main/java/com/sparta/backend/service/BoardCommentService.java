@@ -29,10 +29,9 @@ public class BoardCommentService {
 
     //댓글 작성
     @Transactional
-    public Long createComment(PostBoardCommentRequestDto requestDto,
+    public GetBoardCommentResponseDto createComment(PostBoardCommentRequestDto requestDto,
                               UserDetailsImpl userDetails) {
         Long boardId = requestDto.getBoardId();
-        Long commentId = 0L;
         loginCheck(userDetails);    //로그인했는지 확인
         User currentLoginUser = userDetails.getUser();
 
@@ -40,13 +39,15 @@ public class BoardCommentService {
                 () -> new NullPointerException("찾는 게시물이 없습니다.")
         );
 
+        GetBoardCommentResponseDto responseDto = null;
         if(board != null) {
             BoardComment boardComment = new BoardComment(requestDto, board, currentLoginUser);
             BoardComment saveBoardComment = boardCommentRepository.save(boardComment);
-            commentId = saveBoardComment.getId();
+            responseDto =
+                    new GetBoardCommentResponseDto(saveBoardComment, boardCommentLikesRepository, userDetails);
         }
 
-        return commentId;
+        return responseDto;
     }
 
     //댓글 조회
@@ -77,19 +78,25 @@ public class BoardCommentService {
 
     //댓글 수정
     @Transactional
-    public Long updateComment(Long id, PutBoardCommentRequestDto requestDto, UserDetailsImpl userDetails) {
+    public GetBoardCommentResponseDto updateComment(Long id, PutBoardCommentRequestDto requestDto, UserDetailsImpl userDetails) {
         loginCheck(userDetails);    //로그인했는지 확인
         Long currentLoginUser = userDetails.getUser().getId();
 
         BoardComment boardComment = boardCommentRepository.findById(id).orElseThrow(
                 () -> new NullPointerException("찾는 댓글이 없습니다.")
         );
-        Long writeUser = boardComment.getUser().getId();
 
-        writterCheck(currentLoginUser, writeUser);  //작성자가 맞는지 확인
-        boardComment.updateComment(requestDto);
+        GetBoardCommentResponseDto responseDto = null;
+        if(boardComment != null) {
+            Long writeUser = boardComment.getUser().getId();
 
-        return id;
+            writterCheck(currentLoginUser, writeUser);  //작성자가 맞는지 확인
+            BoardComment updateBoardComment = boardComment.updateComment(requestDto);
+            responseDto =
+                    new GetBoardCommentResponseDto(updateBoardComment, boardCommentLikesRepository, userDetails);
+        }
+
+        return responseDto;
     }
 
     //댓글 삭제
