@@ -83,7 +83,7 @@ public interface RecipeRepository extends JpaRepository<Recipe,Long> {
     Page<Recipe> findAllByRecipeLikesList(@Param("userId") Long userId, Pageable pageable);
 
     //최근레시피(메인페이지) top4가져오기
-    List<Recipe> findTop4ByOrderByRegDateDesc();
+    List<Recipe> findTop3ByOrderByRegDateDesc();
 
     @Query("select r from Recipe r left join r.recipeLikesList rl left join r.tagList tl " +
             "where tl.name = :keyword group by r.id order by count(rl.user) desc")
