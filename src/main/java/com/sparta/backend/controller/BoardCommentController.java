@@ -21,10 +21,10 @@ public class BoardCommentController {
     @PostMapping("/boards/comments")
     public CustomResponseDto<?> createComment(@RequestBody PostBoardCommentRequestDto requestDto,
                                               @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        Long commentId = boardCommentService.createComment(requestDto, userDetails);
+        GetBoardCommentResponseDto responseDto = boardCommentService.createComment(requestDto, userDetails);
 
-        if(commentId > 0) {
-            return new CustomResponseDto<>(1, "댓글 작성 성공", "");
+        if(responseDto != null) {
+            return new CustomResponseDto<>(1, "댓글 작성 성공", responseDto);
         } else {
             return new CustomResponseDto<>(-1, "댓글 작성 실패", "");
         }
@@ -52,10 +52,10 @@ public class BoardCommentController {
     public CustomResponseDto<?> updateComment(@PathVariable("commentId") Long id,
                                               @RequestBody PutBoardCommentRequestDto requestDto,
                                               @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        Long commentId = boardCommentService.updateComment(id, requestDto, userDetails);
+        GetBoardCommentResponseDto responseDto = boardCommentService.updateComment(id, requestDto, userDetails);
 
-        if(commentId > 0) {
-            return new CustomResponseDto<>(1, "댓글 수정 성공", "");
+        if(responseDto != null) {
+            return new CustomResponseDto<>(1, "댓글 수정 성공", responseDto);
         } else {
             return new CustomResponseDto<>(-1, "댓글 수정 실패", "");
         }
