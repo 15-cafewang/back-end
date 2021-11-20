@@ -52,6 +52,10 @@ public class Recipe extends BaseEntity {
     @JsonBackReference
     private List<RecipeImage> recipeImagesList;
 
+    @OneToMany(mappedBy = "recipe",  cascade = CascadeType.REMOVE)
+    @JsonBackReference
+    private List<RecipeDetailCount> recipeDetailCountList;
+
     public Recipe(String title, String content, Integer price, User user){
         //Edge케이스들 validation
         RecipeValidator.validateRecipeInput(title,content,price,user);

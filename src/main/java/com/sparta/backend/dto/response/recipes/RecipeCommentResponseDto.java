@@ -30,10 +30,10 @@ public class RecipeCommentResponseDto {
         this.content = recipeComment.getContent();
         this.regDate = recipeComment.getRegDate();
         this.modDate = recipeComment.getModDate();
-        this.likeCount = recipeComment.getCommentLikes().size();
+        this.likeCount = recipeComment.getCommentLikes() == null? 0: recipeComment.getCommentLikes().size();
 
         Optional<RecipeCommentLikes> foundCommentLikes = commentLikeRepository.findByRecipeCommentAndUser(recipeComment,userDetails.getUser());
         this.likeStatus = foundCommentLikes.isPresent();
-        profileImage = userDetails.getUser().getImage();
+        profileImage = recipeComment.getUser().getImage();
     }
 }
