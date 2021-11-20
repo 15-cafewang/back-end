@@ -26,8 +26,8 @@ public class RecipeCommentController {
     public CustomResponseDto<?> postComment(@RequestBody PostCommentRequestDto requestDto,
                                             @AuthenticationPrincipal UserDetailsImpl userDetails){
         checkLogin(userDetails);
-        commentService.saveComment(requestDto,userDetails);
-        return new CustomResponseDto<>(1, "댓글 등록 성공!", "");
+        RecipeCommentResponseDto responseDto = commentService.saveComment(requestDto,userDetails);
+        return new CustomResponseDto<>(1, "댓글 등록 성공!", responseDto);
     }
 
     //댓글들 조회
@@ -68,8 +68,8 @@ public class RecipeCommentController {
                                               @AuthenticationPrincipal UserDetailsImpl userDetails){
         checkLogin(userDetails);
         checkOwnership(commentId,userDetails);
-        commentService.updateComment(commentId, updateRequestDto, userDetails);
-        return new CustomResponseDto<>(1,"댓글 수정 성공","");
+        RecipeCommentResponseDto responseDto = commentService.updateComment(commentId, updateRequestDto, userDetails);
+        return new CustomResponseDto<>(1,"댓글 수정 성공", responseDto);
    }
 
    //댓글 좋아요 등록/취소
