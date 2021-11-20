@@ -387,8 +387,10 @@ public class RecipeService {
 
         //3.추출된 태그로 레시피id추출
         Long foundRecipeId = recipeRepository.findRecommendingRecipeIdByTagName(foundTagName);
+        //foundRecipeId == null인 경우: 내가 검색한 태그명으로 나를 포함한 누구도 상세조회, 좋아요를 하지 않은 경우
+        Recipe recommendedRecipe = (foundRecipeId == null)? recipeRepository.findRandomRecipe()
+        :recipeRepository.findById(foundRecipeId).orElseThrow(()->new CustomErrorException("id로 해당 게시물 찾을 수 없음"));
 
-        Recipe recommendedRecipe = recipeRepository.findById(foundRecipeId).orElseThrow(()->new CustomErrorException("id로 해당 게시물 찾을 수 없음"));
         RecipeRecommendResponseDto responseDto = new RecipeRecommendResponseDto(recommendedRecipe, foundTagName, user, recipeLikesRepository);
         return responseDto;
     }

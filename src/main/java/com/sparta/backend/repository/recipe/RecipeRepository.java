@@ -228,4 +228,8 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
             "                 join tag t on list.recipe_id= t.recipe_id " +
             "order by cnt desc limit 1;", nativeQuery = true)
     Long findRecommendingRecipeIdByTagName(String foundTagName);
+
+    @Query(value = "select * from recipe order by rand() limit 1"
+    ,nativeQuery = true)
+    Recipe findRandomRecipe();
 }
