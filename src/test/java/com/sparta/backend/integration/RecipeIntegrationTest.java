@@ -1,13 +1,13 @@
 //package com.sparta.backend.integration;
 //
-//import com.sparta.backend.domain.User;
-//import com.sparta.backend.domain.UserRole;
+//import com.sparta.backend.domain.user.User;
+//import com.sparta.backend.domain.user.UserRole;
 //import com.sparta.backend.domain.recipe.Recipe;
 //import com.sparta.backend.dto.request.recipes.PostRecipeRequestDto;
 //import com.sparta.backend.dto.request.recipes.PutRecipeRequestDto;
 //import com.sparta.backend.dto.request.user.SignupRequestDto;
 //import com.sparta.backend.security.UserDetailsImpl;
-//import com.sparta.backend.service.UserService;
+//import com.sparta.backend.service.user.UserService;
 //import com.sparta.backend.service.recipe.RecipeService;
 //import org.junit.jupiter.api.*;
 //import org.springframework.beans.factory.annotation.Autowired;

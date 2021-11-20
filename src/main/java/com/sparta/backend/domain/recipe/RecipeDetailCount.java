@@ -1,8 +1,7 @@
 package com.sparta.backend.domain.recipe;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sparta.backend.domain.BaseEntity;
-import com.sparta.backend.domain.User;
+import com.sparta.backend.domain.user.User;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;

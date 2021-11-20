@@ -1,6 +1,6 @@
 package com.sparta.backend.validator;
 
-import com.sparta.backend.domain.Board;
+import com.sparta.backend.domain.board.Board;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;

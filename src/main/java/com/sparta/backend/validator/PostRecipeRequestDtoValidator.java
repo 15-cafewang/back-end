@@ -1,8 +1,6 @@
 package com.sparta.backend.validator;
 
-import com.sparta.backend.dto.request.recipes.PostRecipeRequestDto;
-
-import java.util.List;
+import com.sparta.backend.dto.request.recipe.PostRecipeRequestDto;
 
 public class PostRecipeRequestDtoValidator {
     public static void validateRecipeInput(PostRecipeRequestDto requestDto){

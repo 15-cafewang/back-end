@@ -2,8 +2,8 @@ package com.sparta.backend.controller;
 
 import com.sparta.backend.domain.recipe.Recipe;
 import com.sparta.backend.dto.response.CustomResponseDto;
-import com.sparta.backend.dto.response.recipes.RecipeListResponseDto;
-import com.sparta.backend.dto.response.recipes.RecipeRecommendResponseDto;
+import com.sparta.backend.dto.response.recipe.RecipeListResponseDto;
+import com.sparta.backend.dto.response.recipe.RecipeRecommendResponseDto;
 import com.sparta.backend.exception.CustomErrorException;
 import com.sparta.backend.security.UserDetailsImpl;
 import com.sparta.backend.service.recipe.RecipeService;

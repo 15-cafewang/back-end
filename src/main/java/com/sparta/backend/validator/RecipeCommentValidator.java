@@ -1,7 +1,7 @@
 package com.sparta.backend.validator;
 
 import com.sparta.backend.domain.recipe.Recipe;
-import com.sparta.backend.domain.User;
+import com.sparta.backend.domain.user.User;
 
 public class RecipeCommentValidator {
 

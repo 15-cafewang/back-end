@@ -1,7 +1,7 @@
 package com.sparta.backend.dto.response.userinfo;
 
 import com.sparta.backend.domain.recipe.Recipe;
-import com.sparta.backend.domain.recipe.RecipeLikes;
+import com.sparta.backend.domain.recipe.RecipeLike;
 import com.sparta.backend.repository.recipe.RecipeLikesRepository;
 import com.sparta.backend.security.UserDetailsImpl;
 import lombok.AllArgsConstructor;
@@ -34,9 +34,9 @@ public class GetRecipeListResponseDto {
         this.nickname = recipe.getUser().getNickname();
         this.price = recipe.getPrice();
         recipe.getRecipeImagesList().forEach(RecipeImage -> this.imageList.add(RecipeImage.getImage()));
-        this.likeCount = recipe.getRecipeLikesList().size();
+        this.likeCount = recipe.getRecipeLikeList().size();
 
-        Optional<RecipeLikes> foundRecipeLike = recipeLikesRepository
+        Optional<RecipeLike> foundRecipeLike = recipeLikesRepository
                 .findByRecipeIdAndUserId(recipe.getId(), userDetails.getUser().getId());
         this.likeStatus = foundRecipeLike.isPresent();
     }

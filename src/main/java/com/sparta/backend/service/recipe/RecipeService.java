@@ -4,12 +4,12 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.sparta.backend.awsS3.S3Uploader;
 import com.sparta.backend.domain.recipe.*;
-import com.sparta.backend.domain.User;
-import com.sparta.backend.dto.request.recipes.PostRecipeRequestDto;
-import com.sparta.backend.dto.request.recipes.PutRecipeRequestDto;
-import com.sparta.backend.dto.response.recipes.RecipeDetailResponsetDto;
-import com.sparta.backend.dto.response.recipes.RecipeListResponseDto;
-import com.sparta.backend.dto.response.recipes.RecipeRecommendResponseDto;
+import com.sparta.backend.domain.user.User;
+import com.sparta.backend.dto.request.recipe.PostRecipeRequestDto;
+import com.sparta.backend.dto.request.recipe.PutRecipeRequestDto;
+import com.sparta.backend.dto.response.recipe.RecipeDetailResponsetDto;
+import com.sparta.backend.dto.response.recipe.RecipeListResponseDto;
+import com.sparta.backend.dto.response.recipe.RecipeRecommendResponseDto;
 import com.sparta.backend.exception.CustomErrorException;
 import com.sparta.backend.repository.recipe.*;
 import com.sparta.backend.security.UserDetailsImpl;
@@ -220,10 +220,10 @@ public class RecipeService {
         String title = recipe.getTitle();
         String content = recipe.getContent();
         LocalDateTime regDate = recipe.getRegDate();
-        int likeCount = recipe.getRecipeLikesList().size();
+        int likeCount = recipe.getRecipeLikeList().size();
         Integer price = recipe.getPrice();
         String profile = recipe.getUser().getImage();
-        Optional<RecipeLikes> foundRecipeLike = recipeLikesRepository.findByRecipeIdAndUserId(recipe.getId(),userDetails.getUser().getId());
+        Optional<RecipeLike> foundRecipeLike = recipeLikesRepository.findByRecipeIdAndUserId(recipe.getId(),userDetails.getUser().getId());
         Boolean likeStatus = foundRecipeLike.isPresent();
 
         List<String> tagNames = new ArrayList<>();
@@ -261,14 +261,14 @@ public class RecipeService {
         Recipe recipe = recipeRepository.findById(postId).orElseThrow(()->
                 new CustomErrorException("해당 게시물이 존재하지 않아요"));
         //이미 좋아요누른 건지 확인하기
-        Optional<RecipeLikes> foundRecipeLike = recipeLikesRepository.findByRecipeIdAndUserId(recipe.getId(),user.getId());
+        Optional<RecipeLike> foundRecipeLike = recipeLikesRepository.findByRecipeIdAndUserId(recipe.getId(),user.getId());
         if(foundRecipeLike.isPresent()){
             //이미 좋아요를 눌렀으면 좋아요취소
             recipeLikesRepository.delete(foundRecipeLike.get());
             return "좋아요 취소 성공";
         }else{
-            RecipeLikes recipeLikes = new RecipeLikes(user, recipe);
-            recipeLikesRepository.save(recipeLikes);
+            RecipeLike recipeLike = new RecipeLike(user, recipe);
+            recipeLikesRepository.save(recipeLike);
             return "좋아요 등록 성공";
         }
 
