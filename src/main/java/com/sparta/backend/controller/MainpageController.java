@@ -31,7 +31,7 @@ public class MainpageController {
     public CustomResponseDto<?> getRecentRecipe(@AuthenticationPrincipal UserDetailsImpl userDetails){
         checkLogin(userDetails);
         List<RecipeListResponseDto> recipes = recipeService.getRecentRecipe(userDetails.getUser());
-        return new CustomResponseDto<>(1, "최근레시피 top4 조회완료" ,recipes);
+        return new CustomResponseDto<>(1, "최근레시피 top3 조회완료" ,recipes);
     }
 
     @GetMapping("/main/recommend")
