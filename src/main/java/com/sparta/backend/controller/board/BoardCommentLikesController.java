@@ -4,6 +4,8 @@ import com.sparta.backend.dto.response.CustomResponseDto;
 import com.sparta.backend.security.UserDetailsImpl;
 import com.sparta.backend.service.board.BoardCommentLikesService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,14 +19,14 @@ public class BoardCommentLikesController {
 
     //댓글 좋아요/취소
     @PostMapping("/boards/comments/likes/{boardCommentId}")
-    public CustomResponseDto<?> likeBoardComment(@PathVariable("boardCommentId") Long id,
-                                                 @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<?> likeBoardComment(@PathVariable("boardCommentId") Long id,
+                                              @AuthenticationPrincipal UserDetailsImpl userDetails) {
         String boardCommentLikesMessage = boardCommentLikesService.likeBoardComment(id, userDetails);
 
         if(boardCommentLikesMessage != null || boardCommentLikesMessage.length() > 0) {
-            return new CustomResponseDto<>(1, boardCommentLikesMessage, "");
+            return new ResponseEntity<>(new CustomResponseDto<>(1, boardCommentLikesMessage, ""), HttpStatus.OK);
         } else {
-            return new CustomResponseDto<>(-1, "게시물 좋아요/취소 실패", "");
+            return new ResponseEntity<>(new CustomResponseDto<>(-1, "게시물 좋아요/취소 실패", ""), HttpStatus.BAD_REQUEST);
         }
 
     }
