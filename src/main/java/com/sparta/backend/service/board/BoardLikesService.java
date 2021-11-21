@@ -3,6 +3,7 @@ package com.sparta.backend.service.board;
 import com.sparta.backend.domain.board.Board;
 import com.sparta.backend.domain.board.BoardLike;
 import com.sparta.backend.domain.user.User;
+import com.sparta.backend.exception.CustomErrorException;
 import com.sparta.backend.repository.board.BoardLikesRepository;
 import com.sparta.backend.repository.board.BoardRepository;
 import com.sparta.backend.security.UserDetailsImpl;
@@ -22,11 +23,10 @@ public class BoardLikesService {
     @Transactional
     public String likeBoard(Long id, UserDetailsImpl userDetails) {
 
-        if(userDetails != null) {
             User user = userDetails.getUser();
 
             Board board = boardRepository.findById(id).orElseThrow(
-                    () -> new NullPointerException("찾는 게시물이 없습니다.")
+                    () -> new CustomErrorException("해당 게시물을 찾을 수 없습니다")
             );
 
             BoardLike boardLike = boardLikesRepository.findByBoardAndUser(board, user);
@@ -39,9 +39,5 @@ public class BoardLikesService {
                 boardLikesRepository.save(newBoardLike);
                 return "게시물에 좋아요 하였습니다.";
             }
-
-        } else {
-            throw new NullPointerException("로그인이 필요합니다.");
-        }
     }
 }
