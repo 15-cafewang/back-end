@@ -3,7 +3,6 @@ package com.sparta.backend.service.user;
 import com.sparta.backend.domain.user.User;
 import com.sparta.backend.domain.user.UserRole;
 import com.sparta.backend.repository.user.UserRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -16,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 import static com.sparta.backend.validator.UserValidator.*;
+import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
@@ -53,10 +53,10 @@ class UserServiceTest {
 
             // when
             validateEmail(email);
-            Optional<User> found = userRepository.findByEmail(email);
+            Optional<User> foundUser = userRepository.findByEmail(email);
 
             // then
-            Assertions.assertThat(found.isEmpty()).isTrue();
+            assertThat(foundUser.isEmpty()).isTrue();
         }
 
         @Test
@@ -68,10 +68,45 @@ class UserServiceTest {
 
             // when
             validateEmail(email);
-            Optional<User> found = userRepository.findByEmail(email);
+            Optional<User> foundUser = userRepository.findByEmail(email);
 
             // then
-            Assertions.assertThat(found.isEmpty()).isFalse();
+            assertThat(foundUser.isEmpty()).isFalse();
+        }
+    }
+
+    @Nested
+    @DisplayName("닉네임 중복 체크 테스트")
+    class validCheckNickname {
+
+        @Test
+        @DisplayName("상공 케이스")
+        void success() {
+
+            // given
+            String nickname = "무야호";
+
+            // when
+            validateNickname(nickname);
+            Optional<User> foundUser = userRepository.findByNickname(nickname);
+
+            // then
+            assertThat(foundUser.isEmpty()).isTrue();
+        }
+
+        @Test
+        @DisplayName("실패 케이스")
+        void fail() {
+
+            // given
+            String nickname = "testUser";
+
+            // when
+            validateNickname(nickname);
+            Optional<User> foundUser = userRepository.findByNickname(nickname);
+
+            // then
+            assertThat(foundUser.isEmpty()).isFalse();
         }
     }
 
