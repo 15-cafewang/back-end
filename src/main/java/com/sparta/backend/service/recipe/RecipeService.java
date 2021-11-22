@@ -367,7 +367,7 @@ public class RecipeService {
         return responseDtoList;
     }
 
-    public RecipeRecommendResponseDto getRecommendedRecipe(User user) {
+    public List<RecipeRecommendResponseDto> getRecommendedRecipe(User user) {
 
         //0.현재 시간대 확인
         List<LocalDateTime> timeZone = getTimeZone();
@@ -392,7 +392,7 @@ public class RecipeService {
         :recipeRepository.findById(foundRecipeId).orElseThrow(()->new CustomErrorException("id로 해당 게시물 찾을 수 없음"));
 
         RecipeRecommendResponseDto responseDto = new RecipeRecommendResponseDto(recommendedRecipe, foundTagName, user, recipeLikesRepository);
-        return responseDto;
+        return List.of(responseDto);
     }
 
     private List<LocalDateTime> getTimeZone() {
