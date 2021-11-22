@@ -36,14 +36,13 @@ public class UserService {
     private final String bucket = "99final";
 
     // 이메일 중복 체크
-    public int validCheckEmail(String email) {
+    public boolean validCheckEmail(String email) {
 
-        Optional<User> found = userRepository.findByEmail(email);
+        validateEmail(email);
 
-        if (found.isPresent()) return 1;
-        if (!validateEmail(email)) return 2;
+        Optional<User> foundUser = userRepository.findByEmail(email);
 
-        return 0;
+        return foundUser.isEmpty();
     }
 
     // 닉네임 중복 체크

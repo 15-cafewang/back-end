@@ -51,17 +51,12 @@ public class UserController {
     @PostMapping("/user/signup/email")
     public ResponseEntity<?> validCheckEmail(@RequestBody ValidEmailRequestDto requestDto) {
 
-        int result = userService.validCheckEmail(requestDto.getEmail());
-
-        if (result == 0) {
+        if (userService.validCheckEmail(requestDto.getEmail())) {
             return new ResponseEntity<>(
                     new CustomResponseDto<>(1, "사용할 수 있는 이메일입니다", ""), HttpStatus.OK);
-        } else if (result == 1) {
-            return new ResponseEntity<>(
-                    new CustomResponseDto<>(-1, "이미 존재하는 이메일입니다", ""), HttpStatus.BAD_REQUEST);
         } else {
             return new ResponseEntity<>(
-                    new CustomResponseDto<>(-1, "이메일 형식이 아닙니다", ""), HttpStatus.BAD_REQUEST);
+                    new CustomResponseDto<>(-1, "이미 존재하는 이메일입니다", ""), HttpStatus.BAD_REQUEST);
         }
     }
 
