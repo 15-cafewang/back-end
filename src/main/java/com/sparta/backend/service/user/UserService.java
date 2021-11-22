@@ -21,7 +21,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.regex.Pattern;
+
+import static com.sparta.backend.validator.UserValidator.*;
 
 @RequiredArgsConstructor
 @Service
@@ -40,7 +41,7 @@ public class UserService {
         Optional<User> found = userRepository.findByEmail(email);
 
         if (found.isPresent()) return 1;
-        if (!isEmail(email)) return 2;
+        if (!validateEmail(email)) return 2;
 
         return 0;
     }
@@ -51,7 +52,7 @@ public class UserService {
         Optional<User> found = userRepository.findByNickname(nickname);
 
         if (found.isPresent()) return 1;
-        if (!isNickname(nickname)) return 2;
+        if (!validateNickname(nickname)) return 2;
 
         return 0;
     }
@@ -177,20 +178,6 @@ public class UserService {
             e.printStackTrace();
             throw new AmazonServiceException(e.getMessage());
         }
-    }
-
-    // 이메일 검사
-    public boolean isEmail(String str) {
-
-        return Pattern
-                .matches("^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$", str);
-    }
-
-    // 닉네임 검사
-    public boolean isNickname(String str) {
-
-        return Pattern
-                .matches("^([0-9a-zA-Z가-힣]{2,8})$", str);
     }
 
 }
