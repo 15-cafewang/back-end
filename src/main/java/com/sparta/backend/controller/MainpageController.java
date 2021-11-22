@@ -40,7 +40,7 @@ public class MainpageController {
     @GetMapping("/main/recommend")
     public ResponseEntity<?> getRecommendedRecipe(@AuthenticationPrincipal UserDetailsImpl userDetails){
         checkLogin(userDetails);
-        RecipeRecommendResponseDto recipes = recipeService.getRecommendedRecipe(userDetails.getUser());
+        List<RecipeRecommendResponseDto> recipes = recipeService.getRecommendedRecipe(userDetails.getUser());
         return new ResponseEntity<>(new CustomResponseDto<>(1, "추천레시피 조회완료",recipes),HttpStatus.OK);
     }
 
