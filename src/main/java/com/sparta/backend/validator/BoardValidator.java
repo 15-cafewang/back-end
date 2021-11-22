@@ -1,6 +1,6 @@
 package com.sparta.backend.validator;
 
-import com.sparta.backend.domain.User;
+import com.sparta.backend.domain.user.User;
 import com.sparta.backend.dto.request.board.PostBoardRequestDto;
 
 public class BoardValidator {

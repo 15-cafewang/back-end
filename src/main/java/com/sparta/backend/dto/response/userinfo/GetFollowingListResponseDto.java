@@ -1,7 +1,6 @@
 package com.sparta.backend.dto.response.userinfo;
 
-import com.sparta.backend.domain.Follow;
-import com.sparta.backend.domain.User;
+import com.sparta.backend.domain.user.Follow;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

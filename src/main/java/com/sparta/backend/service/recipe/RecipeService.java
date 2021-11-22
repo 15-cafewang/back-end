@@ -4,12 +4,12 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.sparta.backend.awsS3.S3Uploader;
 import com.sparta.backend.domain.recipe.*;
-import com.sparta.backend.domain.User;
-import com.sparta.backend.dto.request.recipes.PostRecipeRequestDto;
-import com.sparta.backend.dto.request.recipes.PutRecipeRequestDto;
-import com.sparta.backend.dto.response.recipes.RecipeDetailResponsetDto;
-import com.sparta.backend.dto.response.recipes.RecipeListResponseDto;
-import com.sparta.backend.dto.response.recipes.RecipeRecommendResponseDto;
+import com.sparta.backend.domain.user.User;
+import com.sparta.backend.dto.request.recipe.PostRecipeRequestDto;
+import com.sparta.backend.dto.request.recipe.PutRecipeRequestDto;
+import com.sparta.backend.dto.response.recipe.RecipeDetailResponsetDto;
+import com.sparta.backend.dto.response.recipe.RecipeListResponseDto;
+import com.sparta.backend.dto.response.recipe.RecipeRecommendResponseDto;
 import com.sparta.backend.exception.CustomErrorException;
 import com.sparta.backend.repository.recipe.*;
 import com.sparta.backend.security.UserDetailsImpl;
@@ -220,10 +220,10 @@ public class RecipeService {
         String title = recipe.getTitle();
         String content = recipe.getContent();
         LocalDateTime regDate = recipe.getRegDate();
-        int likeCount = recipe.getRecipeLikesList().size();
+        int likeCount = recipe.getRecipeLikeList().size();
         Integer price = recipe.getPrice();
         String profile = recipe.getUser().getImage();
-        Optional<RecipeLikes> foundRecipeLike = recipeLikesRepository.findByRecipeIdAndUserId(recipe.getId(),userDetails.getUser().getId());
+        Optional<RecipeLike> foundRecipeLike = recipeLikesRepository.findByRecipeIdAndUserId(recipe.getId(),userDetails.getUser().getId());
         Boolean likeStatus = foundRecipeLike.isPresent();
 
         List<String> tagNames = new ArrayList<>();
@@ -261,14 +261,14 @@ public class RecipeService {
         Recipe recipe = recipeRepository.findById(postId).orElseThrow(()->
                 new CustomErrorException("해당 게시물이 존재하지 않아요"));
         //이미 좋아요누른 건지 확인하기
-        Optional<RecipeLikes> foundRecipeLike = recipeLikesRepository.findByRecipeIdAndUserId(recipe.getId(),user.getId());
+        Optional<RecipeLike> foundRecipeLike = recipeLikesRepository.findByRecipeIdAndUserId(recipe.getId(),user.getId());
         if(foundRecipeLike.isPresent()){
             //이미 좋아요를 눌렀으면 좋아요취소
             recipeLikesRepository.delete(foundRecipeLike.get());
             return "좋아요 취소 성공";
         }else{
-            RecipeLikes recipeLikes = new RecipeLikes(user, recipe);
-            recipeLikesRepository.save(recipeLikes);
+            RecipeLike recipeLike = new RecipeLike(user, recipe);
+            recipeLikesRepository.save(recipeLike);
             return "좋아요 등록 성공";
         }
 
@@ -380,22 +380,18 @@ public class RecipeService {
             if( (((BigInteger)obj[0]).intValue() >0 ) || (((BigInteger)obj[1]).intValue() >0 ) ||(((BigInteger)obj[2]).intValue() >0 ) ) hasData = true;
             System.out.println("되라:"+((BigInteger)obj[2]));
         }
-        //2.존재하는 경우 태그와 레시피id 추출- 해당사용자 기록기반, 존재하지 않는 경우- 전체사용자 기록기반
-        List<Object[]> foundRecipeAndTagName = (hasData)?
-                recipeRepository.findRecommendedRecipeIdBasedOne(user.getId(),timeZone.get(0),timeZone.get(1))
-                : recipeRepository.findRecommendedRecipeIdBasedAll(timeZone.get(0),timeZone.get(1));
+        //2.존재하는 경우 태그 먼저 추출
+        String foundTagName = (hasData)?recipeRepository.findRecommendingTagNameBasedOne(user.getId(), timeZone.get(0), timeZone.get(1))
+                :recipeRepository.findRecommendingTagNameBasedAll(timeZone.get(0), timeZone.get(1));
+        System.out.println("태그네임: "+foundTagName);
 
-        //1등으로 뽑힌 레시피id로 레시피 검색
-        Long recipe_id = 1L;
-        String tagName = "";
-        for(Object[] obj : foundRecipeAndTagName){
-            recipe_id = ((BigInteger)obj[0]).longValue();
-//            tagName = (String)obj[1];
-        }
-//        Long recipe_id = ((BigInteger)foundRecipeAndTagName.get(0)[0]).longValue();
-//        String tagName = (String)foundRecipeAndTagName.get(0)[1];
-        Recipe recommendedRecipe = recipeRepository.findById(recipe_id).orElseThrow(()->new CustomErrorException("id로 해당 게시물 찾을 수 없음"));
-        RecipeRecommendResponseDto responseDto = new RecipeRecommendResponseDto(recommendedRecipe, tagName, user, recipeLikesRepository);
+        //3.추출된 태그로 레시피id추출
+        Long foundRecipeId = recipeRepository.findRecommendingRecipeIdByTagName(foundTagName);
+        //foundRecipeId == null인 경우: 내가 검색한 태그명으로 나를 포함한 누구도 상세조회, 좋아요를 하지 않은 경우
+        Recipe recommendedRecipe = (foundRecipeId == null)? recipeRepository.findRandomRecipe()
+        :recipeRepository.findById(foundRecipeId).orElseThrow(()->new CustomErrorException("id로 해당 게시물 찾을 수 없음"));
+
+        RecipeRecommendResponseDto responseDto = new RecipeRecommendResponseDto(recommendedRecipe, foundTagName, user, recipeLikesRepository);
         return responseDto;
     }
 

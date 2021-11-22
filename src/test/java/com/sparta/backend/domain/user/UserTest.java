@@ -1,7 +1,5 @@
 package com.sparta.backend.domain.user;
 
-import com.sparta.backend.domain.User;
-import com.sparta.backend.domain.UserRole;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

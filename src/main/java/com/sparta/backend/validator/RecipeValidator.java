@@ -1,6 +1,6 @@
 package com.sparta.backend.validator;
 
-import com.sparta.backend.domain.User;
+import com.sparta.backend.domain.user.User;
 
 public class RecipeValidator {
     public static void validateRecipeInput(String title, String content, Integer price, User user){
