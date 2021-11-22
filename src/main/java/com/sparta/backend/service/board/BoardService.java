@@ -11,6 +11,7 @@ import com.sparta.backend.dto.request.board.PostBoardRequestDto;
 import com.sparta.backend.dto.request.board.PutBoardRequestDto;
 import com.sparta.backend.dto.response.board.GetBoardDetailResponseDto;
 import com.sparta.backend.dto.response.board.GetBoardResponseDto;
+import com.sparta.backend.exception.CustomErrorException;
 import com.sparta.backend.repository.board.BoardImageRepository;
 import com.sparta.backend.repository.board.BoardLikesRepository;
 import com.sparta.backend.repository.board.BoardRepository;
@@ -47,33 +48,29 @@ public class BoardService {
         List<String> imageList = new ArrayList<>();
 
         Long boardId = 0L;
-        if(user != null) {
-            Board board = new Board(requestDto, user);
-            Board savedBoard = boardRepository.save(board);
-            boardId = savedBoard.getId();
+        Board board = new Board(requestDto, user);
+        Board savedBoard = boardRepository.save(board);
+        boardId = savedBoard.getId();
 
-            if(image != null) { //업로드한 이미지가 있을 경우
-                //S3에 이미지 업로드
-                for(MultipartFile img : image) {
-                    String imageUrl = s3Uploader.upload(img, "boardImage");
-                    System.out.println("saveImage: " + imageUrl);
-                    if(imageUrl == null)    //이미지 업로드에 실패했을 때
-                        throw new NullPointerException("이미지 업로드에 실패하였습니다.");
-                    imageList.add(imageUrl);
-                }
+        if(image != null) { //업로드한 이미지가 있을 경우
+            //S3에 이미지 업로드
+            for(MultipartFile img : image) {
+                String imageUrl = s3Uploader.upload(img, "boardImage");
+                System.out.println("saveImage: " + imageUrl);
+                if(imageUrl == null)    //이미지 업로드에 실패했을 때
+                    throw new NullPointerException("이미지를 s3에 업로드하는 과정 실패");
+                imageList.add(imageUrl);
+            }
 
-                //이미지 URL을 DB에 저장
-                for (String img : imageList) {
-                    try {
-                        BoardImage boardImage = new BoardImage(img, board);
-                        boardImageRepository.save(boardImage);
-                    } catch (Exception e) {
-                        deleteS3(img);
-                    }
+            //이미지 URL을 DB에 저장
+            for(String img : imageList) {
+                try {
+                    BoardImage boardImage = new BoardImage(img, board);
+                    boardImageRepository.save(boardImage);
+                } catch(Exception e) {
+                    deleteS3(img);
                 }
             }
-        } else {
-            throw new NullPointerException("로그인이 필요합니다.");
         }
 
         return boardId;
@@ -119,7 +116,7 @@ public class BoardService {
         User currentLoginUser = userDetails.getUser();
 
         Board board = boardRepository.findById(id).orElseThrow(
-                () -> new NullPointerException("찾는 게시물이 없습니다.")
+                () -> new CustomErrorException("해당 게시물을 찾을 수 없습니다")
         );
 
         GetBoardDetailResponseDto responseDto = null;
@@ -156,10 +153,8 @@ public class BoardService {
         String title = requestDto.getTitle();
         String content = requestDto.getContent();
 
-        loginCheck(userDetails);    //로그인했는지 확인
-
         board = boardRepository.findById(id).orElseThrow(
-                () -> new NullPointerException("찾는 게시물이 없습니다.")
+                () -> new CustomErrorException("해당 게시물을 찾을 수 없습니다")
         );
 
         String currentLoginEmail = userDetails.getUser().getEmail();
@@ -190,28 +185,21 @@ public class BoardService {
     //게시물 삭제
     @Transactional
     public Long deleteBoard(Long id, UserDetailsImpl userDetails) {
-        if(userDetails != null) {   //로그인 했을 경우
-            String currentLoginEmail = userDetails.getUser().getEmail();
-            Board board = boardRepository.findById(id).orElseThrow(
-                    () -> new NullPointerException("찾는 게시물이 없습니다.")
-            );
+        String currentLoginEmail = userDetails.getUser().getEmail();
+        Board board = boardRepository.findById(id).orElseThrow(
+                () -> new CustomErrorException("해당 게시물을 찾을 수 없습니다")
+        );
 
-            String writerEmail = board.getUser().getEmail();
+        String writerEmail = board.getUser().getEmail();
 
-            if(writerEmail.equals(currentLoginEmail)) { //작성자와 현재 로그인한 사용자 계정이 동일할 때
-                List<BoardImage> boardImageList = boardImageRepository.findAllByBoard(board);
-                for(BoardImage bi : boardImageList) {
-                    String image = bi.getImage();
-                    deleteS3(image);
-                }
-                boardImageRepository.deleteAllByBoard(board);
-                boardRepository.deleteById(id);
-            } else { //현재 로그인한 사용자 계정이 작성자가 아닐 때
-                throw new IllegalArgumentException("게시물을 작성한 사용자만 삭제 가능합니다.");
-            }
-        } else {    //로그인 안 했을 경우
-            throw new NullPointerException("로그인이 필요합니다.");
+        writterCheck(currentLoginEmail, writerEmail);
+        List<BoardImage> boardImageList = boardImageRepository.findAllByBoard(board);
+        for(BoardImage bi : boardImageList) {
+            String image = bi.getImage();
+            deleteS3(image);
         }
+        boardImageRepository.deleteAllByBoard(board);
+        boardRepository.deleteById(id);
 
         return id;
     }
@@ -299,7 +287,7 @@ public class BoardService {
                     if(imageFile.getSize() > 0) {     //배열에 실제로 파일이 들어있는 지 확인
                         uploadImageUrl = s3Uploader.upload(imageFile, "boardImage");
                         if(uploadImageUrl == null)    //이미지 업로드에 실패했을 때
-                            throw new NullPointerException("이미지 업로드에 실패하였습니다.");
+                            throw new NullPointerException("이미지를 s3에 업로드하는 과정 실패");
                         uploadImageUrlList.add(uploadImageUrl);
                     }
                 }
@@ -343,28 +331,26 @@ public class BoardService {
         }
     }
 
-    //로그인 되어있는지 확인하기
-    private void loginCheck(UserDetailsImpl userDetails) {
-        if(userDetails == null) {   //로그인 안 했을 떄
-            throw new NullPointerException("로그인이 필요합니다.");
-        }
-    }
-
     //로그인한 계정이 작성자가 맞는지 확인하기
-    private void writterCheck(String currentLoginEmail, String writterEmail) {
-        if (!currentLoginEmail.equals(writterEmail)) {  //로그인한 계정이 작성자가 아닐 때
-            throw new IllegalArgumentException("게시물을 작성한 사용자만 수정 가능합니다.");
+    private void writterCheck(String currentLoginEmail, String writerEmail) {
+        if (!currentLoginEmail.equals(writerEmail)) {  //로그인한 계정이 작성자가 아닐 때
+            throw new CustomErrorException("본인의 게시물만 수정,삭제 가능합니다.");
         }
     }
 
     //S3 이미지 삭제
     public void deleteS3(String imageName){
         //https://S3 버킷 URL/버킷에 생성한 폴더명/이미지이름
-        String keyName = imageName.split("/")[4]; // 이미지이름만 추출
+        String keyName = "";
+        try {
+            keyName = imageName.split("/")[4]; // 이미지이름만 추출
+        }catch (ArrayIndexOutOfBoundsException e){
+            throw new IllegalArgumentException("S3 url 형식이 아닙니다");
+        }
 
         try {
             amazonS3Client.deleteObject(bucket + "/boardImage", keyName);
-            System.out.println("S3에서 삭제한 파일 이름: " + keyName);
+            System.out.println("s3에서 삭제한 파일 이름: " + keyName);
         }catch (AmazonServiceException e){
             e.printStackTrace();
             throw new AmazonServiceException(e.getMessage());

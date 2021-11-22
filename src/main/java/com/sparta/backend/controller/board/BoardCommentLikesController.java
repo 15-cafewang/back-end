@@ -1,6 +1,7 @@
 package com.sparta.backend.controller.board;
 
 import com.sparta.backend.dto.response.CustomResponseDto;
+import com.sparta.backend.exception.CustomErrorException;
 import com.sparta.backend.security.UserDetailsImpl;
 import com.sparta.backend.service.board.BoardCommentLikesService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ public class BoardCommentLikesController {
     @PostMapping("/boards/comments/likes/{boardCommentId}")
     public ResponseEntity<?> likeBoardComment(@PathVariable("boardCommentId") Long id,
                                               @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        checkLogin(userDetails);
         String boardCommentLikesMessage = boardCommentLikesService.likeBoardComment(id, userDetails);
 
         if(boardCommentLikesMessage != null || boardCommentLikesMessage.length() > 0) {
@@ -29,5 +31,12 @@ public class BoardCommentLikesController {
             return new ResponseEntity<>(new CustomResponseDto<>(-1, "게시물 좋아요/취소 실패", ""), HttpStatus.BAD_REQUEST);
         }
 
+    }
+
+    //로그인 확인
+    private void checkLogin(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        if (userDetails == null) {
+            throw new CustomErrorException("로그인된 유저만 사용가능한 기능입니다.");
+        }
     }
 }

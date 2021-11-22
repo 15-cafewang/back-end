@@ -6,6 +6,7 @@ import com.sparta.backend.dto.request.board.PutBoardRequestDto;
 import com.sparta.backend.dto.response.CustomResponseDto;
 import com.sparta.backend.dto.response.board.GetBoardDetailResponseDto;
 import com.sparta.backend.dto.response.board.GetBoardResponseDto;
+import com.sparta.backend.exception.CustomErrorException;
 import com.sparta.backend.security.UserDetailsImpl;
 import com.sparta.backend.service.board.BoardService;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ public class BoardController {
     @PostMapping("/boards")
     public ResponseEntity<?> createBoard(PostBoardRequestDto requestDto,
                                             @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-
+        checkLogin(userDetails);
         Long boardId = boardService.createBoard(requestDto, userDetails);
 
         if(boardId > 0) {
@@ -42,7 +43,7 @@ public class BoardController {
     public ResponseEntity<?> getBoards(@RequestParam int page, @RequestParam int size,
                                           @RequestParam boolean isAsc, @RequestParam String sortBy,
                                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
-
+        checkLogin(userDetails);
         Page<GetBoardResponseDto> boardList =  boardService.getBoards(page, size, isAsc, sortBy, userDetails);
 
         if(boardList != null && boardList.getSize() > 0) {
@@ -56,6 +57,7 @@ public class BoardController {
     @GetMapping("/boards/{boardId}")
     public ResponseEntity<?> getBoardDetail(@PathVariable("boardId") Long id,
                                                @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        checkLogin(userDetails);
         GetBoardDetailResponseDto responseDto = boardService.getBoardDetail(id, userDetails);
 
         if(responseDto != null) {
@@ -70,6 +72,7 @@ public class BoardController {
     public ResponseEntity<?> updateBoard(@PathVariable("boardId") Long id,
                                             PutBoardRequestDto requestDto,
                                             @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        checkLogin(userDetails);
         try {
             Board board = boardService.updateBoard(id, requestDto, userDetails);
             if(board != null) {
@@ -87,6 +90,7 @@ public class BoardController {
     @DeleteMapping("/boards/{boardId}")
     public ResponseEntity<?> deleteBoard(@PathVariable("boardId") Long id,
                                             @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        checkLogin(userDetails);
         Long boardId = boardService.deleteBoard(id, userDetails);
 
         if(boardId > 0) {
@@ -101,6 +105,7 @@ public class BoardController {
     public ResponseEntity<?> searchBoards(@RequestParam String keyword, @RequestParam int page, @RequestParam int size,
                                              @RequestParam boolean isAsc, @RequestParam String sortBy,
                                              @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        checkLogin(userDetails);
         Page<GetBoardResponseDto> boardList =  boardService.searchBoards(keyword, page, size, isAsc, sortBy, userDetails);
 
         if(boardList != null && boardList.getSize() > 0) {
@@ -109,5 +114,12 @@ public class BoardController {
             return new ResponseEntity<>(new CustomResponseDto<>(-1, "게시물 검색 실패", ""), HttpStatus.BAD_REQUEST);
         }
 
+    }
+
+    //로그인 확인
+    private void checkLogin(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        if (userDetails == null) {
+            throw new CustomErrorException("로그인된 유저만 사용가능한 기능입니다.");
+        }
     }
 }

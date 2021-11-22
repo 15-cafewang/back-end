@@ -6,6 +6,7 @@ import com.sparta.backend.domain.user.User;
 import com.sparta.backend.dto.response.board.GetBoardCommentResponseDto;
 import com.sparta.backend.dto.request.board.PostBoardCommentRequestDto;
 import com.sparta.backend.dto.request.board.PutBoardCommentRequestDto;
+import com.sparta.backend.exception.CustomErrorException;
 import com.sparta.backend.repository.board.BoardCommentLikesRepository;
 import com.sparta.backend.repository.board.BoardCommentRepository;
 import com.sparta.backend.repository.board.BoardRepository;
@@ -32,11 +33,10 @@ public class BoardCommentService {
     public GetBoardCommentResponseDto createComment(PostBoardCommentRequestDto requestDto,
                               UserDetailsImpl userDetails) {
         Long boardId = requestDto.getBoardId();
-        loginCheck(userDetails);    //로그인했는지 확인
         User currentLoginUser = userDetails.getUser();
 
         Board board = boardRepository.findById(boardId).orElseThrow(
-                () -> new NullPointerException("찾는 게시물이 없습니다.")
+                () -> new CustomErrorException("해당 게시물을 찾을 수 없습니다")
         );
 
         GetBoardCommentResponseDto responseDto = null;
@@ -53,7 +53,6 @@ public class BoardCommentService {
     //댓글 조회
     public Page<GetBoardCommentResponseDto> getComments(Long id, int page, int size, boolean isAsc,
                                                         String sortBy, UserDetailsImpl userDetails) {
-        loginCheck(userDetails);    //로그인했는지 확인
         //현재 페이지
         page = page - 1;
         //정렬 기준
@@ -64,7 +63,7 @@ public class BoardCommentService {
         Pageable pageable = PageRequest.of(page, size, sort);
 
         Board board = boardRepository.findById(id).orElseThrow(
-                () -> new NullPointerException("찾는 게시물이 없습니다.")
+                () -> new CustomErrorException("해당 게시물을 찾을 수 없습니다")
         );
 
         Page<BoardComment> boardCommentList = boardCommentRepository.findAllByBoard(board, pageable);
@@ -79,11 +78,10 @@ public class BoardCommentService {
     //댓글 수정
     @Transactional
     public GetBoardCommentResponseDto updateComment(Long id, PutBoardCommentRequestDto requestDto, UserDetailsImpl userDetails) {
-        loginCheck(userDetails);    //로그인했는지 확인
         Long currentLoginUser = userDetails.getUser().getId();
 
         BoardComment boardComment = boardCommentRepository.findById(id).orElseThrow(
-                () -> new NullPointerException("찾는 댓글이 없습니다.")
+                () -> new CustomErrorException("해당 댓글이 존재하지 않습니다")
         );
 
         GetBoardCommentResponseDto responseDto = null;
@@ -102,11 +100,10 @@ public class BoardCommentService {
     //댓글 삭제
     @Transactional
     public Long deleteComment(Long id, UserDetailsImpl userDetails) {
-        loginCheck(userDetails);    //로그인했는지 확인
         Long currentLoginUser = userDetails.getUser().getId();
 
         BoardComment boardComment = boardCommentRepository.findById(id).orElseThrow(
-                () -> new NullPointerException("찾는 댓글이 없습니다.")
+                () -> new CustomErrorException("해당 댓글이 존재하지 않습니다")
         );
         Long writeUser = boardComment.getUser().getId();
 
@@ -116,17 +113,10 @@ public class BoardCommentService {
         return id;
     }
 
-    //로그인 되어있는지 확인하기
-    private void loginCheck(UserDetailsImpl userDetails) {
-        if(userDetails == null) {   //로그인 안 했을 떄
-            throw new NullPointerException("로그인이 필요합니다.");
-        }
-    }
-
     //로그인한 계정이 작성자가 맞는지 확인하기
     private void writterCheck(Long currentLoginUserId, Long writeUserId) {
         if (!currentLoginUserId.equals(writeUserId)) {  //로그인한 계정이 작성자가 아닐 때
-            throw new IllegalArgumentException("해당 댓글을 작성한 사용자만 수정 가능합니다.");
+            throw new CustomErrorException("본인의 게시물만 수정,삭제 가능합니다.");
         }
     }
 }

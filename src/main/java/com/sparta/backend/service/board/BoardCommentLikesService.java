@@ -3,6 +3,7 @@ package com.sparta.backend.service.board;
 import com.sparta.backend.domain.board.BoardComment;
 import com.sparta.backend.domain.board.BoardCommentLike;
 import com.sparta.backend.domain.user.User;
+import com.sparta.backend.exception.CustomErrorException;
 import com.sparta.backend.repository.board.BoardCommentLikesRepository;
 import com.sparta.backend.repository.board.BoardCommentRepository;
 import com.sparta.backend.security.UserDetailsImpl;
@@ -21,27 +22,22 @@ public class BoardCommentLikesService {
     //게시물 댓글 좋아요/취소
     @Transactional
     public String likeBoardComment(Long id, UserDetailsImpl userDetails) {
-        if(userDetails != null) {
-            User user = userDetails.getUser();
+        User user = userDetails.getUser();
 
-            BoardComment boardComment = boardCommentRepository.findById(id).orElseThrow(
-                    () -> new NullPointerException("찾는 댓글이 없습니다.")
-            );
+        BoardComment boardComment = boardCommentRepository.findById(id).orElseThrow(
+                () -> new CustomErrorException("해당 댓글이 존재하지 않습니다")
+        );
 
-            BoardCommentLike boardCommentLike =
-                    boardCommentLikesRepository.findByBoardCommentAndUser(boardComment, user);
+        BoardCommentLike boardCommentLike =
+                boardCommentLikesRepository.findByBoardCommentAndUser(boardComment, user);
 
-            if(boardCommentLike != null) {
-                boardCommentLikesRepository.deleteByBoardCommentAndUser(boardComment, user);
-                return "댓글에 좋아요 취소하였습니다.";
-            } else {
-                BoardCommentLike newBoardCommentLike = new BoardCommentLike(user, boardComment);
-                boardCommentLikesRepository.save(newBoardCommentLike);
-                return "댓글에 좋아요 하였습니다.";
-            }
-
+        if(boardCommentLike != null) {
+            boardCommentLikesRepository.deleteByBoardCommentAndUser(boardComment, user);
+            return "댓글에 좋아요 취소하였습니다.";
         } else {
-            throw new NullPointerException("로그인이 필요합니다.");
+            BoardCommentLike newBoardCommentLike = new BoardCommentLike(user, boardComment);
+            boardCommentLikesRepository.save(newBoardCommentLike);
+            return "댓글에 좋아요 하였습니다.";
         }
     }
 }
