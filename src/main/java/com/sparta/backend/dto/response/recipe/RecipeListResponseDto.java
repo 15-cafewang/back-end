@@ -24,7 +24,7 @@ public class RecipeListResponseDto {
     private LocalDateTime regDate;
     private int commentCount;
     private int likeCount;
-    private Integer price;
+    private String location;
     private boolean likeStatus;
 
 
@@ -37,7 +37,7 @@ public class RecipeListResponseDto {
         this.commentCount = recipe.getRecipeCommentList().size();
         recipe.getRecipeImagesList().forEach((RecipeImage)->this.images.add(RecipeImage.getImage()));
         this.likeCount = recipe.getRecipeLikeList().size();
-        this.price = recipe.getPrice();
+        this.location = recipe.getLocation();
 
         Optional<RecipeLike> foundRecipeLike = recipeLikesRepository.findByRecipeIdAndUserId(recipe.getId(),userDetails.getUser().getId());
         this.likeStatus = foundRecipeLike.isPresent();
@@ -52,7 +52,7 @@ public class RecipeListResponseDto {
         this.commentCount = recipe.getRecipeCommentList().size();
         recipe.getRecipeImagesList().forEach((RecipeImage)->this.images.add(RecipeImage.getImage()));
         this.likeCount = recipe.getRecipeLikeList().size();
-        this.price = recipe.getPrice();
+        this.location = recipe.getLocation();
 
         Optional<RecipeLike> foundRecipeLike = recipeLikesRepository.findByRecipeAndUser(recipe,user);
         this.likeStatus = foundRecipeLike.isPresent();
@@ -67,7 +67,7 @@ public class RecipeListResponseDto {
         this.commentCount = recipe.get().getRecipeCommentList().size();
         recipe.get().getRecipeImagesList().forEach((RecipeImage)->this.images.add(RecipeImage.getImage()));
         this.likeCount = recipe.get().getRecipeLikeList().size();
-        this.price = recipe.get().getPrice();
+        this.location = recipe.get().getLocation();
 
         Optional<RecipeLike> foundRecipeLike = likesRepository.findByRecipeIdAndUserId(recipe.get().getId(), user.getId());
         this.likeStatus = foundRecipeLike.isPresent();

@@ -101,7 +101,7 @@ public class RecipeController {
     public ResponseEntity<?> likeRecipe(@PathVariable Long postId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         checkLogin(userDetails);
         String resultMessage = recipeService.likeRecipe(postId, userDetails.getUser());
-        return new ResponseEntity(new CustomResponseDto<>(1, resultMessage,""),HttpStatus.OK);
+        return new ResponseEntity<>(new CustomResponseDto<>(1, resultMessage,""),HttpStatus.OK);
     }
 
     //레시피 검색

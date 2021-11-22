@@ -28,7 +28,7 @@ public class Recipe extends BaseEntity {
     @Column(nullable = false, length = 1500)
     private String content;
 
-    private Integer price;
+    private String location;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonManagedReference
@@ -55,28 +55,28 @@ public class Recipe extends BaseEntity {
     @JsonBackReference
     private List<RecipeDetailCount> recipeDetailCountList;
 
-    public Recipe(String title, String content, Integer price, User user){
+    public Recipe(String title, String content, String locatioin, User user){
         //Edge케이스들 validation
-        RecipeValidator.validateRecipeInput(title,content,price,user);
+        RecipeValidator.validateRecipeInput(title,content, locatioin,user);
         this.title = title;
         this.content = content;
-        this.price = price;
+        this.location = locatioin;
         this.user = user;
     }
-    public Recipe updateRecipe(String title, String content, Integer price) {
+    public Recipe updateRecipe(String title, String content, String location) {
         this.title = title;
         this.content = content;
-        this.price = price;
+        this.location = location;
 
         return this;
     }
 
     //test용(강제 id주입 위해)
-    public Recipe(Long id, String title, String content, Integer price, User user){
+    public Recipe(Long id, String title, String content, String locatioin, User user){
         this.id = id;
         this.title = title;
         this.content = content;
-        this.price = price;
+        this.location = locatioin;
         this.user = user;
     }
 }

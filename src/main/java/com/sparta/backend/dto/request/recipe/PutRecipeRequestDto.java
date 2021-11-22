@@ -11,7 +11,7 @@ import java.util.List;
 public class PutRecipeRequestDto {
     private String title;
     private String content;
-    private Integer price;
+    private String location;
     private List<String> tag;
     private MultipartFile[] image;
     private List<String> deleteImage;
