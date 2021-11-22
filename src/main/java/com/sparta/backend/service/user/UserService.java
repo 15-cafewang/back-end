@@ -46,14 +46,13 @@ public class UserService {
     }
 
     // 닉네임 중복 체크
-    public int validCheckNickname(String nickname) {
+    public boolean validCheckNickname(String nickname) {
 
-        Optional<User> found = userRepository.findByNickname(nickname);
+        validateNickname(nickname);
 
-        if (found.isPresent()) return 1;
-        if (!validateNickname(nickname)) return 2;
+        Optional<User> foundUser = userRepository.findByNickname(nickname);
 
-        return 0;
+        return foundUser.isEmpty();
     }
 
     //회원등록

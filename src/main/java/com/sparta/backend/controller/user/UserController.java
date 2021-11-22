@@ -64,19 +64,12 @@ public class UserController {
     @PostMapping("/user/signup/nickname")
     public ResponseEntity<?> validCheckNickname(@RequestBody ValidNicknameRequestDto requestDto) {
 
-        log.info("nickname = {}", requestDto.getNickname());
-
-        int result = userService.validCheckNickname(requestDto.getNickname());
-
-        if (result == 0) {
+        if (userService.validCheckNickname(requestDto.getNickname())) {
             return new ResponseEntity<>(
                     new CustomResponseDto<>(1, "사용할 수 있는 닉네임입니다", ""), HttpStatus.OK);
-        } else if (result == 1) {
-            return new ResponseEntity<>(
-                    new CustomResponseDto<>(-1, "이미 존재하는 닉네임입니다", ""), HttpStatus.BAD_REQUEST);
         } else {
             return new ResponseEntity<>(
-                    new CustomResponseDto<>(-1, "잘못된 닉네임 형식입니다", ""), HttpStatus.BAD_REQUEST);
+                    new CustomResponseDto<>(-1, "이미 존재하는 닉네임입니다", ""), HttpStatus.BAD_REQUEST);
         }
     }
 
