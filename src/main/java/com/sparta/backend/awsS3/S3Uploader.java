@@ -28,8 +28,8 @@ public class S3Uploader {
 
     public String upload(MultipartFile multipartFile, String dirName) throws IOException {
         //dirName길이 제한.
-        System.out.println("파일네임: "+multipartFile.getName());
-        System.out.println("오리지날파일네임: "+multipartFile.getOriginalFilename());
+//        System.out.println("파일네임: "+multipartFile.getName());
+//        System.out.println("오리지날파일네임: "+multipartFile.getOriginalFilename());
         if(Objects.requireNonNull(multipartFile.getOriginalFilename()).length() >300 ) throw new ImageNameTooLongException("사진 이름이 너무 깁니다.");
 
         File uploadFile = convert(multipartFile)  // 파일 변환할 수 없으면 에러
