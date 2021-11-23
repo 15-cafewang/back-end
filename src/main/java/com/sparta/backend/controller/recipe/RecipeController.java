@@ -34,16 +34,12 @@ public class RecipeController {
     @PostMapping("/recipes")
     public ResponseEntity<?> postRecipe(PostRecipeRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         //todo:IOException처리
-//        System.out.println("레시피 테스트:"+requestDto.getTitle()+"///"+ requestDto.getContent()+"///"+ requestDto.getImage());
-//        System.out.println("테스트 title:"+requestDto.getTitle());
-//        System.out.println("테스트 image:"+ Arrays.toString(requestDto.getImage()));
         checkLogin(userDetails);
         PostRecipeRequestDtoValidator.validateRecipeInput(requestDto);
 
 //        레시피 먼저 생성, 등록
         Recipe savedRecipe = recipeService.saveRecipe(requestDto, userDetails.getUser());
 //        태그 등록할때 저장한 레시피객체도 넣어줌
-        System.out.println(requestDto.getTag());
         tagService.saveTags(requestDto.getTag(), savedRecipe);
 
         return new ResponseEntity<>(new CustomResponseDto<>(1, "레시피 등록 성공", ""), HttpStatus.OK);
