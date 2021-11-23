@@ -18,6 +18,7 @@ public class RecipeImage extends BaseEntity {
     @Column(name = "image_id")
     private Long id;
 
+    @Column(length = 600)
     private String image;
 
     @ManyToOne(fetch = FetchType.LAZY)
