@@ -115,7 +115,7 @@ public class RecipeService {
     }
     //여러장의 이미지를 db에 저장하는 기능
     public Recipe uploadManyImagesToDB(List<String> imageUrlList, PostRecipeRequestDto requestDto, User user){
-        Recipe recipe = new Recipe(requestDto.getTitle(),requestDto.getContent(),requestDto.getPrice(),user);
+        Recipe recipe = new Recipe(requestDto.getTitle(),requestDto.getContent(),requestDto.getLocation(),user);
         //디비에 이미지url저장
         if(imageUrlList!=null){
             List<RecipeImage> recipeImages = new ArrayList<>();
@@ -157,9 +157,9 @@ public class RecipeService {
         //이미지 외 다른 내용들 수정
         String title = requestDto.getTitle();
         String content = requestDto.getContent();
-        Integer price = requestDto.getPrice();
+        String location = requestDto.getLocation();
 
-        Recipe updatedRecipe = recipe.updateRecipe(title,content,price);
+        Recipe updatedRecipe = recipe.updateRecipe(title,content,location);
 
         //사진 다 수정되면 기존 사진 s3삭제 -> 중간에 작업하다가 익셉션 터지면 s3에 작업한 건 롤백이 안되니까 일부러 마지막에서 처리
         if(requestDto.getDeleteImage()!=null){
@@ -221,7 +221,7 @@ public class RecipeService {
         String content = recipe.getContent();
         LocalDateTime regDate = recipe.getRegDate();
         int likeCount = recipe.getRecipeLikeList().size();
-        Integer price = recipe.getPrice();
+        String location = recipe.getLocation();
         String profile = recipe.getUser().getImage();
         Optional<RecipeLike> foundRecipeLike = recipeLikesRepository.findByRecipeIdAndUserId(recipe.getId(),userDetails.getUser().getId());
         Boolean likeStatus = foundRecipeLike.isPresent();
@@ -233,7 +233,7 @@ public class RecipeService {
         recipe.getRecipeImagesList().forEach((recipeImage)->images.add(recipeImage.getImage()));
 
         RecipeDetailResponsetDto responsetDto = new RecipeDetailResponsetDto(
-                recipeId, nickname, title, content, regDate, likeCount, likeStatus, images, tagNames, price,profile);
+                recipeId, nickname, title, content, regDate, likeCount, likeStatus, images, tagNames, location,profile);
 
         return responsetDto;
     }

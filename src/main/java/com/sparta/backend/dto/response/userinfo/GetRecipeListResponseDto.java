@@ -20,7 +20,7 @@ public class GetRecipeListResponseDto {
     private Long recipeId;
     private String title;
     private String nickname;
-    private int price;
+    private String location;
     private List<String> imageList = new ArrayList<>();
     private int likeCount;
     private boolean likeStatus;
@@ -32,7 +32,7 @@ public class GetRecipeListResponseDto {
         this.recipeId = recipe.getId();
         this.title = recipe.getTitle();
         this.nickname = recipe.getUser().getNickname();
-        this.price = recipe.getPrice();
+        this.location = recipe.getLocation();
         recipe.getRecipeImagesList().forEach(RecipeImage -> this.imageList.add(RecipeImage.getImage()));
         this.likeCount = recipe.getRecipeLikeList().size();
 

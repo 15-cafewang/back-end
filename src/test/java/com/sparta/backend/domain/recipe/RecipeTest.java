@@ -17,14 +17,14 @@ class RecipeTest {
 
         private String title;
         private String content;
-        private Integer price;
+        private Integer location;
         private User user;
 
         @BeforeEach
         void setup() {
             title = "normal title";
             content = "normal content";
-            price = 5000;
+            location = 5000;
             user = new User(
                     1L,
                     "abc@gmail.com",
@@ -43,27 +43,27 @@ class RecipeTest {
             @DisplayName("일반적인 레시피등록")
             void createRecipe_Normal() {
                 //given, when
-                Recipe recipe = new Recipe(title, content, price, user);
+                Recipe recipe = new Recipe(title, content, location, user);
 
                 //then
                 assertEquals(title, recipe.getTitle());
                 assertEquals(content, recipe.getContent());
-                assertEquals(price, recipe.getPrice());
+                assertEquals(location, recipe.getLocatioin());
                 assertEquals(user, recipe.getUser());
             }
 
             @Test
             @DisplayName("가격 null")
-            void priceNull(){
+            void locationNull(){
                 //given
-                price = null;
+                location = null;
                 // when
-                Recipe recipe = new Recipe(title, content, price, user);
+                Recipe recipe = new Recipe(title, content, location, user);
 
                 //then
                 assertEquals(title, recipe.getTitle());
                 assertEquals(content, recipe.getContent());
-                assertEquals(price, recipe.getPrice());
+                assertEquals(location, recipe.getLocatioin());
                 assertEquals(user, recipe.getUser());
             }
 
@@ -85,7 +85,7 @@ class RecipeTest {
 
                     //when
                     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-                        Recipe recipe = new Recipe(title, content, price, user);
+                        Recipe recipe = new Recipe(title, content, location, user);
                     });
                     //then
                     assertEquals("로그인 되지 않은 사용자입니다", exception.getMessage());
@@ -108,7 +108,7 @@ class RecipeTest {
 
                     //when
                     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-                        Recipe recipe = new Recipe(title, content, price, user);
+                        Recipe recipe = new Recipe(title, content, location, user);
                     });
                     //then
                     assertEquals("회원 id가 유효하지 않습니다.", exception.getMessage());
@@ -127,7 +127,7 @@ class RecipeTest {
 
                     //when
                     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-                        new Recipe(title, content, price, user);
+                        new Recipe(title, content, location, user);
                     });
 
                     assertEquals("제목이 입력되지 않았습니다.",  exception.getMessage());
@@ -141,7 +141,7 @@ class RecipeTest {
 
                     //when
                     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-                        new Recipe(title, content, price, user);
+                        new Recipe(title, content, location, user);
                     });
 
                     assertEquals("제목이 입력되지 않았습니다.",  exception.getMessage());
@@ -166,7 +166,7 @@ class RecipeTest {
 
                     //when
                     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-                        new Recipe(title, content, price, user);
+                        new Recipe(title, content, location, user);
                     });
 
                     assertEquals("제목의 길이가 100자를 초과하였습니다.",  exception.getMessage());
@@ -194,7 +194,7 @@ class RecipeTest {
 
                     //when
                     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-                        new Recipe(title, content, price, user);
+                        new Recipe(title, content, location, user);
                     });
 
                     assertEquals("내용의 길이가 1000자를 초과하였습니다",  exception.getMessage());
@@ -203,12 +203,12 @@ class RecipeTest {
 
                 @Test
                 @DisplayName("가격 음수")
-                void priceMinus() {
+                void locationMinus() {
                     //given
-                    price = -1000;
+                    location = -1000;
                     //when
                     Exception exception = assertThrows(IllegalArgumentException.class, ()->{
-                        new Recipe(title, content,price, user);
+                        new Recipe(title, content,location, user);
                     });
 
                     assertEquals("가격은 0보다 작을 수 없습니다.", exception.getMessage());
