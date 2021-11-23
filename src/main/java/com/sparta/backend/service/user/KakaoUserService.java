@@ -24,6 +24,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -125,16 +126,12 @@ public class KakaoUserService {
                 .orElse(null);
         if (kakaoUser == null) {
 
-            String nickname = UUID.randomUUID().toString();
+            String nickname = nicknameGenerator(kakaoUserInfo.getNickname());
 
-            // password: random UUID
             String password = UUID.randomUUID().toString();
             String encodedPassword = passwordEncoder.encode(password);
 
-            // email: kakao email
             String email = UUID.randomUUID().toString() + "@kakao.com";
-            // role: 일반 사용자
-//            UserRoleEnum role = UserRoleEnum.USER;
 
             String image = "https://user-images.githubusercontent.com/76515226/140890775-30641b72-226a-4068-8a0a-9a306e8c68b4.png";
 
@@ -149,6 +146,32 @@ public class KakaoUserService {
         UserDetails userDetails = new UserDetailsImpl(kakaoUser);
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    private String nicknameGenerator(String nickname) {
+
+        Optional<User> foundUser = userRepository.findByNickname(nickname);
+
+        if (foundUser.isEmpty()) {
+            return nickname;
+        } else {
+            return validDuplicate(nickname);
+        }
+    }
+
+    private String validDuplicate(String nickname) {
+
+        int cnt = 2;
+        while (true) {
+            String temp = nickname + cnt;
+            Optional<User> foundUser = userRepository.findByNickname(temp);
+            if (foundUser.isPresent()) {
+                cnt++;
+                validDuplicate(nickname);
+            } else {
+                return temp;
+            }
+        }
     }
 
 }
