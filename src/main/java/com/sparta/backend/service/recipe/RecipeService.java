@@ -370,7 +370,7 @@ public class RecipeService {
     public List<RecipeRecommendResponseDto> getRecommendedRecipe(User user) {
 
         //0.현재 시간대 확인
-        List<LocalDateTime> timeZone = getTimeZone();
+        List<LocalDateTime> timeZone = getTimeZone(LocalDateTime.now());
 
         //1.해당 사용자의 기록이 존재하는지 체크
         System.out.println("시간확인:"+timeZone.get(0)+"//"+timeZone.get(1));
@@ -395,37 +395,53 @@ public class RecipeService {
         return List.of(responseDto);
     }
 
-    private List<LocalDateTime> getTimeZone() {
-        LocalDateTime morningStart = LocalDateTime.of(LocalDateTime.now().getYear(),
-                LocalDateTime.now().getMonth(),
-                LocalDateTime.now().getDayOfMonth(),
-                4,0,0,0);
-        LocalDateTime mornigEnd = LocalDateTime.of(LocalDateTime.now().getYear(),
-                LocalDateTime.now().getMonth(),
-                LocalDateTime.now().getDayOfMonth(),
+    public List<LocalDateTime> getTimeZone(LocalDateTime now) {
+
+        System.out.println("now.gethour:" + now.getHour());
+        System.out.println(now.getHour() < 5);
+        System.out.println(now);
+        System.out.println(now.minusDays(1L));
+        if( now.getHour() <5) now = now.minusDays(1L);
+
+        LocalDateTime morningStart = LocalDateTime.of(now.getYear(),
+                now.getMonth(),
+                now.getDayOfMonth(),
+                5,0,0,0);
+        LocalDateTime mornigEnd = LocalDateTime.of(now.getYear(),
+                now.getMonth(),
+                now.getDayOfMonth(),
                 11,0,0,0);
-        LocalDateTime lunchStart = LocalDateTime.of(LocalDateTime.now().getYear(),
-                LocalDateTime.now().getMonth(),
-                LocalDateTime.now().getDayOfMonth(),
+        LocalDateTime lunchStart = LocalDateTime.of(now.getYear(),
+                now.getMonth(),
+                now.getDayOfMonth(),
                 11,0,0,0);
-        LocalDateTime lunchEnd = LocalDateTime.of(LocalDateTime.now().getYear(),
-                LocalDateTime.now().getMonth(),
-                LocalDateTime.now().getDayOfMonth(),
-                15,0,0,0);
-        LocalDateTime otherStart = LocalDateTime.of(LocalDateTime.now().getYear(),
-                LocalDateTime.now().getMonth(),
-                LocalDateTime.now().getDayOfMonth(),
-                15,0,0,0);
-        LocalDateTime otherEnd = LocalDateTime.of(LocalDateTime.now().getYear(),
-                LocalDateTime.now().getMonth(),
-                LocalDateTime.now().getDayOfMonth()+1,
+        LocalDateTime lunchEnd = LocalDateTime.of(now.getYear(),
+                now.getMonth(),
+                now.getDayOfMonth(),
+                16,0,0,0);
+        LocalDateTime dinnerStart = LocalDateTime.of(now.getYear(),
+                now.getMonth(),
+                now.getDayOfMonth(),
+                16,0,0,0);
+        LocalDateTime dinnerEnd = LocalDateTime.of(now.getYear(),
+                now.getMonth(),
+                now.getDayOfMonth(),
+                20,0,0,0);
+        LocalDateTime nightStart = LocalDateTime.of(now.getYear(),
+                now.getMonth(),
+                now.getDayOfMonth(),
+                20,0,0,0);
+        LocalDateTime nightEnd = LocalDateTime.of(now.getYear(),
+                now.getMonth(),
+                now.getDayOfMonth()+1,
                 4,0,0,0);
 
-        LocalDateTime now = LocalDateTime.now();
+
 
         if(now.isAfter(morningStart) && now.isBefore(mornigEnd)) return Arrays.asList(morningStart,mornigEnd);
         else if(now.isAfter(lunchStart) && now.isBefore(lunchEnd))  return Arrays.asList(lunchStart,lunchEnd);
-        else return Arrays.asList(otherStart,otherEnd);
+        else if(now.isAfter(dinnerStart) && now.isBefore(dinnerEnd))  return Arrays.asList(dinnerStart,dinnerEnd);
+        else return Arrays.asList(nightStart,nightEnd);
 
     }
 }
