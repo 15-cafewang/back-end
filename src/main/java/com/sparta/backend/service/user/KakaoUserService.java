@@ -167,7 +167,6 @@ public class KakaoUserService {
             Optional<User> foundUser = userRepository.findByNickname(temp);
             if (foundUser.isPresent()) {
                 cnt++;
-                validDuplicate(nickname);
             } else {
                 return temp;
             }
