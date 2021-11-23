@@ -23,9 +23,9 @@ public class RecipeValidator {
             throw new IllegalArgumentException("내용의 길이가 1000자를 초과하였습니다");
         }
 
-//        if( location!= null && location < 0){
-//            throw new IllegalArgumentException("가격은 0보다 작을 수 없습니다.");
-//        }
+        if( location.length() > 100){
+            throw new IllegalArgumentException("장소의 길이가 100자를 초과하였습니다.");
+        }
 
     }
 }
