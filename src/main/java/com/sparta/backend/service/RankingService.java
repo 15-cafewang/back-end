@@ -22,10 +22,7 @@ import java.util.List;
 @Service
 public class RankingService {
 
-    private final RecipeLikesRepository recipeLikesRepository;
     private final UserRepository userRepository;
-    private final RecipeRepository recipeRepository;
-    private final RecipeCommentRepository recipeCommentRepository;
 
     /*
     [공통]
@@ -51,7 +48,7 @@ public class RankingService {
 
         //get(0) : lastMonday, get(1) : lastSunday
         List<Object[]> theMostLikedUserList =
-                recipeLikesRepository.findTheMostLikedUser(startEndDate.get(0), startEndDate.get(1));
+                userRepository.findTheMostLikedUser(startEndDate.get(0), startEndDate.get(1));
 
         GetKingUserInfoLastWeekResponseDto responseDto = null;
         if(theMostLikedUserList != null && theMostLikedUserList.size() > 0) {
@@ -87,7 +84,7 @@ public class RankingService {
 
         //get(0) : lastMonday, get(1) : lastSunday
         List<Object[]> theMostWritePostsUserList =
-                recipeRepository.findTheMostWrotePostsUser(startEndDate.get(0), startEndDate.get(1));
+                userRepository.findTheMostWrotePostsUser(startEndDate.get(0), startEndDate.get(1));
 
         GetKingUserInfoLastWeekResponseDto responseDto = null;
         if(theMostWritePostsUserList != null && theMostWritePostsUserList.size() > 0) {
@@ -105,7 +102,7 @@ public class RankingService {
 
         //get(0) : lastMonday, get(1) : lastSunday
         List<Object[]> theMostWriteCommentsUserList =
-                recipeCommentRepository.findTheMostWroteCommentsUser(startEndDate.get(0), startEndDate.get(1));
+                userRepository.findTheMostWroteCommentsUser(startEndDate.get(0), startEndDate.get(1));
 
         GetKingUserInfoLastWeekResponseDto responseDto = null;
         if(theMostWriteCommentsUserList != null && theMostWriteCommentsUserList.size() > 0) {
