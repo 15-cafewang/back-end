@@ -230,4 +230,19 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     @Query(value = "select * from recipe order by rand() limit 1"
     ,nativeQuery = true)
     Recipe findRandomRecipe();
+
+    @Query(value = "SELECT " +
+                    "        u.user_id AS user_id, " +
+                    "        u.nickname AS nickname, " +
+                    "        u.image AS profile, " +
+                    "        COUNT(r.recipe_id) AS post_count " +
+                    "FROM    recipe r, user u " +
+                    "WHERE   r.user_id = u.user_id " +
+                    "AND     r.reg_date BETWEEN :start AND :end " +
+                    "AND     u.status = 'Y' " +
+                    "GROUP BY user_id " +
+                    "ORDER BY post_count DESC, user_id " +
+                    "LIMIT    1 ", nativeQuery = true)
+    List<Object[]> findTheMostWrotePostsUser(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
 }
