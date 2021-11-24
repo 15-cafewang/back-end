@@ -26,7 +26,7 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     Page<Recipe> findRecipesOrderByLikeCountDesc(Pageable pageable);
 
     //  특정기간&인기레시피 - 원하는 칼럼만 가져오는 jpql
-    @Query("select r.id as recipeId, r.title as title, r.content as content , r.price as price " +
+    @Query("select r.id as recipeId, r.title as title, r.content as content , r.location as location " +
             "from Recipe r join r.recipeLikeList l " +
             "where l.regDate between :startDate and :endDate " +
             "group by r.id order by count(l.recipe) desc ")
@@ -41,7 +41,7 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 
     //특정기간&인기레시피 - id만 가져오기..top3..native sql
     @Query(value = "SELECT r.recipe_id " +
-            "FROM recipe r JOIN recipe_likes l ON r.recipe_id = l.recipe_id " +
+            "FROM recipe r JOIN recipe_like l ON r.recipe_id = l.recipe_id " +
             "WHERE l.reg_date BETWEEN :startDate AND :endDate " +
             "GROUP BY r.recipe_id order by count(l.recipe_id) desc limit 3",
             nativeQuery = true)

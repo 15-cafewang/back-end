@@ -115,7 +115,7 @@ public class RecipeService {
     }
     //여러장의 이미지를 db에 저장하는 기능
     public Recipe uploadManyImagesToDB(List<String> imageUrlList, PostRecipeRequestDto requestDto, User user){
-        Recipe recipe = new Recipe(requestDto.getTitle(),requestDto.getContent(),requestDto.getPrice(),user);
+        Recipe recipe = new Recipe(requestDto.getTitle(),requestDto.getContent(),requestDto.getLocation(),user);
         //디비에 이미지url저장
         if(imageUrlList!=null){
             List<RecipeImage> recipeImages = new ArrayList<>();
@@ -157,9 +157,9 @@ public class RecipeService {
         //이미지 외 다른 내용들 수정
         String title = requestDto.getTitle();
         String content = requestDto.getContent();
-        Integer price = requestDto.getPrice();
+        String location = requestDto.getLocation();
 
-        Recipe updatedRecipe = recipe.updateRecipe(title,content,price);
+        Recipe updatedRecipe = recipe.updateRecipe(title,content,location);
 
         //사진 다 수정되면 기존 사진 s3삭제 -> 중간에 작업하다가 익셉션 터지면 s3에 작업한 건 롤백이 안되니까 일부러 마지막에서 처리
         if(requestDto.getDeleteImage()!=null){
@@ -221,7 +221,7 @@ public class RecipeService {
         String content = recipe.getContent();
         LocalDateTime regDate = recipe.getRegDate();
         int likeCount = recipe.getRecipeLikeList().size();
-        Integer price = recipe.getPrice();
+        String location = recipe.getLocation();
         String profile = recipe.getUser().getImage();
         Optional<RecipeLike> foundRecipeLike = recipeLikesRepository.findByRecipeIdAndUserId(recipe.getId(),userDetails.getUser().getId());
         Boolean likeStatus = foundRecipeLike.isPresent();
@@ -233,7 +233,7 @@ public class RecipeService {
         recipe.getRecipeImagesList().forEach((recipeImage)->images.add(recipeImage.getImage()));
 
         RecipeDetailResponsetDto responsetDto = new RecipeDetailResponsetDto(
-                recipeId, nickname, title, content, regDate, likeCount, likeStatus, images, tagNames, price,profile);
+                recipeId, nickname, title, content, regDate, likeCount, likeStatus, images, tagNames, location,profile);
 
         return responsetDto;
     }
@@ -370,7 +370,7 @@ public class RecipeService {
     public List<RecipeRecommendResponseDto> getRecommendedRecipe(User user) {
 
         //0.현재 시간대 확인
-        List<LocalDateTime> timeZone = getTimeZone();
+        List<LocalDateTime> timeZone = getTimeZone(LocalDateTime.now());
 
         //1.해당 사용자의 기록이 존재하는지 체크
         System.out.println("시간확인:"+timeZone.get(0)+"//"+timeZone.get(1));
@@ -395,37 +395,53 @@ public class RecipeService {
         return List.of(responseDto);
     }
 
-    private List<LocalDateTime> getTimeZone() {
-        LocalDateTime morningStart = LocalDateTime.of(LocalDateTime.now().getYear(),
-                LocalDateTime.now().getMonth(),
-                LocalDateTime.now().getDayOfMonth(),
-                4,0,0,0);
-        LocalDateTime mornigEnd = LocalDateTime.of(LocalDateTime.now().getYear(),
-                LocalDateTime.now().getMonth(),
-                LocalDateTime.now().getDayOfMonth(),
+    public List<LocalDateTime> getTimeZone(LocalDateTime now) {
+
+        System.out.println("now.gethour:" + now.getHour());
+        System.out.println(now.getHour() < 5);
+        System.out.println(now);
+        System.out.println(now.minusDays(1L));
+        if( now.getHour() <5) now = now.minusDays(1L);
+
+        LocalDateTime morningStart = LocalDateTime.of(now.getYear(),
+                now.getMonth(),
+                now.getDayOfMonth(),
+                5,0,0,0);
+        LocalDateTime mornigEnd = LocalDateTime.of(now.getYear(),
+                now.getMonth(),
+                now.getDayOfMonth(),
                 11,0,0,0);
-        LocalDateTime lunchStart = LocalDateTime.of(LocalDateTime.now().getYear(),
-                LocalDateTime.now().getMonth(),
-                LocalDateTime.now().getDayOfMonth(),
+        LocalDateTime lunchStart = LocalDateTime.of(now.getYear(),
+                now.getMonth(),
+                now.getDayOfMonth(),
                 11,0,0,0);
-        LocalDateTime lunchEnd = LocalDateTime.of(LocalDateTime.now().getYear(),
-                LocalDateTime.now().getMonth(),
-                LocalDateTime.now().getDayOfMonth(),
-                15,0,0,0);
-        LocalDateTime otherStart = LocalDateTime.of(LocalDateTime.now().getYear(),
-                LocalDateTime.now().getMonth(),
-                LocalDateTime.now().getDayOfMonth(),
-                15,0,0,0);
-        LocalDateTime otherEnd = LocalDateTime.of(LocalDateTime.now().getYear(),
-                LocalDateTime.now().getMonth(),
-                LocalDateTime.now().getDayOfMonth()+1,
+        LocalDateTime lunchEnd = LocalDateTime.of(now.getYear(),
+                now.getMonth(),
+                now.getDayOfMonth(),
+                16,0,0,0);
+        LocalDateTime dinnerStart = LocalDateTime.of(now.getYear(),
+                now.getMonth(),
+                now.getDayOfMonth(),
+                16,0,0,0);
+        LocalDateTime dinnerEnd = LocalDateTime.of(now.getYear(),
+                now.getMonth(),
+                now.getDayOfMonth(),
+                20,0,0,0);
+        LocalDateTime nightStart = LocalDateTime.of(now.getYear(),
+                now.getMonth(),
+                now.getDayOfMonth(),
+                20,0,0,0);
+        LocalDateTime nightEnd = LocalDateTime.of(now.getYear(),
+                now.getMonth(),
+                now.getDayOfMonth()+1,
                 4,0,0,0);
 
-        LocalDateTime now = LocalDateTime.now();
+
 
         if(now.isAfter(morningStart) && now.isBefore(mornigEnd)) return Arrays.asList(morningStart,mornigEnd);
         else if(now.isAfter(lunchStart) && now.isBefore(lunchEnd))  return Arrays.asList(lunchStart,lunchEnd);
-        else return Arrays.asList(otherStart,otherEnd);
+        else if(now.isAfter(dinnerStart) && now.isBefore(dinnerEnd))  return Arrays.asList(dinnerStart,dinnerEnd);
+        else return Arrays.asList(nightStart,nightEnd);
 
     }
 }

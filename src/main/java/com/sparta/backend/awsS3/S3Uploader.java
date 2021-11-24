@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.sparta.backend.exception.CustomErrorException;
+import com.sparta.backend.exception.ImageNameTooLongException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -12,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,6 +27,11 @@ public class S3Uploader {
     private final String bucket = "99final";  // S3 버킷 이름
 
     public String upload(MultipartFile multipartFile, String dirName) throws IOException {
+        //dirName길이 제한.
+//        System.out.println("파일네임: "+multipartFile.getName());
+//        System.out.println("오리지날파일네임: "+multipartFile.getOriginalFilename());
+        if(Objects.requireNonNull(multipartFile.getOriginalFilename()).length() >300 ) throw new ImageNameTooLongException("사진 이름이 너무 깁니다.");
+
         File uploadFile = convert(multipartFile)  // 파일 변환할 수 없으면 에러
                 .orElseThrow(() -> new CustomErrorException("error: MultipartFile -> File convert fail")); //반환된 uploadFile은 로컬에 있는 사진위치임
 

@@ -50,13 +50,13 @@
 //        //given
 //        String title = "이것이 레시피다";
 //        String content = "내용입니다. 맛있다 냠냠냠";
-//        Integer price = 5000;
+//        Integer location = 5000;
 //        List<String> tag = Arrays.asList("가가,나나,다다");
 //        MockMultipartFile image1 = new MockMultipartFile("image", "imagefile.jpeg", "image/jpg", new FileInputStream("src/test/java/com/sparta/backend/images/puppy1.jpg"));
 //        MockMultipartFile[] image = {image1};
 //
 //        PostRecipeRequestDto requestDto = new PostRecipeRequestDto(
-//                title, content, price,tag, image
+//                title, content, location,tag, image
 //        );
 //
 //        //when
@@ -98,13 +98,13 @@
 //        //given
 //        String title = "이것이 레시피다";
 //        String content = "내용입니다. 맛있다 냠냠냠";
-//        Integer price = 5000;
+//        Integer location = 5000;
 //        List<String> tag = Arrays.asList("가가,나나,다다");
 //        MockMultipartFile image1 = new MockMultipartFile("image", "imagefile.jpeg", "image/jpg", new FileInputStream("src/test/java/com/sparta/backend/images/puppy1.jpg"));
 //        MockMultipartFile[] image = {image1};
 //
 //        PostRecipeRequestDto requestDto = new PostRecipeRequestDto(
-//                title, content, price,tag, image
+//                title, content, location,tag, image
 //        );
 //
 //        //when
@@ -120,7 +120,7 @@
 ////        assertEquals(tag,stringTags);
 ////        System.out.println(recipe.getRecipeImagesList());
 ////        assertEquals(1, recipe.getRecipeImagesList().size());
-//        assertEquals(price, recipe.getPrice());
+//        assertEquals(location, recipe.getlocation());
 //
 ////        recipeService.deleteRecipe(recipe.getId());
 //
@@ -134,14 +134,14 @@
 //        //given
 //        String title = "수정한 제목입니다";
 //        String content = "수정한 내용입니다. 맛있다 냠냠냠";
-//        Integer price = 5000;
+//        Integer location = 5000;
 //        List<String> tag = Arrays.asList("가가,나나,다다");
 //        MockMultipartFile image1 = new MockMultipartFile("image", "imagefile.jpeg", "image/jpg", new FileInputStream("src/test/java/com/sparta/backend/images/puppy1.jpg"));
 //        MockMultipartFile[] image = {image1};
 //        List<String> deleteimage = Arrays.asList("url1,url2");
 //
 //        PutRecipeRequestDto requestDto = new PutRecipeRequestDto(
-//                title, content, price,tag, image,deleteimage
+//                title, content, location,tag, image,deleteimage
 //        );
 //
 //        //when

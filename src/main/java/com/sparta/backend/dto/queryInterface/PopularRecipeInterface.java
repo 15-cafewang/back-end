@@ -4,5 +4,5 @@ public interface PopularRecipeInterface {
     Long getRecipeId();
     String getTitle();
     String getContent();
-    int getPrice();
+    int getlocation();
 }

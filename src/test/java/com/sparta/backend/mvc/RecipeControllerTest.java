@@ -278,10 +278,10 @@ public class RecipeControllerTest {
 //        //given
 //        String title = "제목입니다";
 //        String content = "내용입니다";
-//        Integer price = 5000;
+//        Integer location = 5000;
 //        List<String> tag = Arrays.asList("tagA","tagB");
 //        MultipartFile[] image = null;
-//        PostRecipeRequestDto requestDto = new PostRecipeRequestDto(title,content,price,tag, image);
+//        PostRecipeRequestDto requestDto = new PostRecipeRequestDto(title,content,location,tag, image);
 //
 //        //when
 //        Set<ConstraintViolation<PostRecipeRequestDto>> validate = validatorInjected.validate(requestDto);
