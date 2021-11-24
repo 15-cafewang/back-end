@@ -230,4 +230,5 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     @Query(value = "select * from recipe order by rand() limit 1"
     ,nativeQuery = true)
     Recipe findRandomRecipe();
+
 }

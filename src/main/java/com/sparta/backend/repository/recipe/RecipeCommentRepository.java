@@ -11,5 +11,4 @@ public interface RecipeCommentRepository extends JpaRepository<RecipeComment,Lon
     List<RecipeComment> findAllByRecipeIdOrderByRegDateDesc(Long recipeId);
 
     Page<RecipeComment> findAllByRecipeId(Long recipeId, Pageable pageable);
-
 }
