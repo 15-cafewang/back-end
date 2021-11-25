@@ -1,8 +1,8 @@
 package com.sparta.backend.dto.response.userinfo;
 
-import com.sparta.backend.domain.recipe.Recipe;
-import com.sparta.backend.domain.recipe.RecipeLike;
-import com.sparta.backend.repository.recipe.RecipeLikesRepository;
+import com.sparta.backend.domain.cafe.Cafe;
+import com.sparta.backend.domain.cafe.CafeLike;
+import com.sparta.backend.repository.cafe.CafeLikeRepository;
 import com.sparta.backend.security.UserDetailsImpl;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,19 +25,19 @@ public class GetRecipeListResponseDto {
     private int likeCount;
     private boolean likeStatus;
 
-    public GetRecipeListResponseDto(Recipe recipe,
+    public GetRecipeListResponseDto(Cafe cafe,
                                     UserDetailsImpl userDetails,
-                                    RecipeLikesRepository recipeLikesRepository) {
+                                    CafeLikeRepository cafeLikeRepository) {
 
-        this.recipeId = recipe.getId();
-        this.title = recipe.getTitle();
-        this.nickname = recipe.getUser().getNickname();
-        this.location = recipe.getLocation();
-        recipe.getRecipeImagesList().forEach(RecipeImage -> this.imageList.add(RecipeImage.getImage()));
-        this.likeCount = recipe.getRecipeLikeList().size();
+        this.recipeId = cafe.getId();
+        this.title = cafe.getTitle();
+        this.nickname = cafe.getUser().getNickname();
+        this.location = cafe.getLocation();
+        cafe.getCafeImagesList().forEach(RecipeImage -> this.imageList.add(RecipeImage.getImage()));
+        this.likeCount = cafe.getCafeLikeList().size();
 
-        Optional<RecipeLike> foundRecipeLike = recipeLikesRepository
-                .findByRecipeIdAndUserId(recipe.getId(), userDetails.getUser().getId());
+        Optional<CafeLike> foundRecipeLike = cafeLikeRepository
+                .findByCafeIdAndUserId(cafe.getId(), userDetails.getUser().getId());
         this.likeStatus = foundRecipeLike.isPresent();
     }
 

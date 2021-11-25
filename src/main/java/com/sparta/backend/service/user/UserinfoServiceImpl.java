@@ -2,13 +2,13 @@ package com.sparta.backend.service.user;
 
 import com.sparta.backend.domain.board.Board;
 import com.sparta.backend.domain.user.Follow;
-import com.sparta.backend.domain.recipe.Recipe;
+import com.sparta.backend.domain.cafe.Cafe;
 import com.sparta.backend.domain.user.User;
 import com.sparta.backend.dto.response.userinfo.*;
 import com.sparta.backend.repository.board.BoardLikesRepository;
 import com.sparta.backend.repository.board.BoardRepository;
-import com.sparta.backend.repository.recipe.RecipeLikesRepository;
-import com.sparta.backend.repository.recipe.RecipeRepository;
+import com.sparta.backend.repository.cafe.CafeLikeRepository;
+import com.sparta.backend.repository.cafe.CafeRepository;
 import com.sparta.backend.repository.user.FollowRepository;
 import com.sparta.backend.repository.user.UserRepository;
 import com.sparta.backend.security.UserDetailsImpl;
@@ -27,8 +27,8 @@ public class UserinfoServiceImpl implements UserinfoService {
 
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
-    private final RecipeRepository recipeRepository;
-    private final RecipeLikesRepository recipeLikesRepository;
+    private final CafeRepository cafeRepository;
+    private final CafeLikeRepository cafeLikeRepository;
     private final BoardRepository boardRepository;
     private final BoardLikesRepository boardLikesRepository;
 
@@ -80,9 +80,9 @@ public class UserinfoServiceImpl implements UserinfoService {
 
         User user = getUser(userDetails, nickname);
 
-        Page<Recipe> recipeList = recipeRepository.findAllByUser(pageable, user);
+        Page<Cafe> recipeList = cafeRepository.findAllByUser(pageable, user);
 
-        return recipeList.map((recipe -> new GetRecipeListResponseDto(recipe, userDetails, recipeLikesRepository)));
+        return recipeList.map((recipe -> new GetRecipeListResponseDto(recipe, userDetails, cafeLikeRepository)));
     }
 
     // 내가 쓴 게시글 목록 조회
@@ -117,9 +117,9 @@ public class UserinfoServiceImpl implements UserinfoService {
 
         User user = getUser(userDetails, nickname);
 
-        Page<Recipe> likedRecipeList = recipeRepository.findAllByRecipeLikesList(user.getId(), pageable);
+        Page<Cafe> likedRecipeList = cafeRepository.findAllByCafeLikesList(user.getId(), pageable);
 
-        return likedRecipeList.map(recipe -> new GetRecipeListResponseDto(recipe, userDetails, recipeLikesRepository));
+        return likedRecipeList.map(recipe -> new GetRecipeListResponseDto(recipe, userDetails, cafeLikeRepository));
     }
 
     // 내가 좋아요한 게시글 목록 조회
