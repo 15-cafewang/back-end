@@ -1,7 +1,7 @@
 package com.sparta.backend.controller;
 
 import com.sparta.backend.dto.response.CustomResponseDto;
-import com.sparta.backend.dto.response.GetThisWeekRankingResponseDto;
+import com.sparta.backend.dto.response.user.GetThisWeekRankingResponseDto;
 import com.sparta.backend.dto.response.user.GetKingsLastWeekResponseDto;
 import com.sparta.backend.exception.CustomErrorException;
 import com.sparta.backend.security.UserDetailsImpl;

@@ -1,6 +1,6 @@
 package com.sparta.backend.service;
 
-import com.sparta.backend.dto.response.GetThisWeekRankingResponseDto;
+import com.sparta.backend.dto.response.user.GetThisWeekRankingResponseDto;
 import com.sparta.backend.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
