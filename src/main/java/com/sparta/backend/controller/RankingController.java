@@ -47,7 +47,7 @@ public class RankingController {
     public ResponseEntity<?> getKingsLastWeek(@AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         checkLogin(userDetails);
-        List<GetKingsLastWeekResponseDto> responseDtoList = rankingService.getKingsLastWeek();
+        GetKingsLastWeekResponseDto responseDtoList = rankingService.getKingsLastWeek();
 
         if(responseDtoList != null) {
             return new ResponseEntity<>(
