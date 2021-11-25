@@ -82,15 +82,14 @@ public class RankingService {
     지난주 데이터가 아예 없을 때 : 빈 리스트로 리턴
     각 항목에서 공동 1등이 나왔을 때 : 먼저 가입한 사람이 우선
     */
-    public List<GetKingsLastWeekResponseDto> getKingsLastWeek() {
-        List<GetKingsLastWeekResponseDto> responseDtoList = new ArrayList<>();
+
+    public GetKingsLastWeekResponseDto getKingsLastWeek() {
 
         GetKingsLastWeekResponseDto responseDto =
                 new GetKingsLastWeekResponseDto(getMostLikes(), getMostFollows(),
                                                 getMostWrotePosts(), getMostWroteComments());
-        responseDtoList.add(responseDto);
 
-        return responseDtoList;
+        return responseDto;
 
     }
 
