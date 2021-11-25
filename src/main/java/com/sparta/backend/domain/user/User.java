@@ -5,9 +5,9 @@ import com.sparta.backend.domain.BaseEntity;
 import com.sparta.backend.domain.board.Board;
 import com.sparta.backend.domain.board.BoardComment;
 import com.sparta.backend.domain.board.BoardLike;
-import com.sparta.backend.domain.recipe.Recipe;
-import com.sparta.backend.domain.recipe.RecipeComment;
-import com.sparta.backend.domain.recipe.RecipeLike;
+import com.sparta.backend.domain.cafe.Cafe;
+import com.sparta.backend.domain.cafe.CafeComment;
+import com.sparta.backend.domain.cafe.CafeLike;
 
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -43,6 +43,7 @@ public class User extends BaseEntity {
     @Column(unique = true)
     private Long kakaoId;
 
+    @Column(length = 600)
     private String image;
 
     @Column(nullable = false)
@@ -50,15 +51,15 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonBackReference
-    private List<Recipe> recipeList;
+    private List<Cafe> cafeList;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonBackReference
-    private List<RecipeComment> recipeCommentList;
+    private List<CafeComment> cafeCommentList;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonBackReference
-    private List<RecipeLike> recipeLikeList;
+    private List<CafeLike> cafeLikeList;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonBackReference
