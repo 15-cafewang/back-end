@@ -17,21 +17,21 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByKakaoId(Long kakaoId);
 
-    @Query(value = "select nickname, image, count(likes_id) cnt " +
+    @Query(value = "select nickname, image, count(cafe_like_id) cnt " +
             "from user u " +
-            "join recipe r on u.user_id = r.user_id " +
-            "join recipe_like rl on r.recipe_id = rl.recipe_id " +
-            "where rl.reg_date between :startDate and :endDate " +
+            "join cafe c on u.user_id = c.user_id " +
+            "join cafe_like cl on c.cafe_id = cl.cafe_id " +
+            "where cl.reg_date between :startDate and :endDate " +
             "group by nickname " +
             "order by cnt desc limit 3",
             nativeQuery = true)
     List<Object[]> findTop3ByMostLiked(@Param("startDate") LocalDateTime startDate,
                                        @Param("endDate") LocalDateTime endDate);
 
-    @Query(value = "select nickname, image, count(recipe_id) cnt " +
+    @Query(value = "select nickname, image, count(cafe_id) cnt " +
             "from user u " +
-            "join recipe r on u.user_id = r.user_id " +
-            "where r.reg_date between :startDate and :endDate " +
+            "join cafe c on u.user_id = c.user_id " +
+            "where c.reg_date between :startDate and :endDate " +
             "group by nickname " +
             "order by cnt desc limit 3",
             nativeQuery = true)
@@ -48,10 +48,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<Object[]> findTop3ByMostFollow(@Param("startDate") LocalDateTime startDate,
                                         @Param("endDate") LocalDateTime endDate);
 
-    @Query(value = "select nickname, image, count(comment_id) cnt " +
+    @Query(value = "select nickname, image, count(cafe_comment_id) cnt " +
             "from user u " +
-            "join recipe_comment rc on u.user_id = rc.user_id " +
-            "where rc.reg_date between :startDate and :endDate " +
+            "join cafe_comment cc on u.user_id = cc.user_id " +
+            "where cc.reg_date between :startDate and :endDate " +
             "group by nickname " +
             "order by cnt desc limit 3",
             nativeQuery = true)
@@ -62,13 +62,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "         u.user_id AS user_id, " +
             "         u.nickname AS nickname, " +
             "         u.image AS profile, " +
-            "         COUNT(rl.user_id) AS like_count " +
-            "FROM     recipe_like rl, recipe r, user u " +
-            "WHERE    rl.recipe_id = r.recipe_id " +
-            "AND      r.user_id = u.user_id " +
-            "AND      rl.reg_date BETWEEN :start AND :end " +
+            "         COUNT(cl.user_id) AS like_count " +
+            "FROM     cafe_like cl, cafe c, user u " +
+            "WHERE    cl.cafe_id = c.cafe_id " +
+            "AND      c.user_id = u.user_id " +
+            "AND      cl.reg_date BETWEEN :start AND :end " +
             "AND     u.status = 'Y' " +
-            "GROUP BY rl.recipe_id " +
+            "GROUP BY cl.cafe_id " +
             "ORDER BY like_count DESC, user_id " +
             "LIMIT    1 ", nativeQuery = true)
     List<Object[]> findTheMostLikedUser(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
@@ -92,10 +92,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "        u.user_id AS user_id, " +
             "        u.nickname AS nickname, " +
             "        u.image AS profile, " +
-            "        COUNT(r.recipe_id) AS post_count " +
-            "FROM    recipe r, user u " +
-            "WHERE   r.user_id = u.user_id " +
-            "AND     r.reg_date BETWEEN :start AND :end " +
+            "        COUNT(c.cafe_id) AS post_count " +
+            "FROM    cafe c, user u " +
+            "WHERE   c.user_id = u.user_id " +
+            "AND     c.reg_date BETWEEN :start AND :end " +
             "AND     u.status = 'Y' " +
             "GROUP BY user_id " +
             "ORDER BY post_count DESC, user_id " +
@@ -107,10 +107,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "        u.user_id AS user_id, " +
             "        u.nickname AS nickname, " +
             "        u.image AS profile, " +
-            "        COUNT(rc.comment_id) AS comment_count " +
-            "FROM    user u, recipe_comment rc " +
-            "WHERE   u.user_id = rc.user_id " +
-            "AND     rc.reg_date BETWEEN :start AND :end " +
+            "        COUNT(cc.cafe_comment_id) AS comment_count " +
+            "FROM    user u, cafe_comment cc " +
+            "WHERE   u.user_id = cc.user_id " +
+            "AND     cc.reg_date BETWEEN :start AND :end " +
             "AND     u.status = 'Y' " +
             "GROUP BY user_id " +
             "ORDER BY comment_count DESC, user_id " +
