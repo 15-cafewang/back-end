@@ -13,9 +13,9 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 public class CafeImage extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "image_id")
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "cafe_image_id")
     private Long id;
 
     @Column(length = 600)
@@ -30,11 +30,7 @@ public class CafeImage extends BaseEntity {
         this.image = image;
         this.cafe = cafe;
 
-//        addRecipeImage(this);
     }
-//    public void addRecipeImage(RecipeImage recipeImage){
-//        recipe.getRecipeImagesList().add(recipeImage);
-//    }
 
     public CafeImage updateCafeImage(String image, Cafe cafe){
         this.image = image;

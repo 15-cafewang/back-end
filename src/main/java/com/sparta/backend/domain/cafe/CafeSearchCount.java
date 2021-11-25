@@ -11,6 +11,7 @@ import javax.persistence.*;
 public class CafeSearchCount extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "cafe_search_count_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
