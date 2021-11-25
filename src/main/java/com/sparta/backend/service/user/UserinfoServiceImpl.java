@@ -5,7 +5,7 @@ import com.sparta.backend.domain.user.Follow;
 import com.sparta.backend.domain.cafe.Cafe;
 import com.sparta.backend.domain.user.User;
 import com.sparta.backend.dto.response.userinfo.*;
-import com.sparta.backend.repository.board.BoardLikesRepository;
+import com.sparta.backend.repository.board.BoardLikeRepository;
 import com.sparta.backend.repository.board.BoardRepository;
 import com.sparta.backend.repository.cafe.CafeLikeRepository;
 import com.sparta.backend.repository.cafe.CafeRepository;
@@ -30,7 +30,7 @@ public class UserinfoServiceImpl implements UserinfoService {
     private final CafeRepository cafeRepository;
     private final CafeLikeRepository cafeLikeRepository;
     private final BoardRepository boardRepository;
-    private final BoardLikesRepository boardLikesRepository;
+    private final BoardLikeRepository boardLikeRepository;
 
     // 마이페이지
     @Override
@@ -100,7 +100,7 @@ public class UserinfoServiceImpl implements UserinfoService {
 
         Page<Board> boardList = boardRepository.findAllByUser(pageable, user);
 
-        return boardList.map((board -> new GetBoardListResponseDto(board, userDetails, boardLikesRepository)));
+        return boardList.map((board -> new GetBoardListResponseDto(board, userDetails, boardLikeRepository)));
     }
 
     // TODO: N+1 문제 해결
@@ -137,7 +137,7 @@ public class UserinfoServiceImpl implements UserinfoService {
 
         Page<Board> likedBoardList = boardRepository.findAllByBoardLikesList(user.getId(), pageable);
 
-        return likedBoardList.map(board -> new GetBoardListResponseDto(board, userDetails, boardLikesRepository));
+        return likedBoardList.map(board -> new GetBoardListResponseDto(board, userDetails, boardLikeRepository));
     }
 
     // 팔로잉 목록 조회

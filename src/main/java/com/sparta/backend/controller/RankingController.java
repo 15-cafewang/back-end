@@ -5,7 +5,7 @@ import com.sparta.backend.dto.response.user.GetThisWeekRankingResponseDto;
 import com.sparta.backend.dto.response.user.GetKingsLastWeekResponseDto;
 import com.sparta.backend.exception.CustomErrorException;
 import com.sparta.backend.security.UserDetailsImpl;
-import com.sparta.backend.service.RankingService;
+import com.sparta.backend.service.user.RankingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -2,7 +2,7 @@ package com.sparta.backend.dto.response.board;
 
 import com.sparta.backend.domain.board.BoardComment;
 import com.sparta.backend.domain.board.BoardCommentLike;
-import com.sparta.backend.repository.board.BoardCommentLikesRepository;
+import com.sparta.backend.repository.board.BoardCommentLikeRepository;
 import com.sparta.backend.security.UserDetailsImpl;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,7 +25,7 @@ public class GetBoardCommentResponseDto {
     private boolean likeStatus;
 
     public GetBoardCommentResponseDto(BoardComment boardComment,
-                                      BoardCommentLikesRepository boardCommentLikesRepository,
+                                      BoardCommentLikeRepository boardCommentLikeRepository,
                                       UserDetailsImpl userDetails) {
         this.commentId = boardComment.getId();
         this.boardId = boardComment.getBoard().getId();
@@ -37,7 +37,7 @@ public class GetBoardCommentResponseDto {
         this.likeCount = boardComment.getBoardCommentLikeList() == null ?
                                                     0 : boardComment.getBoardCommentLikeList().size();
         BoardCommentLike boardCommentLikeList =
-                boardCommentLikesRepository.findByBoardCommentAndUser(boardComment, userDetails.getUser());
+                boardCommentLikeRepository.findByBoardCommentAndUser(boardComment, userDetails.getUser());
         this.likeStatus = boardCommentLikeList != null;
 
     }

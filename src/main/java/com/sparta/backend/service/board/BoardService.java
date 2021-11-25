@@ -13,7 +13,7 @@ import com.sparta.backend.dto.response.board.GetBoardDetailResponseDto;
 import com.sparta.backend.dto.response.board.GetBoardResponseDto;
 import com.sparta.backend.exception.CustomErrorException;
 import com.sparta.backend.repository.board.BoardImageRepository;
-import com.sparta.backend.repository.board.BoardLikesRepository;
+import com.sparta.backend.repository.board.BoardLikeRepository;
 import com.sparta.backend.repository.board.BoardRepository;
 import com.sparta.backend.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
     private final BoardImageRepository boardImageRepository;
-    private final BoardLikesRepository boardLikesRepository;
+    private final BoardLikeRepository boardLikeRepository;
     private final S3Uploader s3Uploader;
     private final AmazonS3Client amazonS3Client;
     private final String bucket = "99final";
@@ -106,7 +106,7 @@ public class BoardService {
 
         // Page<Board> -> Page<Dto> 로 변환
         Page<GetBoardResponseDto> responseDtoList = boardList.map(board ->
-                new GetBoardResponseDto(board, currentLoginUser, boardLikesRepository));
+                new GetBoardResponseDto(board, currentLoginUser, boardLikeRepository));
 
         return responseDtoList;
     }
@@ -136,7 +136,7 @@ public class BoardService {
                 }
             }
             int likeCount = board.getBoardLikeList().size();
-            BoardLike boardLike = boardLikesRepository.findByBoardAndUser(board, currentLoginUser);
+            BoardLike boardLike = boardLikeRepository.findByBoardAndUser(board, currentLoginUser);
             boolean likeStatus = boardLike != null;
 
             responseDto = new GetBoardDetailResponseDto(boardId, title, nickname, profile, regDate,
@@ -238,7 +238,7 @@ public class BoardService {
 
         //Page<Board> -> Page<Dto> 로 변환
         Page<GetBoardResponseDto> responseDtoList = boardList.map(board ->
-                new GetBoardResponseDto(board, currentLoginUser, boardLikesRepository));
+                new GetBoardResponseDto(board, currentLoginUser, boardLikeRepository));
 
         return responseDtoList;
     }
