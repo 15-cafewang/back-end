@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-public class BoardCommentLikesController {
+public class BoardCommentLikeController {
 
     private final BoardCommentLikeService boardCommentLikeService;
 

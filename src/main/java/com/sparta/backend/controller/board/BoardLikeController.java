@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-public class BoardLikesController {
+public class BoardLikeController {
 
     private final BoardLikeService boardLikeService;
 
