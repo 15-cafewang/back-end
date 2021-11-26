@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public class GetKingsLastWeekResponseDto {
     private GetKingUserInfoLastWeekResponseDto getLikeKing;
-    private GetKingUserInfoLastWeekResponseDto geFollowKing;
-    private GetKingUserInfoLastWeekResponseDto gePostKing;
+    private GetKingUserInfoLastWeekResponseDto getFollowKing;
+    private GetKingUserInfoLastWeekResponseDto getPostKing;
     private GetKingUserInfoLastWeekResponseDto getCommentKing;
 }

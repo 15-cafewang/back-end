@@ -14,9 +14,9 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 public class BoardCommentLike extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "likes_id")
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "board_comment_like_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

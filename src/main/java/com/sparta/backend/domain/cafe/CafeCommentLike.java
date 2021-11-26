@@ -1,21 +1,18 @@
-package com.sparta.backend.domain.board;
+package com.sparta.backend.domain.cafe;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.sparta.backend.domain.BaseEntity;
 import com.sparta.backend.domain.user.User;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import javax.persistence.*;
 
-@ToString(exclude = {"user", "board"})
-@Getter
 @NoArgsConstructor
 @Entity
-public class BoardLike {
+public class CafeCommentLike extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "board_like_id")
+    @Column(name = "cafe_comment_like_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -25,11 +22,11 @@ public class BoardLike {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonManagedReference
-    @JoinColumn(name = "board_id")
-    private Board board;
+    @JoinColumn(name = "cafe_comment_id")
+    private CafeComment cafeComment;
 
-    public BoardLike(User user, Board board) {
+    public CafeCommentLike(User user, CafeComment cafeComment){
+        this.cafeComment = cafeComment;
         this.user = user;
-        this.board = board;
     }
 }

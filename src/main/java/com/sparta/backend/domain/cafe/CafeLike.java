@@ -1,6 +1,7 @@
-package com.sparta.backend.domain.board;
+package com.sparta.backend.domain.cafe;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.sparta.backend.domain.BaseEntity;
 import com.sparta.backend.domain.user.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,14 +9,14 @@ import lombok.ToString;
 
 import javax.persistence.*;
 
-@ToString(exclude = {"user", "board"})
+@ToString(exclude = {"user", "cafe"})
 @Getter
 @NoArgsConstructor
 @Entity
-public class BoardLike {
+public class CafeLike extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "board_like_id")
+    @Column(name = "cafe_like_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -25,11 +26,11 @@ public class BoardLike {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonManagedReference
-    @JoinColumn(name = "board_id")
-    private Board board;
+    @JoinColumn(name = "cafe_id")
+    private Cafe cafe;
 
-    public BoardLike(User user, Board board) {
+    public CafeLike(User user, Cafe cafe){
+        this.cafe = cafe;
         this.user = user;
-        this.board = board;
     }
 }
