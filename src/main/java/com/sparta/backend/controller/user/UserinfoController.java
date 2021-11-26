@@ -35,7 +35,7 @@ public class UserinfoController {
     }
 
     // 내가 쓴 카페 목록 조회
-    @GetMapping("/userinfo/recipes/{nickname}")
+    @GetMapping("/userinfo/cafes/{nickname}")
     public ResponseEntity<?> getRecipeList(@RequestParam("page") int page,
                                            @RequestParam("size") int size,
                                            @RequestParam("isAsc") boolean isAsc,
@@ -71,7 +71,7 @@ public class UserinfoController {
     }
 
     // 내가 좋아요한 카페 목록 조회
-    @GetMapping("/userinfo/recipes/likes/{nickname}")
+    @GetMapping("/userinfo/cafes/likes/{nickname}")
     public ResponseEntity<?> getLikedRecipeList(@RequestParam("page") int page,
                                                @RequestParam("size") int size,
                                                @RequestParam("isAsc") boolean isAsc,
