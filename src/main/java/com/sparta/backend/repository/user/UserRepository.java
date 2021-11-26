@@ -116,4 +116,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "ORDER BY comment_count DESC, user_id " +
             "LIMIT    1 ", nativeQuery = true)
     List<Object[]> findTheMostWroteCommentsUser(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    @Query(value = "update user set rangking_status = 0", nativeQuery = true)
+    void initRankingStatus();
 }

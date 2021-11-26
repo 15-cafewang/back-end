@@ -48,6 +48,8 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String status;
 
+    private int rankingStatus;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonBackReference
     private List<Cafe> cafeList;
@@ -129,5 +131,9 @@ public class User extends BaseEntity {
 
     public void deleteUser(String status) {
         this.status = status;
+    }
+
+    public void changeRankingStatus(int rankingStatus) {
+        this.rankingStatus = rankingStatus;
     }
 }
