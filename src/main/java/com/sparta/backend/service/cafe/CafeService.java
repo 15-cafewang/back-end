@@ -65,7 +65,7 @@ public class CafeService {
         this.tagRepository = tagRepository;
     }
 
-    //레시피 저장
+    //카페 저장
     public Cafe saveCafe(CafeRequestDto requestDto, User user) throws IOException {
 
         List<String> imageUrlList= requestDto.getImage()[0].getSize() == 0L? null :uploadManyImagesToS3(requestDto, "cafeImage");
@@ -73,7 +73,7 @@ public class CafeService {
         return cafeRepository.save(cafe);
     }
 
-    //레시피 삭제, 이미지도 삭제
+    //카페 삭제, 이미지도 삭제
     public void deleteCafe(Long cafeId) {
         Cafe foundCafe = cafeRepository.findById(cafeId).orElseThrow(()->
                 new CustomErrorException("해당 아이디가 존재하지 않습니다")
@@ -127,7 +127,7 @@ public class CafeService {
         return cafe;
     }
 
-    //레시피 수정
+    //카페 수정
     //todo: 문제점: 중간에 익셉션 터져서 롤백한 상황이라면, S3에서 수정한건 롤백이 안된다.
     @Transactional
     public Cafe updateCafe(Long cafeId, CafePutRequestDto requestDto) throws IOException {
@@ -209,7 +209,7 @@ public class CafeService {
         }
     }
 
-    //레시피 상세조회
+    //카페 상세조회
     public CafeDetailResponsetDto getCafeDetail(Long cafeId, UserDetailsImpl userDetails) {
         Cafe cafe = cafeRepository.findById(cafeId).orElseThrow(()->
                 new CustomErrorException("해당 게시물이 존재하지 않습니다"));
@@ -385,7 +385,7 @@ public class CafeService {
                 : cafeRepository.findRecommendingTagNameBasedAll(timeZone.get(0), timeZone.get(1));
         System.out.println("태그네임: "+foundTagName);
 
-        //3.추출된 태그로 레시피id추출
+        //3.추출된 태그로 카페id추출
         Long foundCafeId = cafeRepository.findRecommendingCafeIdByTagName(foundTagName);
         //foundCafeId == null인 경우: 내가 검색한 태그명으로 나를 포함한 누구도 상세조회, 좋아요를 하지 않은 경우
         Cafe recommendedCafe = (foundCafeId == null)? cafeRepository.findRandomCafe()

@@ -11,7 +11,7 @@
 //
 //class RecipeCommentTest {
 //    @Nested
-//    @DisplayName("레시피 댓글 객체 생성")
+//    @DisplayName("카페 댓글 객체 생성")
 //    class CreateRecipeComment{
 //        private String content;
 //        private User recipeOwner;

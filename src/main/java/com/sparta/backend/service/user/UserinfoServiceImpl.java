@@ -67,7 +67,7 @@ public class UserinfoServiceImpl implements UserinfoService {
         return new GetUserinfoResponseDto(image, nickname, followCount, followingCount, followStatus);
     }
 
-    // 내가 쓴 레시피 목록 조회
+    // 내가 쓴 카페 목록 조회
     @Override
     public Page<GetRecipeListResponseDto> getRecipeListByPage(int page,
                                                               int size,
@@ -104,7 +104,7 @@ public class UserinfoServiceImpl implements UserinfoService {
     }
 
     // TODO: N+1 문제 해결
-    // 내가 좋아요한 레시피 목록 조회
+    // 내가 좋아요한 카페 목록 조회
     @Override
     public Page<GetRecipeListResponseDto> getLikedRecipeListByPage(int page,
                                                                    int size,

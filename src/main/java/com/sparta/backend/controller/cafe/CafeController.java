@@ -30,55 +30,55 @@ public class CafeController {
     private final CafeService cafeService;
     private final TagService tagService;
 
-    //레시피 등록
+    //카페 등록
     @PostMapping("/cafes")
     public ResponseEntity<?> postCafe(CafeRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         //todo:IOException처리
         checkLogin(userDetails);
         PostCafeRequestDtoValidator.validateCafeInput(requestDto);
 
-//        레시피 먼저 생성, 등록
+//        카페 먼저 생성, 등록
         Cafe savedCafe = cafeService.saveCafe(requestDto, userDetails.getUser());
-//        태그 등록할때 저장한 레시피객체도 넣어줌
+//        태그 등록할때 저장한 카페객체도 넣어줌
         tagService.saveTags(requestDto.getTag(), savedCafe);
 
-        return new ResponseEntity<>(new CustomResponseDto<>(1, "레시피 등록 성공", ""), HttpStatus.OK);
+        return new ResponseEntity<>(new CustomResponseDto<>(1, "카페 등록 성공", ""), HttpStatus.OK);
     }
 
-    //레시피 수정
+    //카페 수정
     @PutMapping("/cafes/{cafeId}")
     public ResponseEntity<?> updateCafe(@PathVariable Long cafeId, CafePutRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         //todo:IOException처리
         checkLogin(userDetails);
         checkOwnership(cafeId, userDetails);
 
-        //레시피 업데이트
+        //카페 업데이트
         Cafe updatedCafe = cafeService.updateCafe(cafeId,requestDto);
         //태그 업데이트
         tagService.updateTags(requestDto.getTag(), updatedCafe);
 
-        return new ResponseEntity<>(new CustomResponseDto<>(1, "레시피 수정 성공", ""),HttpStatus.OK);
+        return new ResponseEntity<>(new CustomResponseDto<>(1, "카페 수정 성공", ""),HttpStatus.OK);
     }
 
-    //레시피 삭제
+    //카페 삭제
     @DeleteMapping("cafes/{cafeId}")
     public ResponseEntity<?> deleteRecipe(@PathVariable Long cafeId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         checkLogin(userDetails);
         checkOwnership(cafeId, userDetails);
 
         cafeService.deleteCafe(cafeId);
-        return new ResponseEntity<>(new CustomResponseDto<>(1, "레시피 삭제 성공", ""),HttpStatus.OK);
+        return new ResponseEntity<>(new CustomResponseDto<>(1, "카페 삭제 성공", ""),HttpStatus.OK);
     }
 
-    //레시피 상세조회
+    //카페 상세조회
     @GetMapping("cafes/{cafeId}")
     public ResponseEntity<?> getCafeDetail(@PathVariable Long cafeId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         checkLogin(userDetails);
         CafeDetailResponsetDto cafeDetailResponsetDto = cafeService.getCafeDetail(cafeId, userDetails);
-        return new ResponseEntity<>(new CustomResponseDto<>(1, "레시피 조회 성공", cafeDetailResponsetDto),HttpStatus.OK);
+        return new ResponseEntity<>(new CustomResponseDto<>(1, "카페 조회 성공", cafeDetailResponsetDto),HttpStatus.OK);
     }
 
-    //레시피 목록조회
+    //카페 목록조회
     @GetMapping("cafes/list")
     public ResponseEntity<?> getCafes(@RequestParam("page") int page,
                                            @RequestParam("size") int size,
@@ -89,10 +89,10 @@ public class CafeController {
         checkLogin(userDetails);
         page = page-1;
         Page<CafeListResponseDto> cafesByPage = cafeService.getCafesByPage(page, size, isAsc, sortBy,sortByLike, userDetails);
-        return new ResponseEntity<>(new CustomResponseDto<>(1, "레시피 리스트 성공", cafesByPage),HttpStatus.OK);
+        return new ResponseEntity<>(new CustomResponseDto<>(1, "카페 리스트 성공", cafesByPage),HttpStatus.OK);
     }
 
-    //레시피 좋아요 등록/취소
+    //카페 좋아요 등록/취소
     @GetMapping("cafes/likes/{postId}")
     public ResponseEntity<?> likeCafe(@PathVariable Long postId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         checkLogin(userDetails);
@@ -100,7 +100,7 @@ public class CafeController {
         return new ResponseEntity<>(new CustomResponseDto<>(1, resultMessage,""),HttpStatus.OK);
     }
 
-    //레시피 검색
+    //카페 검색
     @GetMapping("/search/cafe")
     public ResponseEntity<?> searchCafe(@RequestParam("keyword") String keyword,
                                              @RequestParam("withTag") boolean withTag,
@@ -111,7 +111,7 @@ public class CafeController {
                                              @AuthenticationPrincipal UserDetailsImpl userDetails){
         checkLogin(userDetails);
         Page<CafeListResponseDto> cafeByPage= cafeService.searchCafe(withTag,keyword, page, size, isAsc, sortBy,userDetails);
-        return new ResponseEntity<>(new CustomResponseDto<>(1, "레시피 리스트 성공", cafeByPage),HttpStatus.OK);
+        return new ResponseEntity<>(new CustomResponseDto<>(1, "카페 리스트 성공", cafeByPage),HttpStatus.OK);
     }
 
     private void checkLogin(@AuthenticationPrincipal UserDetailsImpl userDetails) {
