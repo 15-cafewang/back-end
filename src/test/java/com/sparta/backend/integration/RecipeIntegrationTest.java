@@ -45,10 +45,10 @@
 //
 //    @Test
 //    @Order(1)
-//    @DisplayName("회원가입 없이 레시피 저장하면 에러발생")
+//    @DisplayName("회원가입 없이 카페 저장하면 에러발생")
 //    void test1() throws IOException {
 //        //given
-//        String title = "이것이 레시피다";
+//        String title = "이것이 카페다";
 //        String content = "내용입니다. 맛있다 냠냠냠";
 //        Integer location = 5000;
 //        List<String> tag = Arrays.asList("가가,나나,다다");
@@ -93,10 +93,10 @@
 //
 //    @Test
 //    @Order(3)
-//    @DisplayName("가입한 회원 Id 로 레시피 등록")
+//    @DisplayName("가입한 회원 Id 로 카페 등록")
 //    void test3() throws IOException {
 //        //given
-//        String title = "이것이 레시피다";
+//        String title = "이것이 카페다";
 //        String content = "내용입니다. 맛있다 냠냠냠";
 //        Integer location = 5000;
 //        List<String> tag = Arrays.asList("가가,나나,다다");
@@ -129,7 +129,7 @@
 //
 //    @Test
 //    @Order(4)
-//    @DisplayName("방금 등록한 레시피 수정업로드")
+//    @DisplayName("방금 등록한 카페 수정업로드")
 //    void test4() throws IOException {
 //        //given
 //        String title = "수정한 제목입니다";

@@ -34,7 +34,7 @@ public class UserinfoController {
                 new CustomResponseDto<>(1, "마이페이지 조회 성공", responseDto), HttpStatus.OK);
     }
 
-    // 내가 쓴 레시피 목록 조회
+    // 내가 쓴 카페 목록 조회
     @GetMapping("/userinfo/recipes/{nickname}")
     public ResponseEntity<?> getRecipeList(@RequestParam("page") int page,
                                            @RequestParam("size") int size,
@@ -49,7 +49,7 @@ public class UserinfoController {
                 .getRecipeListByPage(page, size, isAsc, sortBy, nickname, userDetails);
 
         return new ResponseEntity<>(
-                new CustomResponseDto<>(1, "레시피 목록 조회 성공", recipeList), HttpStatus.OK);
+                new CustomResponseDto<>(1, "카페 목록 조회 성공", recipeList), HttpStatus.OK);
     }
 
     // 내가 쓴 게시글 목록 조회
@@ -70,7 +70,7 @@ public class UserinfoController {
                 new CustomResponseDto<>(1, "게시글 목록 조회 성공", boardList), HttpStatus.OK);
     }
 
-    // 내가 좋아요한 레시피 목록 조회
+    // 내가 좋아요한 카페 목록 조회
     @GetMapping("/userinfo/recipes/likes/{nickname}")
     public ResponseEntity<?> getLikedRecipeList(@RequestParam("page") int page,
                                                @RequestParam("size") int size,
@@ -85,7 +85,7 @@ public class UserinfoController {
                 .getLikedRecipeListByPage(page, size, isAsc, sortBy, nickname, userDetails);
 
         return new ResponseEntity<>(
-                new CustomResponseDto<>(1, "좋아요한 레시피 목록 조회 성공", likedRecipeList), HttpStatus.OK);
+                new CustomResponseDto<>(1, "좋아요한 카페 목록 조회 성공", likedRecipeList), HttpStatus.OK);
     }
 
     // 내가 좋아요한 게시글 목록 조회

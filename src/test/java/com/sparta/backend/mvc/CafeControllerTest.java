@@ -84,7 +84,7 @@ public class CafeControllerTest {
     @DisplayName("정상 케이스")
     class SuccessCases {
 //        @Test
-//        @DisplayName("일반적인 레시피 등록")
+//        @DisplayName("일반적인 카페 등록")
 //        void saveRecipe() throws Exception {
 //            mockUserSetup();
 //            MockMultipartFile image = new MockMultipartFile("image", "imagefile.jpeg", "image/jpg", new FileInputStream("src/test/java/com/sparta/backend/images/puppy1.jpg"));
@@ -273,7 +273,7 @@ public class CafeControllerTest {
 
 
 //    @Test
-//    @DisplayName("레시피등록-validator")
+//    @DisplayName("카페등록-validator")
 //    void validTest(){
 //        //given
 //        String title = "제목입니다";
@@ -295,7 +295,7 @@ public class CafeControllerTest {
 //            System.out.println("message = " + next.getMessage());
 //        }
 //
-//        Assertions.assertThat(messages).contains("제목은 필수 입력 값입니다.","레시피 형식에 맞지 않음");
+//        Assertions.assertThat(messages).contains("제목은 필수 입력 값입니다.","카페 형식에 맞지 않음");
 //        assertEquals("제목이 입력되지 않았습니다.",  exception.getMessage());
 //    }
 }

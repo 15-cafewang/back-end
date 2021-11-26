@@ -21,26 +21,26 @@ import java.util.List;
 public class MainpageController {
     private final CafeService cafeService;
 
-    //인기레시피 요청
+    //인기카페 요청
     @GetMapping("/main/popular")
     public ResponseEntity<?> getPopularCafe(@RequestParam("sortBy") String sortBy, @AuthenticationPrincipal UserDetailsImpl userDetails){
         checkLogin(userDetails);
         List<CafeListResponseDto> cafes = cafeService.getPopularCafe(sortBy,userDetails.getUser());
-        return new ResponseEntity<>(new CustomResponseDto<>(1, "인기레시피 top3 조회완료" ,cafes),HttpStatus.OK);
+        return new ResponseEntity<>(new CustomResponseDto<>(1, "인기카페 top3 조회완료" ,cafes),HttpStatus.OK);
     }
 
     @GetMapping("/main/recent")
     public ResponseEntity<?> getRecentCafe(@AuthenticationPrincipal UserDetailsImpl userDetails){
         checkLogin(userDetails);
         List<CafeListResponseDto> cafes = cafeService.getRecentCafe(userDetails.getUser());
-        return new ResponseEntity<>(new CustomResponseDto<>(1, "최근레시피 top3 조회완료" ,cafes),HttpStatus.OK);
+        return new ResponseEntity<>(new CustomResponseDto<>(1, "최근카페 top3 조회완료" ,cafes),HttpStatus.OK);
     }
 
     @GetMapping("/main/recommend")
     public ResponseEntity<?> getRecommendedCafe(@AuthenticationPrincipal UserDetailsImpl userDetails){
         checkLogin(userDetails);
         List<CafeRecommendResponseDto> cafes = cafeService.getRecommendedCafe(userDetails.getUser());
-        return new ResponseEntity<>(new CustomResponseDto<>(1, "추천레시피 조회완료",cafes),HttpStatus.OK);
+        return new ResponseEntity<>(new CustomResponseDto<>(1, "추천카페 조회완료",cafes),HttpStatus.OK);
     }
 
     private void checkLogin(@AuthenticationPrincipal UserDetailsImpl userDetails) {
