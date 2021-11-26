@@ -10,12 +10,12 @@ public interface UserinfoService {
     GetUserinfoResponseDto getUserInfo(UserDetailsImpl userDetails, String nickname);
 
     // 내가 쓴 카페 목록 조회
-    Page<GetRecipeListResponseDto> getRecipeListByPage(int page,
-                                                       int size,
-                                                       boolean isAsc,
-                                                       String sortBy,
-                                                       String nickname,
-                                                       UserDetailsImpl userDetails);
+    Page<GetCafeListResponseDto> getRecipeListByPage(int page,
+                                                     int size,
+                                                     boolean isAsc,
+                                                     String sortBy,
+                                                     String nickname,
+                                                     UserDetailsImpl userDetails);
 
     // 내가 쓴 게시글 목록 조회
     Page<GetBoardListResponseDto> getBoardListByPage(int page,
@@ -26,12 +26,12 @@ public interface UserinfoService {
                                                      UserDetailsImpl userDetails);
 
     // 내가 좋아요한 카페 목록 조회
-    Page<GetRecipeListResponseDto> getLikedRecipeListByPage(int page,
-                                                            int size,
-                                                            boolean isAsc,
-                                                            String sortBy,
-                                                            String nickname,
-                                                            UserDetailsImpl userDetails);
+    Page<GetCafeListResponseDto> getLikedRecipeListByPage(int page,
+                                                          int size,
+                                                          boolean isAsc,
+                                                          String sortBy,
+                                                          String nickname,
+                                                          UserDetailsImpl userDetails);
 
     // 내가 좋아요한 게시글 목록 조회
     Page<GetBoardListResponseDto> getLikedBoardListByPage(int page,
