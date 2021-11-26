@@ -21,25 +21,25 @@ public interface CafeRepository extends JpaRepository<Cafe, Long> {
     @Query("select r from Cafe r where r.title like concat('%',:keyword,'%') or r.content like concat('%',:keyword,'%')")
     Page<Cafe> findAllByTitleOrContent(String keyword, Pageable pageable);
 
-    //레시피 목록조회 좋아요 순
+    //카페 목록조회 좋아요 순
     @Query("select r from Cafe r left join r.cafeLikeList l group by r.id order by count(l.cafe) desc")
     Page<Cafe> findCafesOrderByLikeCountDesc(Pageable pageable);
 
-    //  특정기간&인기레시피 - 원하는 칼럼만 가져오는 jpql
+    //  특정기간&인기카페 - 원하는 칼럼만 가져오는 jpql
     @Query("select r.id as cafeId, r.title as title, r.content as content , r.location as location " +
             "from Cafe r join r.cafeLikeList l " +
             "where l.regDate between :startDate and :endDate " +
             "group by r.id order by count(l.cafe) desc ")
     List<PopularCafeInterface> findPopularCafe(LocalDateTime startDate, LocalDateTime endDate);
 
-    //특정기간&인기레시피 - id만 가져오기..전체..jpql
+    //특정기간&인기카페 - id만 가져오기..전체..jpql
     @Query("select r.id " +
             "from Cafe r join r.cafeLikeList l " +
             "where l.regDate between :startDate and :endDate " +
             "group by r.id order by count(l.cafe) ")
     List<Long> findPopularCafeId(LocalDateTime startDate, LocalDateTime endDate);
 
-    //특정기간&인기레시피 - id만 가져오기..top3..native sql
+    //특정기간&인기카페 - id만 가져오기..top3..native sql
     @Query(value = "SELECT r.cafe_id " +
             "FROM cafe r JOIN cafe_like l ON r.cafe_id = l.cafe_id " +
             "WHERE l.reg_date BETWEEN :startDate AND :endDate " +
@@ -80,7 +80,7 @@ public interface CafeRepository extends JpaRepository<Cafe, Long> {
     @Query("select r from Cafe r where r.id in (select rl.cafe.id from CafeLike rl where rl.user.id = :userId)")
     Page<Cafe> findAllByCafeLikesList(@Param("userId") Long userId, Pageable pageable);
 
-    //최근레시피(메인페이지) top4가져오기
+    //최근카페(메인페이지) top4가져오기
     List<Cafe> findTop3ByOrderByRegDateDesc();
 
     @Query("select r from Cafe r left join r.cafeLikeList rl left join r.tagList tl " +

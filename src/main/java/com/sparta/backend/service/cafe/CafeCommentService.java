@@ -33,14 +33,14 @@ public class CafeCommentService {
     //댓글 저장
     public CafeCommentResponseDto saveComment(CafeCommentRequestDto requestDto, UserDetailsImpl userDetails) {
         Cafe cafe = cafeRepository.findById(requestDto.getCafeId()).orElseThrow(()->
-                new CustomErrorException("해당 댓글의 레시피가 존재하지 않습니다."));
+                new CustomErrorException("해당 댓글의 카페가 존재하지 않습니다."));
         CafeComment cafeComment = new CafeComment(requestDto.getContent(),userDetails.getUser(), cafe);
         CafeComment savedComment = commentRepository.save(cafeComment);
         CafeCommentResponseDto responseDto = new CafeCommentResponseDto(savedComment, userDetails, commentLikeReposiotory);
         return responseDto;
     }
 
-    //레시피에 대한 댓글들 조회- 리스트로 리턴
+    //카페에 대한 댓글들 조회- 리스트로 리턴
 //    public List<CafeCommentResponseDto> getComment(Long cafeId, UserDetailsImpl userDetails){
 //        List<CafeComment> cafeCommentList = commentRepository.findAllByCafeIdOrderByregDateDesc(cafeId);
 //        List<CafeCommentResponseDto> responseDtoList = new ArrayList<>();
@@ -52,7 +52,7 @@ public class CafeCommentService {
 //        return responseDtoList;
 //    }
 
-    //레시피에 대한 댓글들 조회- 페이지로 리턴
+    //카페에 대한 댓글들 조회- 페이지로 리턴
     public Page<CafeCommentResponseDto> getCommentByPage(Long cafeId, int page, int size, boolean isAsc, UserDetailsImpl userDetails){
 
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;

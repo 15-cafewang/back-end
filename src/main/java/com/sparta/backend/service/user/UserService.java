@@ -73,7 +73,7 @@ public class UserService {
 
         String nickname = requestDto.getNickname();
 
-        String image = "https://user-images.githubusercontent.com/76515226/140890775-30641b72-226a-4068-8a0a-9a306e8c68b4.png";
+        String image = "https://user-images.githubusercontent.com/76515226/143576583-9b0bdb15-5e93-43d4-b328-445374f9f1ee.png";
 
         User user = new User(email, password, nickname, image, UserRole.USER, "Y");
 
@@ -84,7 +84,7 @@ public class UserService {
     public GetUserInfoResponseDto login(SignupRequestDto requestDto) {
 
         User user = userRepository.findByEmail(requestDto.getEmail()).orElseThrow(
-                () -> new NullPointerException("아이디를 찾을수 없습니다")
+                () -> new NullPointerException("찾을 수 없습니다")
         );
 
         if (user.getStatus().equals("N")) throw new NullPointerException("존재하지 않는 회원입니다");

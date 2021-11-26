@@ -12,7 +12,7 @@
 //class RecipeTest {
 //
 //    @Nested
-//    @DisplayName("레시피 객체 생성")
+//    @DisplayName("카페 객체 생성")
 //    class CreateRecipe {
 //
 //        private String title;
@@ -40,7 +40,7 @@
 //        @DisplayName("정상 케이스")
 //        class SuccessCases{
 //            @Test
-//            @DisplayName("일반적인 레시피등록")
+//            @DisplayName("일반적인 카페등록")
 //            void createRecipe_Normal() {
 //                //given, when
 //                Recipe recipe = new Recipe(title, content, location, user);

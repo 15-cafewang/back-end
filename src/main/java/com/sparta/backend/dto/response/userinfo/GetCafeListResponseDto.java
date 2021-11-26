@@ -15,9 +15,9 @@ import java.util.Optional;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetRecipeListResponseDto {
+public class GetCafeListResponseDto {
 
-    private Long recipeId;
+    private Long cafeId;
     private String title;
     private String nickname;
     private String location;
@@ -25,11 +25,11 @@ public class GetRecipeListResponseDto {
     private int likeCount;
     private boolean likeStatus;
 
-    public GetRecipeListResponseDto(Cafe cafe,
-                                    UserDetailsImpl userDetails,
-                                    CafeLikeRepository cafeLikeRepository) {
+    public GetCafeListResponseDto(Cafe cafe,
+                                  UserDetailsImpl userDetails,
+                                  CafeLikeRepository cafeLikeRepository) {
 
-        this.recipeId = cafe.getId();
+        this.cafeId = cafe.getId();
         this.title = cafe.getTitle();
         this.nickname = cafe.getUser().getNickname();
         this.location = cafe.getLocation();
