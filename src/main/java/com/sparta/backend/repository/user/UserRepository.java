@@ -77,7 +77,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
                     "         u.user_id AS user_id, " +
                     "         u.nickname AS nickname, " +
                     "         u.image AS profile, " +
-                    "         COUNT(f.to_user_id) AS follow_count " +
+                    "         COUNT(f.from_user_id) AS follow_count " +
                     "FROM     follow f, user u " +
                     "WHERE    f.from_user_id = u.user_id " +
                     "AND      f.reg_date BETWEEN :start AND :end " +
