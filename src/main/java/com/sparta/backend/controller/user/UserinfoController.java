@@ -45,11 +45,11 @@ public class UserinfoController {
 
         checkLogin(userDetails);
 
-        Page<GetCafeListResponseDto> recipeList = userinfoService
+        Page<GetCafeListResponseDto> cafeList = userinfoService
                 .getRecipeListByPage(page, size, isAsc, sortBy, nickname, userDetails);
 
         return new ResponseEntity<>(
-                new CustomResponseDto<>(1, "카페 목록 조회 성공", recipeList), HttpStatus.OK);
+                new CustomResponseDto<>(1, "카페 목록 조회 성공", cafeList), HttpStatus.OK);
     }
 
     // 내가 쓴 게시글 목록 조회
@@ -81,11 +81,11 @@ public class UserinfoController {
 
         checkLogin(userDetails);
 
-        Page<GetCafeListResponseDto> likedRecipeList = userinfoService
+        Page<GetCafeListResponseDto> likedCafeList = userinfoService
                 .getLikedRecipeListByPage(page, size, isAsc, sortBy, nickname, userDetails);
 
         return new ResponseEntity<>(
-                new CustomResponseDto<>(1, "좋아요한 카페 목록 조회 성공", likedRecipeList), HttpStatus.OK);
+                new CustomResponseDto<>(1, "좋아요한 카페 목록 조회 성공", likedCafeList), HttpStatus.OK);
     }
 
     // 내가 좋아요한 게시글 목록 조회

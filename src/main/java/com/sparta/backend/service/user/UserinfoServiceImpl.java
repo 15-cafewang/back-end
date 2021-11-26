@@ -80,9 +80,9 @@ public class UserinfoServiceImpl implements UserinfoService {
 
         User user = getUser(userDetails, nickname);
 
-        Page<Cafe> recipeList = cafeRepository.findAllByUser(pageable, user);
+        Page<Cafe> cafeList = cafeRepository.findAllByUser(pageable, user);
 
-        return recipeList.map((recipe -> new GetCafeListResponseDto(recipe, userDetails, cafeLikeRepository)));
+        return cafeList.map((cafe -> new GetCafeListResponseDto(cafe, userDetails, cafeLikeRepository)));
     }
 
     // 내가 쓴 게시글 목록 조회
@@ -117,9 +117,9 @@ public class UserinfoServiceImpl implements UserinfoService {
 
         User user = getUser(userDetails, nickname);
 
-        Page<Cafe> likedRecipeList = cafeRepository.findAllByCafeLikesList(user.getId(), pageable);
+        Page<Cafe> likedCafeList = cafeRepository.findAllByCafeLikesList(user.getId(), pageable);
 
-        return likedRecipeList.map(recipe -> new GetCafeListResponseDto(recipe, userDetails, cafeLikeRepository));
+        return likedCafeList.map(cafe -> new GetCafeListResponseDto(cafe, userDetails, cafeLikeRepository));
     }
 
     // 내가 좋아요한 게시글 목록 조회
