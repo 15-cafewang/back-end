@@ -93,7 +93,7 @@ public class UserController {
         GetUserInfoResponseDto responseDto = userService.login(requestDto);
 
         return new ResponseEntity<>(
-                new CustomResponseDto<>(1, "로그인 성공", responseDto), HttpStatus.OK);
+                new CustomResponseDto<>(1, "환영합니다", responseDto), HttpStatus.OK);
     }
 
     // 카카오 로그인
@@ -109,7 +109,7 @@ public class UserController {
         GetUserInfoResponseDto responseDto = new GetUserInfoResponseDto(token, nickname, image);
 
         return new ResponseEntity<>(
-                new CustomResponseDto<>(1, "로그인 성공", responseDto), HttpStatus.OK);
+                new CustomResponseDto<>(1, "환영합니다", responseDto), HttpStatus.OK);
     }
 
     // 회원 정보 조회
