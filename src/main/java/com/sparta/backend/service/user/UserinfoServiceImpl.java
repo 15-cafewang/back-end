@@ -69,12 +69,12 @@ public class UserinfoServiceImpl implements UserinfoService {
 
     // 내가 쓴 카페 목록 조회
     @Override
-    public Page<GetRecipeListResponseDto> getRecipeListByPage(int page,
-                                                              int size,
-                                                              boolean isAsc,
-                                                              String sortBy,
-                                                              String nickname,
-                                                              UserDetailsImpl userDetails) {
+    public Page<GetCafeListResponseDto> getRecipeListByPage(int page,
+                                                            int size,
+                                                            boolean isAsc,
+                                                            String sortBy,
+                                                            String nickname,
+                                                            UserDetailsImpl userDetails) {
 
         Pageable pageable = getPageable(page, size, isAsc, sortBy);
 
@@ -82,7 +82,7 @@ public class UserinfoServiceImpl implements UserinfoService {
 
         Page<Cafe> recipeList = cafeRepository.findAllByUser(pageable, user);
 
-        return recipeList.map((recipe -> new GetRecipeListResponseDto(recipe, userDetails, cafeLikeRepository)));
+        return recipeList.map((recipe -> new GetCafeListResponseDto(recipe, userDetails, cafeLikeRepository)));
     }
 
     // 내가 쓴 게시글 목록 조회
@@ -106,12 +106,12 @@ public class UserinfoServiceImpl implements UserinfoService {
     // TODO: N+1 문제 해결
     // 내가 좋아요한 카페 목록 조회
     @Override
-    public Page<GetRecipeListResponseDto> getLikedRecipeListByPage(int page,
-                                                                   int size,
-                                                                   boolean isAsc,
-                                                                   String sortBy,
-                                                                   String nickname,
-                                                                   UserDetailsImpl userDetails) {
+    public Page<GetCafeListResponseDto> getLikedRecipeListByPage(int page,
+                                                                 int size,
+                                                                 boolean isAsc,
+                                                                 String sortBy,
+                                                                 String nickname,
+                                                                 UserDetailsImpl userDetails) {
 
         Pageable pageable = getPageable(page, size, isAsc, sortBy);
 
@@ -119,7 +119,7 @@ public class UserinfoServiceImpl implements UserinfoService {
 
         Page<Cafe> likedRecipeList = cafeRepository.findAllByCafeLikesList(user.getId(), pageable);
 
-        return likedRecipeList.map(recipe -> new GetRecipeListResponseDto(recipe, userDetails, cafeLikeRepository));
+        return likedRecipeList.map(recipe -> new GetCafeListResponseDto(recipe, userDetails, cafeLikeRepository));
     }
 
     // 내가 좋아요한 게시글 목록 조회

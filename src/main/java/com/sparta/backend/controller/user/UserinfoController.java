@@ -45,7 +45,7 @@ public class UserinfoController {
 
         checkLogin(userDetails);
 
-        Page<GetRecipeListResponseDto> recipeList = userinfoService
+        Page<GetCafeListResponseDto> recipeList = userinfoService
                 .getRecipeListByPage(page, size, isAsc, sortBy, nickname, userDetails);
 
         return new ResponseEntity<>(
@@ -81,7 +81,7 @@ public class UserinfoController {
 
         checkLogin(userDetails);
 
-        Page<GetRecipeListResponseDto> likedRecipeList = userinfoService
+        Page<GetCafeListResponseDto> likedRecipeList = userinfoService
                 .getLikedRecipeListByPage(page, size, isAsc, sortBy, nickname, userDetails);
 
         return new ResponseEntity<>(
