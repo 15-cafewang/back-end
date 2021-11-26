@@ -1,4 +1,4 @@
-package com.sparta.backend.controller;
+package com.sparta.backend.controller.user;
 
 import com.sparta.backend.dto.response.CustomResponseDto;
 import com.sparta.backend.dto.response.user.GetThisWeekRankingResponseDto;
