@@ -2,7 +2,7 @@ package com.sparta.backend.dto.response.userinfo;
 
 import com.sparta.backend.domain.board.Board;
 import com.sparta.backend.domain.board.BoardLike;
-import com.sparta.backend.repository.board.BoardLikesRepository;
+import com.sparta.backend.repository.board.BoardLikeRepository;
 import com.sparta.backend.security.UserDetailsImpl;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,7 +29,7 @@ public class GetBoardListResponseDto {
 
     public GetBoardListResponseDto(Board board,
                                    UserDetailsImpl userDetails,
-                                   BoardLikesRepository boardLikesRepository) {
+                                   BoardLikeRepository boardLikeRepository) {
 
         this.boardId = board.getId();
         this.title = board.getTitle();
@@ -39,7 +39,7 @@ public class GetBoardListResponseDto {
         this.commentCount = board.getBoardCommentList().size();
         board.getBoardImageList().forEach((boardImage -> this.imageList.add(boardImage.getImage())));
 
-        Optional<BoardLike> foundBoardLike = boardLikesRepository
+        Optional<BoardLike> foundBoardLike = boardLikeRepository
                 .findByBoardIdAndUserId(board.getId(), userDetails.getUser().getId());
         this.likeStatus = foundBoardLike.isPresent();
     }

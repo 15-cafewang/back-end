@@ -17,7 +17,6 @@ import java.util.List;
 
 import static com.sparta.backend.validator.UserValidator.*;
 
-//@ToString
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -97,7 +96,6 @@ public class User extends BaseEntity {
         this.status = status;
     }
 
-    //test용- id주입받기 위해
     public User(Long id, String email, String password, String nickname, String image, UserRole role, String status) {
         this.id = id;
         this.email = email;
@@ -118,20 +116,17 @@ public class User extends BaseEntity {
         this.status = status;
     }
 
-    // 정보 수정
     public void changeProfile(String nickname, String image) {
         validateNickname(nickname);
         this.nickname = nickname;
         this.image = image;
     }
 
-    // 닉네임 수정
     public void changeNickname(String nickname) {
         validateNickname(nickname);
         this.nickname = nickname;
     }
 
-    // 회원 삭제
     public void deleteUser(String status) {
         this.status = status;
     }

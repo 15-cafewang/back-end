@@ -15,9 +15,8 @@ import javax.persistence.*;
 @Entity
 public class CafeLike extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "like_id")
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "cafe_like_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

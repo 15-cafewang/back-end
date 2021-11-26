@@ -10,9 +10,9 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 public class CafeCommentLike extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "likes_id")
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "cafe_comment_like_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

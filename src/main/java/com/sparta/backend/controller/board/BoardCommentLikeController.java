@@ -3,7 +3,7 @@ package com.sparta.backend.controller.board;
 import com.sparta.backend.dto.response.CustomResponseDto;
 import com.sparta.backend.exception.CustomErrorException;
 import com.sparta.backend.security.UserDetailsImpl;
-import com.sparta.backend.service.board.BoardCommentLikesService;
+import com.sparta.backend.service.board.BoardCommentLikeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,16 +14,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-public class BoardCommentLikesController {
+public class BoardCommentLikeController {
 
-    private final BoardCommentLikesService boardCommentLikesService;
+    private final BoardCommentLikeService boardCommentLikeService;
 
     //댓글 좋아요/취소
     @PostMapping("/boards/comments/likes/{boardCommentId}")
     public ResponseEntity<?> likeBoardComment(@PathVariable("boardCommentId") Long id,
                                               @AuthenticationPrincipal UserDetailsImpl userDetails) {
         checkLogin(userDetails);
-        String boardCommentLikesMessage = boardCommentLikesService.likeBoardComment(id, userDetails);
+        String boardCommentLikesMessage = boardCommentLikeService.likeBoardComment(id, userDetails);
 
         if(boardCommentLikesMessage != null || boardCommentLikesMessage.length() > 0) {
             return new ResponseEntity<>(new CustomResponseDto<>(1, boardCommentLikesMessage, ""), HttpStatus.OK);

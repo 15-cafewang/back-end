@@ -19,7 +19,7 @@ import java.util.List;
 public class CafeComment extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "comment_id")
+    @Column(name = "cafe_comment_id")
     private Long id;
 
     @Column(nullable = false, length = 1500)

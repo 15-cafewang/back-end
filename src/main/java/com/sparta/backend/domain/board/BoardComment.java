@@ -22,9 +22,8 @@ import static com.sparta.backend.validator.BoardCommentValidator.boardCommentVal
 @Entity
 public class BoardComment extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "comment_id")
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "board_comment_id")
     private Long id;
 
     @Column(nullable = false, length = 1500)
@@ -51,7 +50,6 @@ public class BoardComment extends BaseEntity {
         this.user = user;
     }
 
-    //test용
     public BoardComment(Long id, PostBoardCommentRequestDto requestDto, Board board, User user) {
         boardCommentValidatorId(id, requestDto, board, user);
         this.id = id;

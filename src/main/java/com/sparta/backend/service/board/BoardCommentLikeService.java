@@ -4,7 +4,7 @@ import com.sparta.backend.domain.board.BoardComment;
 import com.sparta.backend.domain.board.BoardCommentLike;
 import com.sparta.backend.domain.user.User;
 import com.sparta.backend.exception.CustomErrorException;
-import com.sparta.backend.repository.board.BoardCommentLikesRepository;
+import com.sparta.backend.repository.board.BoardCommentLikeRepository;
 import com.sparta.backend.repository.board.BoardCommentRepository;
 import com.sparta.backend.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +14,9 @@ import javax.transaction.Transactional;
 
 @RequiredArgsConstructor
 @Service
-public class BoardCommentLikesService {
+public class BoardCommentLikeService {
 
-    private final BoardCommentLikesRepository boardCommentLikesRepository;
+    private final BoardCommentLikeRepository boardCommentLikeRepository;
     private final BoardCommentRepository boardCommentRepository;
 
     //게시물 댓글 좋아요/취소
@@ -29,14 +29,14 @@ public class BoardCommentLikesService {
         );
 
         BoardCommentLike boardCommentLike =
-                boardCommentLikesRepository.findByBoardCommentAndUser(boardComment, user);
+                boardCommentLikeRepository.findByBoardCommentAndUser(boardComment, user);
 
         if(boardCommentLike != null) {
-            boardCommentLikesRepository.deleteByBoardCommentAndUser(boardComment, user);
+            boardCommentLikeRepository.deleteByBoardCommentAndUser(boardComment, user);
             return "댓글에 좋아요 취소하였습니다.";
         } else {
             BoardCommentLike newBoardCommentLike = new BoardCommentLike(user, boardComment);
-            boardCommentLikesRepository.save(newBoardCommentLike);
+            boardCommentLikeRepository.save(newBoardCommentLike);
             return "댓글에 좋아요 하였습니다.";
         }
     }

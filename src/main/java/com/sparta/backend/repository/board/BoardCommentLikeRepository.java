@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface BoardCommentLikesRepository extends JpaRepository<BoardCommentLike, Long> {
+public interface BoardCommentLikeRepository extends JpaRepository<BoardCommentLike, Long> {
     BoardCommentLike findByBoardCommentAndUser(BoardComment boardComment, User user);
     void deleteByBoardCommentAndUser(BoardComment boardComment, User user);
 }
