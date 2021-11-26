@@ -73,7 +73,7 @@ public class UserService {
 
         String nickname = requestDto.getNickname();
 
-        String image = "https://user-images.githubusercontent.com/76515226/140890775-30641b72-226a-4068-8a0a-9a306e8c68b4.png";
+        String image = "https://user-images.githubusercontent.com/76515226/143576583-9b0bdb15-5e93-43d4-b328-445374f9f1ee.png";
 
         User user = new User(email, password, nickname, image, UserRole.USER, "Y");
 
