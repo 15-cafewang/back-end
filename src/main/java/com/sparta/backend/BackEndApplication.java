@@ -29,7 +29,8 @@ public class BackEndApplication {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-						.allowedOrigins("https://mycipe.shop")
+						.allowedOrigins("https://cafewang.co.kr")
+//                        .allowedOrigins("http://localhost:3000")
 //                        .allowedOrigins("*")
                         .maxAge(3000)
                         .allowedHeaders("header1", "Origin", "Accept", "X-Requested-With", "Content-Type", "Access-Control-Request-Method"
