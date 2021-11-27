@@ -84,7 +84,7 @@ public class UserService {
     public GetUserInfoResponseDto login(SignupRequestDto requestDto) {
 
         User user = userRepository.findByEmail(requestDto.getEmail()).orElseThrow(
-                () -> new NullPointerException("찾을 수 없습니다")
+                () -> new NullPointerException("이메일을 찾을 수 없습니다")
         );
 
         if (user.getStatus().equals("N")) throw new NullPointerException("존재하지 않는 회원입니다");
