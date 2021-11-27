@@ -3,11 +3,14 @@ package com.sparta.backend.controller.cafe;
 import com.sparta.backend.domain.cafe.CafeComment;
 import com.sparta.backend.dto.request.cafe.CafeCommentRequestDto;
 import com.sparta.backend.dto.request.cafe.CafeCommentUpdateRequestDto;
+import com.sparta.backend.dto.request.cafe.CafePostReplyRequestDto;
 import com.sparta.backend.dto.response.CustomResponseDto;
 import com.sparta.backend.dto.response.cafe.CafeCommentResponseDto;
+import com.sparta.backend.dto.response.cafe.CafeReplyResponseDto;
 import com.sparta.backend.exception.CustomErrorException;
 import com.sparta.backend.security.UserDetailsImpl;
 import com.sparta.backend.service.cafe.CafeCommentService;
+import com.sparta.backend.service.cafe.CafeReplyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -22,6 +25,7 @@ import java.util.Optional;
 public class CafeCommentController {
 
     private final CafeCommentService commentService;
+    private final CafeReplyService replyService;
 
     //댓글 입력
     @PostMapping("/cafes/comment")
@@ -80,6 +84,14 @@ public class CafeCommentController {
         checkLogin(userDetails);
         String resultMessage = commentService.likeComment(commentId, userDetails.getUser());
         return new ResponseEntity<>(new CustomResponseDto<>(1,resultMessage, ""),HttpStatus.OK);
+    }
+
+    //대댓글 달기
+    @PostMapping("/cafes/reply")
+    public ResponseEntity<?> postReply(@RequestBody CafePostReplyRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        checkLogin(userDetails);
+        CafeReplyResponseDto responseDto = replyService.saveReply(requestDto, userDetails);
+        return new ResponseEntity<>(new CustomResponseDto<>(1, "대댓글 등록 성공!",responseDto),HttpStatus.OK);
     }
 
 
