@@ -26,16 +26,9 @@ public class RankingService {
 
     private final UserRepository userRepository;
 
-    LocalDateTime time = LocalDateTime.now();
-    LocalDateTime monday = time.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
-            .withHour(0)
-            .withMinute(0)
-            .withSecond(0)
-            .withNano(0);
-
     public List<GetThisWeekRankingResponseDto> getTop3ByMostLiked() {
 
-        List<Object[]> top3ByMostLiked = userRepository.findTop3ByMostLiked(monday, time);
+        List<Object[]> top3ByMostLiked = userRepository.findTop3ByMostLiked(getTime().get(0), getTime().get(1));
 
         return top3ByMostLiked.stream().map(like -> new GetThisWeekRankingResponseDto(
                 (String) like[0],
@@ -46,7 +39,7 @@ public class RankingService {
 
     public List<GetThisWeekRankingResponseDto> getTop3ByMostRecipe() {
 
-        List<Object[]> top3ByMostRecipe = userRepository.findTop3ByMostRecipe(monday, time);
+        List<Object[]> top3ByMostRecipe = userRepository.findTop3ByMostRecipe(getTime().get(0), getTime().get(1));
 
         return top3ByMostRecipe.stream().map(recipe -> new GetThisWeekRankingResponseDto(
                 (String) recipe[0],
@@ -57,7 +50,7 @@ public class RankingService {
 
     public List<GetThisWeekRankingResponseDto> getTop3ByMostFollow() {
 
-        List<Object[]> top3ByMostFollow = userRepository.findTop3ByMostFollow(monday, time);
+        List<Object[]> top3ByMostFollow = userRepository.findTop3ByMostFollow(getTime().get(0), getTime().get(1));
 
         return top3ByMostFollow.stream().map(follow -> new GetThisWeekRankingResponseDto(
                 (String) follow[0],
@@ -68,7 +61,7 @@ public class RankingService {
 
     public List<GetThisWeekRankingResponseDto> getTop3ByMostComment() {
 
-        List<Object[]> top3ByMostComment = userRepository.findTop3ByMostComment(monday, time);
+        List<Object[]> top3ByMostComment = userRepository.findTop3ByMostComment(getTime().get(0), getTime().get(1));
 
         return top3ByMostComment.stream().map(comment -> new GetThisWeekRankingResponseDto(
                 (String) comment[0],
@@ -163,6 +156,24 @@ public class RankingService {
         }
 
         return responseDto;
+    }
+
+    // 이번주 월요일 부터 현재까지의 시간
+    public List<LocalDateTime> getTime() {
+
+        List<LocalDateTime> list = new ArrayList<>();
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime monday = now.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+                .withHour(0)
+                .withMinute(0)
+                .withSecond(0)
+                .withNano(0);
+
+        list.add(monday);
+        list.add(now);
+
+        return list;
     }
 
     //저번 주 월요일 & 저번주 일요일 구하는 함수
