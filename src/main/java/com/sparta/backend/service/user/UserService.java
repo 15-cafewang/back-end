@@ -103,9 +103,7 @@ public class UserService {
     @Transactional
     public void updateNickname(UserDetailsImpl userDetails, UpdateNicknameRequestDto requestDto) {
 
-        User user = userRepository.findById(userDetails.getUser().getId()).orElseThrow(
-                () -> new NullPointerException("존재하지 않는 회원입니다")
-        );
+        User user = getUser(userDetails);
 
         if (!requestDto.getNickname().equals(user.getNickname())) {
 
@@ -123,9 +121,7 @@ public class UserService {
     @Transactional
     public void updateUser(UserDetailsImpl userDetails, UpdateUserRequestDto requestDto) throws IOException {
 
-        User user = userRepository.findById(userDetails.getUser().getId()).orElseThrow(
-                () -> new NullPointerException("존재하지 않는 회원입니다")
-        );
+        User user = getUser(userDetails);
 
         // 닉네임을 변경하지 않아도 dto에 값이 들어오게 되는데 현재 닉네임과 다를 경우에만 수정
         if (!requestDto.getNickname().equals(user.getNickname())) {
@@ -176,6 +172,12 @@ public class UserService {
             e.printStackTrace();
             throw new AmazonServiceException(e.getMessage());
         }
+    }
+
+    private User getUser(UserDetailsImpl userDetails) {
+        return userRepository.findById(userDetails.getUser().getId()).orElseThrow(
+                () -> new NullPointerException("존재하지 않는 회원입니다")
+        );
     }
 
 }
