@@ -24,6 +24,7 @@ public class GetCafeListResponseDto {
     private List<String> imageList = new ArrayList<>();
     private int likeCount;
     private boolean likeStatus;
+    private int commentCount;
 
     public GetCafeListResponseDto(Cafe cafe,
                                   UserDetailsImpl userDetails,
@@ -35,6 +36,7 @@ public class GetCafeListResponseDto {
         this.location = cafe.getLocation();
         cafe.getCafeImagesList().forEach(RecipeImage -> this.imageList.add(RecipeImage.getImage()));
         this.likeCount = cafe.getCafeLikeList().size();
+        this.commentCount = cafe.getCafeCommentList().size();
 
         Optional<CafeLike> foundRecipeLike = cafeLikeRepository
                 .findByCafeIdAndUserId(cafe.getId(), userDetails.getUser().getId());
