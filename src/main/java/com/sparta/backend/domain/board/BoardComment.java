@@ -6,15 +6,13 @@ import com.sparta.backend.domain.BaseEntity;
 import com.sparta.backend.domain.user.User;
 import com.sparta.backend.dto.request.board.PostBoardCommentRequestDto;
 import com.sparta.backend.dto.request.board.PutBoardCommentRequestDto;
+import com.sparta.backend.validator.BoardCommentValidator;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.List;
-
-import static com.sparta.backend.validator.BoardCommentValidator.boardCommentValidatorId;
-import static com.sparta.backend.validator.BoardCommentValidator.boardCommentValidatorRequestDto;
 
 @ToString(exclude = {"user", "board"})
 @Getter
@@ -44,14 +42,14 @@ public class BoardComment extends BaseEntity {
     private List<BoardCommentLike> boardCommentLikeList;
 
     public BoardComment(PostBoardCommentRequestDto requestDto, Board board, User user) {
-        boardCommentValidatorRequestDto(requestDto, board, user);
+        BoardCommentValidator.boardCommentValidatorRequestDto(requestDto, board, user);
         this.content = requestDto.getContent();
         this.board = board;
         this.user = user;
     }
 
     public BoardComment(Long id, PostBoardCommentRequestDto requestDto, Board board, User user) {
-        boardCommentValidatorId(id, requestDto, board, user);
+        BoardCommentValidator.boardCommentValidatorId(id, requestDto, board, user);
         this.id = id;
         this.content = requestDto.getContent();
         this.board = board;
@@ -59,7 +57,9 @@ public class BoardComment extends BaseEntity {
     }
 
     public BoardComment updateComment(PutBoardCommentRequestDto requestDto) {
-        this.content = requestDto.getContent();
+        content = requestDto.getContent();
+        BoardCommentValidator.boardCommentContentValidator(content);
+        this.content = content;
         return this;
     }
 }
