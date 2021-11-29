@@ -1,6 +1,7 @@
 package com.sparta.backend.controller.cafe;
 
 import com.sparta.backend.domain.cafe.Cafe;
+import com.sparta.backend.domain.user.UserRole;
 import com.sparta.backend.dto.request.cafe.CafeRequestDto;
 import com.sparta.backend.dto.request.cafe.CafePutRequestDto;
 import com.sparta.backend.dto.response.CustomResponseDto;
@@ -123,7 +124,8 @@ public class CafeController {
     private void checkOwnership(Long cafeId, UserDetailsImpl userDetails){
         Optional<Cafe> cafe = cafeService.findById(cafeId);
         if(cafe.isEmpty()) throw new NoSuchElementException("해당 게시물이 존재하지 않습니다");
-        if(!cafe.get().getUser().getEmail().equals(userDetails.getUser().getEmail())) throw new CustomErrorException("본인의 게시물만 수정,삭제 가능합니다.");
+        if(!cafe.get().getUser().getEmail().equals(userDetails.getUser().getEmail()) || userDetails.getUser().getRole() == UserRole.ADMIN)
+            throw new CustomErrorException("본인의 게시물만 수정,삭제 가능합니다.");
     }
 }
 

@@ -3,6 +3,7 @@ package com.sparta.backend.service.board;
 import com.sparta.backend.domain.board.Board;
 import com.sparta.backend.domain.board.BoardComment;
 import com.sparta.backend.domain.user.User;
+import com.sparta.backend.domain.user.UserRole;
 import com.sparta.backend.dto.response.board.GetBoardCommentResponseDto;
 import com.sparta.backend.dto.request.board.PostBoardCommentRequestDto;
 import com.sparta.backend.dto.request.board.PutBoardCommentRequestDto;
@@ -88,7 +89,7 @@ public class BoardCommentService {
         if(boardComment != null) {
             Long writeUser = boardComment.getUser().getId();
 
-            writterCheck(currentLoginUser, writeUser);  //작성자가 맞는지 확인
+            writterCheck(currentLoginUser, writeUser, userDetails);  //작성자가 맞는지 확인
             BoardComment updateBoardComment = boardComment.updateComment(requestDto);
             responseDto =
                     new GetBoardCommentResponseDto(updateBoardComment, boardCommentLikeRepository, userDetails);
@@ -107,15 +108,15 @@ public class BoardCommentService {
         );
         Long writeUser = boardComment.getUser().getId();
 
-        writterCheck(currentLoginUser, writeUser);  //작성자가 맞는지 확인
+        writterCheck(currentLoginUser, writeUser, userDetails);  //작성자가 맞는지 확인
         boardCommentRepository.deleteById(id);
 
         return id;
     }
 
     //로그인한 계정이 작성자가 맞는지 확인하기
-    private void writterCheck(Long currentLoginUserId, Long writeUserId) {
-        if (!currentLoginUserId.equals(writeUserId)) {  //로그인한 계정이 작성자가 아닐 때
+    private void writterCheck(Long currentLoginUserId, Long writeUserId, UserDetailsImpl userDetails) {
+        if (!currentLoginUserId.equals(writeUserId) || userDetails.getUser().getRole() == UserRole.ADMIN) {  //로그인한 계정이 작성자가 아닐 때
             throw new CustomErrorException("본인의 게시물만 수정,삭제 가능합니다.");
         }
     }
