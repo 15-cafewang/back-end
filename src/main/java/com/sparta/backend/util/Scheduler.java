@@ -8,7 +8,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -47,15 +46,5 @@ public class Scheduler {
             commentKing.ifPresent(user -> user.changeRankingStatus(4));
         }
 
-    }
-
-    @Scheduled(cron = "*/10 * * * * *")
-    public void test() {
-
-//        userRepository.initRankingStatus();
-//        List<User> users = userRepository.findAll();
-//        for (User user : users) {
-//            user.changeRankingStatus(0);
-//        }
     }
 }
