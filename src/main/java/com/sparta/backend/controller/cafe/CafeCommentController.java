@@ -1,6 +1,7 @@
 package com.sparta.backend.controller.cafe;
 
 import com.sparta.backend.domain.cafe.CafeComment;
+import com.sparta.backend.domain.user.UserRole;
 import com.sparta.backend.dto.request.cafe.CafeCommentRequestDto;
 import com.sparta.backend.dto.request.cafe.CafeCommentUpdateRequestDto;
 import com.sparta.backend.dto.request.cafe.CafePostReplyRequestDto;
@@ -102,6 +103,7 @@ public class CafeCommentController {
     }
     private void checkOwnership(Long commentId, UserDetailsImpl userDetails){
         Optional<CafeComment> cafe = commentService.findById(commentId);
-        if(!cafe.get().getUser().getEmail().equals(userDetails.getUser().getEmail())) throw new CustomErrorException("본인의 게시물만 수정,삭제 가능합니다.");
+        if(!cafe.get().getUser().getEmail().equals(userDetails.getUser().getEmail()) && userDetails.getUser().getRole() != UserRole.ADMIN)
+            throw new CustomErrorException("본인의 게시물만 수정,삭제 가능합니다.");
     }
 }
