@@ -39,11 +39,18 @@ dependencies {
     //S3 서버 연결관련
     implementation platform('com.amazonaws:aws-java-sdk-bom:1.11.228')
     implementation 'com.amazonaws:aws-java-sdk-s3'
+
     //쿼리에 ?내용 보여주기
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.7'
 
     //스프링mvc테스트 시, 관심상품등록하려면 로그인이 필요한데, 가짜로그인을 해주기 위해 필요.
     testImplementation 'org.springframework.security:spring-security-test'
+
+    //로그 파일 남기기
+    implementation (
+            'ch.qos.logback:logback-classic:1.2.3',
+            'ch.qos.logback:logback-core:1.2.3',
+    )
 }
 
 test {
