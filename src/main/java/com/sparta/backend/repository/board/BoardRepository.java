@@ -12,7 +12,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BoardRepository extends JpaRepository<Board, Long> {
     Page<Board> findAll(Pageable pageable);
-    Page<Board> findAllByTitleContainingOrContentContaining(String title, String content, Pageable pageable);
+    @Query("select b from Board b " +
+           "where b.title like %:keyword% or b.content like %:keyword% or b.user.nickname like %:keyword% ")
+    Page<Board> findAllByTitleContainingOrContentContainingOrNicknameContaining(@Param("keyword") String keyword, Pageable pageable);
 
     Page<Board> findAllByUser(Pageable pageable, User user);
 
@@ -26,7 +28,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     //검색(인기순)
     @Query("select b from Board b " +
            "left join b.boardLikeList bl " +
-           "where b.title like %:keyword% or b.content like %:keyword% " +
+           "where b.title like %:keyword% or b.content like %:keyword% or b.user.nickname like %:keyword% " +
            "group by b.id order by count(bl.user) desc")
     Page<Board> findBoardsByTitleContainingOrContentContainingOrderByLikeCountDesc(@Param("keyword") String keyword,
                                                                                    Pageable pageable);

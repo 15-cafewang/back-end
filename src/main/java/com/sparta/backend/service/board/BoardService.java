@@ -234,7 +234,7 @@ public class BoardService {
                     boardRepository.findBoardsByTitleContainingOrContentContainingOrderByLikeCountDesc(keyword, pageable);
         } else {
             //키워드가 제목 또는 내용에 포함되어있어야 검색 결과에 나타남
-            boardList = boardRepository.findAllByTitleContainingOrContentContaining(keyword, keyword, pageable);
+            boardList = boardRepository.findAllByTitleContainingOrContentContainingOrNicknameContaining(keyword, pageable);
         }
 
         //Page<Board> -> Page<Dto> 로 변환
