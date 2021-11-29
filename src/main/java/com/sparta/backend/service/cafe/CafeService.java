@@ -76,11 +76,9 @@ public class CafeService {
 
         //섬네일을 S3에 저장
         String thumbNailUrl = requestDto.getImage()[0].getSize() == 0L? null:uploadThumbNailImageToS3(requestDto.getImage()[0], "thumbNail");
-        System.out.println("섬네일이미지: "+thumbNailUrl);
-        //사진들을 db에 저장
-        Cafe cafe = uploadManyImagesToDB(imageUrlList,requestDto,user);
 
-        //섬네일을 db에 저장
+        //사진들을 db에 저장
+        Cafe cafe = uploadManyImagesToDB(imageUrlList,requestDto,user,thumbNailUrl);
 
         return cafeRepository.save(cafe);
     }
@@ -134,8 +132,8 @@ public class CafeService {
         return savedImages;
     }
     //여러장의 이미지를 db에 저장하는 기능
-    public Cafe uploadManyImagesToDB(List<String> imageUrlList, CafeRequestDto requestDto, User user){
-        Cafe cafe = new Cafe(requestDto.getTitle(),requestDto.getContent(),requestDto.getLocation(),user);
+    public Cafe uploadManyImagesToDB(List<String> imageUrlList, CafeRequestDto requestDto, User user,String thumbNailUrl){
+        Cafe cafe = new Cafe(requestDto.getTitle(),requestDto.getContent(),requestDto.getLocation(),user,thumbNailUrl);
         //디비에 이미지url저장
         if(imageUrlList!=null){
             List<CafeImage> cafeImages = new ArrayList<>();
