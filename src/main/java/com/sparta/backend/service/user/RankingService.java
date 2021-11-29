@@ -181,13 +181,13 @@ public class RankingService {
         List<LocalDateTime> startEnd = new ArrayList<>();
 
         //DB에 데이터를 쌓은 지 일주일이 지나야 저번 주 왕에 대한 데이터가 나옴
-        //LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now();
 
         //개발 시 데이터가 조회되지 않으면 불편하기 때문에
         //데이터가 조회되도록 now 변수의 날짜를 조작해놓음
-        String dateStr = "2021-12-01 10:36:02";    //테스트 데이터
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime now = LocalDateTime.parse(dateStr, formatter);
+        //String dateStr = "2021-12-01 10:36:02";    //테스트 데이터
+        //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        //LocalDateTime now = LocalDateTime.parse(dateStr, formatter);
 
         //저번 주 월요일 : 지난갔던 가장 최근의 월요일에서 7일 빼기
         LocalDateTime lastMonday = now.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)).minusDays(7)

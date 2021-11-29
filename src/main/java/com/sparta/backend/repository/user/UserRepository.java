@@ -60,63 +60,67 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<Object[]> findTop3ByMostComment(@Param("startDate") LocalDateTime startDate,
                                          @Param("endDate") LocalDateTime endDate);
 
-    @Query(value = "SELECT " +
-            "         u.user_id AS user_id, " +
-            "         u.nickname AS nickname, " +
-            "         u.image AS profile, " +
-            "         COUNT(cl.user_id) AS like_count " +
-            "FROM     cafe_like cl, cafe c, user u " +
-            "WHERE    cl.cafe_id = c.cafe_id " +
-            "AND      c.user_id = u.user_id " +
-            "AND      cl.reg_date BETWEEN :start AND :end " +
-            "AND     u.status = 'Y' " +
-            "GROUP BY cl.cafe_id " +
-            "ORDER BY like_count DESC, user_id " +
-            "LIMIT    1 ", nativeQuery = true)
+    @Query(value =  "SELECT " +
+                    "         u.user_id         AS user_id, " +
+                    "         u.nickname        AS nickname, " +
+                    "         u.image           AS profile, " +
+                    "         COUNT(cl.user_id) AS like_count " +
+                    "FROM     cafe_like cl, cafe c, user u " +
+                    "WHERE    cl.cafe_id = c.cafe_id " +
+                    "AND      c.user_id = u.user_id " +
+                    "AND      cl.reg_date " +
+                    "BETWEEN  :start AND :end " +
+                    "AND      u.status = 'Y' " +
+                    "GROUP BY u.user_id, u.nickname, u.image " +
+                    "ORDER BY like_count DESC, user_id " +
+                    "LIMIT    1", nativeQuery = true)
     List<Object[]> findTheMostLikedUser(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
-    @Query(value = "SELECT " +
-                    "         u.user_id AS user_id, " +
-                    "         u.nickname AS nickname, " +
-                    "         u.image AS profile, " +
+    @Query(value =  "SELECT " +
+                    "         u.user_id     AS user_id, " +
+                    "         u.nickname    AS nickname, " +
+                    "         u.image       AS profile, " +
                     "         COUNT(f.from_user_id) AS follow_count " +
                     "FROM     follow f, user u " +
-                    "WHERE    f.from_user_id = u.user_id " +
-                    "AND      f.reg_date BETWEEN :start AND :end " +
-                    "AND     u.status = 'Y' " +
-                    "GROUP BY f.from_user_id " +
+                    "WHERE    f.to_user_id = u.user_id " +
+                    "AND      f.reg_date " +
+                    "BETWEEN  :start AND :end " +
+                    "AND      u.status = 'Y' " +
+                    "GROUP BY u.user_id, u.nickname, u.image " +
                     "ORDER BY follow_count DESC, user_id " +
                     "LIMIT    1 ", nativeQuery = true)
     List<Object[]> findTheMostFollowedUser(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
 
-    @Query(value = "SELECT " +
-            "        u.user_id AS user_id, " +
-            "        u.nickname AS nickname, " +
-            "        u.image AS profile, " +
-            "        COUNT(c.cafe_id) AS post_count " +
-            "FROM    cafe c, user u " +
-            "WHERE   c.user_id = u.user_id " +
-            "AND     c.reg_date BETWEEN :start AND :end " +
-            "AND     u.status = 'Y' " +
-            "GROUP BY user_id " +
-            "ORDER BY post_count DESC, user_id " +
-            "LIMIT    1 ", nativeQuery = true)
+    @Query(value =  "SELECT " +
+                    "         u.user_id         AS user_id, " +
+                    "         u.nickname        AS nickname, " +
+                    "         u.image           AS profile, " +
+                    "         COUNT(c.cafe_id)  AS post_count " +
+                    "FROM     cafe c, user u " +
+                    "WHERE    c.user_id = u.user_id " +
+                    "AND      c.reg_date " +
+                    "BETWEEN  :start AND :end " +
+                    "AND      u.status = 'Y' " +
+                    "GROUP BY u.user_id, u.nickname, u.image " +
+                    "ORDER BY post_count DESC, user_id " +
+                    "LIMIT    1", nativeQuery = true)
     List<Object[]> findTheMostWrotePostsUser(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
 
     @Query(value =  "SELECT " +
-            "        u.user_id AS user_id, " +
-            "        u.nickname AS nickname, " +
-            "        u.image AS profile, " +
-            "        COUNT(cc.cafe_comment_id) AS comment_count " +
-            "FROM    user u, cafe_comment cc " +
-            "WHERE   u.user_id = cc.user_id " +
-            "AND     cc.reg_date BETWEEN :start AND :end " +
-            "AND     u.status = 'Y' " +
-            "GROUP BY user_id " +
-            "ORDER BY comment_count DESC, user_id " +
-            "LIMIT    1 ", nativeQuery = true)
+                    "         u.user_id                 AS user_id, " +
+                    "         u.nickname                AS nickname, " +
+                    "         u.image                   AS profile, " +
+                    "         COUNT(cc.cafe_comment_id) AS comment_count " +
+                    "FROM     user u, cafe_comment cc " +
+                    "WHERE    u.user_id = cc.user_id " +
+                    "AND      cc.reg_date " +
+                    "BETWEEN  :start AND :end " +
+                    "AND      u.status = 'Y' " +
+                    "GROUP BY u.user_id, u.nickname, u.image " +
+                    "ORDER BY comment_count DESC, user_id " +
+                    "LIMIT    1", nativeQuery = true)
     List<Object[]> findTheMostWroteCommentsUser(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
     @Modifying
