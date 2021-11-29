@@ -20,4 +20,5 @@ public class CafeDetailResponsetDto {
     private List<String> tags;
     private String location;
     private String profile;
+    private int rankingStatus;
 }
