@@ -153,12 +153,11 @@ public class UserController {
 
     // 회원 탈퇴
     @PutMapping("/user/delete")
-    public ResponseEntity<?> deleteUser(@RequestBody DeleteUserRequestDto requestDto,
-                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<?> deleteUser(@AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         checkLogin(userDetails);
 
-        userService.deleteUser(userDetails, requestDto);
+        userService.deleteUser(userDetails);
 
         return new ResponseEntity<>(
                 new CustomResponseDto<>(1, "회원 탈퇴 성공", ""), HttpStatus.OK);
