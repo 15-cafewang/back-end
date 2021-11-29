@@ -28,5 +28,11 @@ public class CafeCommentValidator {
     }
 
     public static void validateCommentInput(String content) {
+        if(content == null || content.isEmpty()){
+            throw new IllegalArgumentException("댓글 내용이 입력되지 않았습니다.");
+        }
+        if(content.length() > 200){
+            throw new IllegalArgumentException("댓글 내용이 200자를 초과하였습니다.");
+        }
     }
 }
