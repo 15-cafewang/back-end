@@ -20,7 +20,8 @@ public class CafeListResponseDto {
     private String nickname;
     private String title;
     private String content;
-    private List<String> images = new ArrayList<>();
+//    private List<String> images = new ArrayList<>();
+    private String image;
     private LocalDateTime regDate;
     private int commentCount;
     private int likeCount;
@@ -35,7 +36,7 @@ public class CafeListResponseDto {
         this.content = cafe.getContent();
         this.regDate = cafe.getRegDate();
         this.commentCount = cafe.getCafeCommentList().size();
-        cafe.getCafeImagesList().forEach((CafeImage)->this.images.add(CafeImage.getImage()));
+        this.image = getThumbNail(cafe);
         this.likeCount = cafe.getCafeLikeList().size();
         this.location = cafe.getLocation();
 
@@ -50,7 +51,7 @@ public class CafeListResponseDto {
         this.content = cafe.getContent();
         this.regDate = cafe.getRegDate();
         this.commentCount = cafe.getCafeCommentList().size();
-        cafe.getCafeImagesList().forEach((CafeImage)->this.images.add(CafeImage.getImage()));
+        this.image = getThumbNail(cafe);
         this.likeCount = cafe.getCafeLikeList().size();
         this.location = cafe.getLocation();
 
@@ -65,11 +66,16 @@ public class CafeListResponseDto {
         this.content = cafe.get().getContent();
         this.regDate = cafe.get().getRegDate();
         this.commentCount = cafe.get().getCafeCommentList().size();
-        cafe.get().getCafeImagesList().forEach((CafeImage)->this.images.add(CafeImage.getImage()));
+        this.image = getThumbNail(cafe.get());
         this.likeCount = cafe.get().getCafeLikeList().size();
         this.location = cafe.get().getLocation();
 
         Optional<CafeLike> foundCafeLike = likesRepository.findByCafeIdAndUserId(cafe.get().getId(), user.getId());
         this.likeStatus = foundCafeLike.isPresent();
+    }
+
+    public String getThumbNail(Cafe cafe) {
+        if(cafe.getThumbNailImage() == null) return cafe.getCafeImagesList().get(0).getImage();
+        else return cafe.getThumbNailImage();
     }
 }
