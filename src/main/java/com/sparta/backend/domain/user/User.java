@@ -48,6 +48,7 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String status;
 
+    @Column(columnDefinition = "int default 0")
     private int rankingStatus;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)

@@ -6,7 +6,9 @@ import com.sparta.backend.service.user.RankingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -17,31 +19,43 @@ public class Scheduler {
     private final UserRepository userRepository;
 
     @Scheduled(cron = "0 1 0 ? * MON")
-    public void setupRankingData() throws InterruptedException {
+    @Transactional
+    public void setupRankingData() {
 
         // 1. 모든 유저의 rankingStatus 0으로 초기화
         userRepository.initRankingStatus();
 
-        // 2. 각각의 왕들이 rankingStatus 변경
-        // 1 == 좋아요왕, 2 == 게시글왕, 3 == 팔로우왕, 4 == 댓글왕
-        User likeKing = userRepository.findByNickname(rankingService.getMostLikes().getNickname()).orElseThrow(
-                () -> new NullPointerException("존재하지 않는 회원입니다")
-        );
-        likeKing.changeRankingStatus(1);
+        // 2. 각각 왕들의 rankingStatus 변경
+        // 1 == 좋아요왕
+        if (rankingService.getMostLikes() != null) {
+            Optional<User> likeKing = userRepository.findByNickname(rankingService.getMostLikes().getNickname());
+            likeKing.ifPresent(user -> user.changeRankingStatus(1));
+        }
+        // 2 == 게시글왕
+        if (rankingService.getMostWrotePosts() != null) {
+            Optional<User> postKing = userRepository.findByNickname(rankingService.getMostWrotePosts().getNickname());
+            postKing.ifPresent(user -> user.changeRankingStatus(2));
+        }
+        // 3 == 팔로우왕
+        if (rankingService.getMostFollows() != null) {
+            Optional<User> followKing = userRepository.findByNickname(rankingService.getMostFollows().getNickname());
+            followKing.ifPresent(user -> user.changeRankingStatus(3));
+        }
+        // 4 == 댓글왕
+        if (rankingService.getMostWroteComments() != null) {
+            Optional<User> commentKing = userRepository.findByNickname(rankingService.getMostWroteComments().getNickname());
+            commentKing.ifPresent(user -> user.changeRankingStatus(4));
+        }
 
-        User postKing = userRepository.findByNickname(rankingService.getMostWrotePosts().getNickname()).orElseThrow(
-                () -> new NullPointerException("존재하지 않는 회원입니다")
-        );
-        postKing.changeRankingStatus(2);
+    }
 
-        User followKing = userRepository.findByNickname(rankingService.getMostFollows().getNickname()).orElseThrow(
-                () -> new NullPointerException("존재하지 않는 회원입니다")
-        );
-        followKing.changeRankingStatus(3);
+    @Scheduled(cron = "*/10 * * * * *")
+    public void test() {
 
-        User commentKing = userRepository.findByNickname(rankingService.getMostWroteComments().getNickname()).orElseThrow(
-                () -> new NullPointerException("존재하지 않는 회원입니다")
-        );
-        commentKing.changeRankingStatus(4);
+//        userRepository.initRankingStatus();
+//        List<User> users = userRepository.findAll();
+//        for (User user : users) {
+//            user.changeRankingStatus(0);
+//        }
     }
 }
