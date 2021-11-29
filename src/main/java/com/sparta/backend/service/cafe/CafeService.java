@@ -71,9 +71,16 @@ public class CafeService {
     //카페 저장
     public Cafe saveCafe(CafeRequestDto requestDto, User user) throws IOException {
 
+        //사진들을 S3에 저장
         List<String> imageUrlList= requestDto.getImage()[0].getSize() == 0L? null :uploadManyImagesToS3(requestDto, "cafeImage");
-        //사진들 저장
+
+        //섬네일을 S3에 저장
+        String thumbNailUrl = requestDto.getImage()[0].getSize() == 0L? null:uploadThumbNailImageToS3(requestDto.getImage()[0], "thumbNail");
+        System.out.println("섬네일이미지: "+thumbNailUrl);
+        //사진들을 db에 저장
         Cafe cafe = uploadManyImagesToDB(imageUrlList,requestDto,user);
+
+        //섬네일을 db에 저장
 
         return cafeRepository.save(cafe);
     }
@@ -91,22 +98,17 @@ public class CafeService {
         cafeRepository.deleteById(cafeId);
     }
 
-    //섬네일저장
-    BufferedImage resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight){
-        BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
-        Graphics2D graphics2D = resizedImage.createGraphics();
-        graphics2D.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
-        graphics2D.dispose();
-        return resizedImage;
+
+    private String uploadThumbNailImageToS3(MultipartFile multipartFile, String dirName) throws IOException {
+        String savedImageUrl = s3Uploader.resizeAndUpload(multipartFile, dirName);
+        if(savedImageUrl == null) throw new NullPointerException("이미지를 s3에 업로드하는 과정 실패");
+        return savedImageUrl;
     }
 
     //여러장의 이미지를 s3에 저장하는 기능
     public List<String> uploadManyImagesToS3(CafeRequestDto requestDto, String dirName) throws IOException {
         List<String> savedImages = new ArrayList<>();
-//
-//        todo://섬네일 저장
-//        BufferedImage thumbNailImage = resizeImage(requestDto.getImage()[0],100,100);
-//
+
         //s3에 이미지저장
         for(MultipartFile img : requestDto.getImage()){
             if(img.isEmpty()) return savedImages;
