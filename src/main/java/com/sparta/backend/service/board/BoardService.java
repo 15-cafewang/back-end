@@ -334,7 +334,7 @@ public class BoardService {
 
     //로그인한 계정이 작성자가 맞는지 확인하기
     private void writterCheck(String currentLoginEmail, String writerEmail, UserDetailsImpl userDetails) {
-        if (!currentLoginEmail.equals(writerEmail) || userDetails.getUser().getRole() == UserRole.ADMIN) {  //로그인한 계정이 작성자가 아닐 때
+        if (!currentLoginEmail.equals(writerEmail) && userDetails.getUser().getRole() != UserRole.ADMIN) {  //로그인한 계정이 작성자가 아닐 때
             throw new CustomErrorException("본인의 게시물만 수정,삭제 가능합니다.");
         }
     }

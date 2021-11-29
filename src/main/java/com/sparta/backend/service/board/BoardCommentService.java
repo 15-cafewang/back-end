@@ -116,7 +116,7 @@ public class BoardCommentService {
 
     //로그인한 계정이 작성자가 맞는지 확인하기
     private void writterCheck(Long currentLoginUserId, Long writeUserId, UserDetailsImpl userDetails) {
-        if (!currentLoginUserId.equals(writeUserId) || userDetails.getUser().getRole() == UserRole.ADMIN) {  //로그인한 계정이 작성자가 아닐 때
+        if (!currentLoginUserId.equals(writeUserId) && userDetails.getUser().getRole() != UserRole.ADMIN) {  //로그인한 계정이 작성자가 아닐 때
             throw new CustomErrorException("본인의 게시물만 수정,삭제 가능합니다.");
         }
     }

@@ -103,7 +103,7 @@ public class CafeCommentController {
     }
     private void checkOwnership(Long commentId, UserDetailsImpl userDetails){
         Optional<CafeComment> cafe = commentService.findById(commentId);
-        if(!cafe.get().getUser().getEmail().equals(userDetails.getUser().getEmail()) || userDetails.getUser().getRole() == UserRole.ADMIN)
+        if(!cafe.get().getUser().getEmail().equals(userDetails.getUser().getEmail()) && userDetails.getUser().getRole() != UserRole.ADMIN)
             throw new CustomErrorException("본인의 게시물만 수정,삭제 가능합니다.");
     }
 }
