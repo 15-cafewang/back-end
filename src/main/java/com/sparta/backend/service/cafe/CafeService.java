@@ -314,7 +314,7 @@ public class CafeService {
         Sort sort = Sort.by(direction, sortBy);
         Pageable pageable = PageRequest.of(page,size,sort);
 
-        Page<Cafe> cafes = cafeRepository.findAllByTitleOrContentOrLocation(keyword, pageable);
+        Page<Cafe> cafes = cafeRepository.findAllByTitleOrContentOrLocationOrNickName(keyword, pageable);
         Page<CafeListResponseDto> responseDtos = cafes.map((cafe) -> new CafeListResponseDto(cafe,userDetails, cafeLikeRepository));
         return responseDtos;
     }
@@ -340,7 +340,7 @@ public class CafeService {
         keyword = keyword.trim();
         if(withTag && !isSortByLikeCount) cafes = cafeRepository.findAllByTag(keyword, pageable);
         if(withTag && isSortByLikeCount) cafes = cafeRepository.findAllByTagOrderByLikeCount(keyword,pageable);
-        if(!withTag && !isSortByLikeCount) cafes = cafeRepository.findAllByTitleOrContentOrLocation(keyword, pageable);
+        if(!withTag && !isSortByLikeCount) cafes = cafeRepository.findAllByTitleOrContentOrLocationOrNickName(keyword, pageable);
         if(!withTag && isSortByLikeCount) cafes = cafeRepository.findAllByTitleOrContentOrLocationOrderByLikeCount(keyword, pageable);
         Page<CafeListResponseDto> responseDtos = cafes.map((cafe) -> new CafeListResponseDto(cafe,userDetails, cafeLikeRepository));
         return responseDtos;

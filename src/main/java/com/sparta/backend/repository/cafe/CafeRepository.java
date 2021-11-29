@@ -21,8 +21,9 @@ public interface CafeRepository extends JpaRepository<Cafe, Long> {
     @Query("select r from Cafe r " +
             "where r.title like concat('%',:keyword,'%') " +
             "or r.content like concat('%',:keyword,'%') " +
-            "or r.location like concat('%', :keyword, '%')")
-    Page<Cafe> findAllByTitleOrContentOrLocation(String keyword, Pageable pageable);
+            "or r.location like concat('%', :keyword, '%') " +
+            "or r.user.nickname like concat('%', :keyword, '%')")
+    Page<Cafe> findAllByTitleOrContentOrLocationOrNickName(String keyword, Pageable pageable);
 
     //카페 목록조회 좋아요 순
     @Query("select r from Cafe r left join r.cafeLikeList l group by r.id order by count(l.cafe) desc")
@@ -66,6 +67,7 @@ public interface CafeRepository extends JpaRepository<Cafe, Long> {
             "where r.title like concat('%',:keyword,'%') " +
             "or r.content like concat('%',:keyword,'%') " +
             "or r.location like concat('%', :keyword, '%')" +
+            "or r.user.nickname like concat('%', :keyword, '%') " +
             "group by r.id order by count(rl.user) desc ")
     Page<Cafe> findAllByTitleOrContentOrLocationOrderByLikeCount(@Param("keyword") String keyword, Pageable pageable);
 
