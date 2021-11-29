@@ -2,6 +2,7 @@ package com.sparta.backend.awsS3;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.sparta.backend.exception.CustomErrorException;
 import com.sparta.backend.exception.ImageNameTooLongException;
@@ -10,9 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -35,8 +37,31 @@ public class S3Uploader {
         File uploadFile = convert(multipartFile)  // 파일 변환할 수 없으면 에러
                 .orElseThrow(() -> new CustomErrorException("error: MultipartFile -> File convert fail")); //반환된 uploadFile은 로컬에 있는 사진위치임
 
-        return upload(uploadFile, dirName);
-//        return "EC2에만 업로드시킴";
+        return uploadToS3(uploadFile, dirName);
+    }
+
+    //섬네일 resize하기
+    BufferedImage resizeImage(File originalImage, int targetWidth, int targetHeight) throws IOException {
+        BufferedImage in = ImageIO.read(originalImage);
+        BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
+        Graphics2D graphics2D = resizedImage.createGraphics();
+        graphics2D.drawImage(in, 0, 0, targetWidth, targetHeight, null);
+        graphics2D.dispose();
+        return resizedImage;
+    }
+
+
+    //resize한 후 s3에 업로드하기
+    public String resizeAndUpload(MultipartFile multipartFile, String dirName) throws IOException {
+        //dirName길이 제한.
+        if(Objects.requireNonNull(multipartFile.getOriginalFilename()).length() >300 ) throw new ImageNameTooLongException("사진 이름이 너무 깁니다.");
+
+        File uploadedFile = convert(multipartFile)  // 파일 변환할 수 없으면 에러
+                .orElseThrow(() -> new CustomErrorException("error: MultipartFile -> File convert fail")); //반환된 uploadFile은 로컬에 있는 사진위치임
+
+        //파일 resize하기
+        BufferedImage resizedImage = resizeImage(uploadedFile, 200, 200);
+        return uploadBufferedImageToS3(resizedImage, dirName,uploadedFile);
     }
 
     // 로컬에 파일 업로드 하기
@@ -53,8 +78,27 @@ public class S3Uploader {
         return Optional.empty();
     }
 
+    //BufferedImage를 S3로 업로드하기
+    private String uploadBufferedImageToS3(BufferedImage resizedImage,String dirName, File uploadedFile) throws IOException {
+
+        //BufferedImage -> InputStream으로 변환
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        ImageIO.write(resizedImage,"png",os);
+        byte[] buffer = os.toByteArray();
+        InputStream is = new ByteArrayInputStream(buffer);
+        String fileName = dirName + "/" + UUID.randomUUID() + uploadedFile.getName();   // S3에 저장된 파일 이름
+        ObjectMetadata meta = new ObjectMetadata();
+
+        //s3에 업로드
+        amazonS3Client.putObject(new PutObjectRequest(bucket,fileName,is,meta).withCannedAcl(CannedAccessControlList.PublicRead));
+
+        //로컬(또는 우분투) 파일 삭제
+        removeNewFile(uploadedFile);
+        return amazonS3Client.getUrl(bucket, fileName).toString();
+    }
+
     // S3로 파일 업로드하기
-    private String upload(File uploadFile, String dirName) {
+    private String uploadToS3(File uploadFile, String dirName) {
         String fileName = dirName + "/" + UUID.randomUUID() + uploadFile.getName();   // S3에 저장된 파일 이름
         String uploadImageUrl = putS3(uploadFile, fileName); // s3로 업로드
         removeNewFile(uploadFile);
