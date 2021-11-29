@@ -162,7 +162,7 @@ public class UserService {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
         }
 
-        user.deleteUser("N");
+        userRepository.delete(user);
     }
 
     // S3 이미지 삭제
