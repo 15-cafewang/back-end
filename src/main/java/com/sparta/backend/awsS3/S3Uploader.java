@@ -60,17 +60,8 @@ public class S3Uploader {
                 .orElseThrow(() -> new CustomErrorException("error: MultipartFile -> File convert fail")); //반환된 uploadFile은 로컬에 있는 사진위치임
 
         //파일 resize하기
-        BufferedImage resizedImage = resizeImage(uploadedFile, 100, 100);
-
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        ImageIO.write(resizedImage,"png",os);
-        byte[] buffer = os.toByteArray();
-        InputStream is = new ByteArrayInputStream(buffer);
-        String fileName = dirName + "/" + UUID.randomUUID() + uploadedFile.getName();   // S3에 저장된 파일 이름
-        ObjectMetadata meta = new ObjectMetadata();
-        amazonS3Client.putObject(new PutObjectRequest(bucket,fileName,is,meta).withCannedAcl(CannedAccessControlList.PublicRead));
-        return amazonS3Client.getUrl(bucket, fileName).toString();
-//        return uploadToS3(uploadedFile, dirName);
+        BufferedImage resizedImage = resizeImage(uploadedFile, 200, 200);
+        return uploadBufferedImageToS3(resizedImage, dirName,uploadedFile);
     }
 
     // 로컬에 파일 업로드 하기
@@ -85,6 +76,25 @@ public class S3Uploader {
         }
 
         return Optional.empty();
+    }
+
+    //BufferedImage를 S3로 업로드하기
+    private String uploadBufferedImageToS3(BufferedImage resizedImage,String dirName, File uploadedFile) throws IOException {
+
+        //BufferedImage -> InputStream으로 변환
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        ImageIO.write(resizedImage,"png",os);
+        byte[] buffer = os.toByteArray();
+        InputStream is = new ByteArrayInputStream(buffer);
+        String fileName = dirName + "/" + UUID.randomUUID() + uploadedFile.getName();   // S3에 저장된 파일 이름
+        ObjectMetadata meta = new ObjectMetadata();
+
+        //s3에 업로드
+        amazonS3Client.putObject(new PutObjectRequest(bucket,fileName,is,meta).withCannedAcl(CannedAccessControlList.PublicRead));
+
+        //로컬(또는 우분투) 파일 삭제
+        removeNewFile(uploadedFile);
+        return amazonS3Client.getUrl(bucket, fileName).toString();
     }
 
     // S3로 파일 업로드하기
