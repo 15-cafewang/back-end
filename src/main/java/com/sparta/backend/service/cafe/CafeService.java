@@ -24,10 +24,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.List;
 
 @Transactional
 @RequiredArgsConstructor
@@ -69,7 +72,9 @@ public class CafeService {
     public Cafe saveCafe(CafeRequestDto requestDto, User user) throws IOException {
 
         List<String> imageUrlList= requestDto.getImage()[0].getSize() == 0L? null :uploadManyImagesToS3(requestDto, "cafeImage");
+        //사진들 저장
         Cafe cafe = uploadManyImagesToDB(imageUrlList,requestDto,user);
+
         return cafeRepository.save(cafe);
     }
 
@@ -86,9 +91,22 @@ public class CafeService {
         cafeRepository.deleteById(cafeId);
     }
 
+    //섬네일저장
+    BufferedImage resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight){
+        BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
+        Graphics2D graphics2D = resizedImage.createGraphics();
+        graphics2D.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
+        graphics2D.dispose();
+        return resizedImage;
+    }
+
     //여러장의 이미지를 s3에 저장하는 기능
     public List<String> uploadManyImagesToS3(CafeRequestDto requestDto, String dirName) throws IOException {
         List<String> savedImages = new ArrayList<>();
+//
+//        todo://섬네일 저장
+//        BufferedImage thumbNailImage = resizeImage(requestDto.getImage()[0],100,100);
+//
         //s3에 이미지저장
         for(MultipartFile img : requestDto.getImage()){
             if(img.isEmpty()) return savedImages;
@@ -296,7 +314,7 @@ public class CafeService {
         Sort sort = Sort.by(direction, sortBy);
         Pageable pageable = PageRequest.of(page,size,sort);
 
-        Page<Cafe> cafes = cafeRepository.findAllByTitleOrContent(keyword, pageable);
+        Page<Cafe> cafes = cafeRepository.findAllByTitleOrContentOrLocationOrNickName(keyword, pageable);
         Page<CafeListResponseDto> responseDtos = cafes.map((cafe) -> new CafeListResponseDto(cafe,userDetails, cafeLikeRepository));
         return responseDtos;
     }
@@ -322,8 +340,8 @@ public class CafeService {
         keyword = keyword.trim();
         if(withTag && !isSortByLikeCount) cafes = cafeRepository.findAllByTag(keyword, pageable);
         if(withTag && isSortByLikeCount) cafes = cafeRepository.findAllByTagOrderByLikeCount(keyword,pageable);
-        if(!withTag && !isSortByLikeCount) cafes = cafeRepository.findAllByTitleOrContent(keyword, pageable);
-        if(!withTag && isSortByLikeCount) cafes = cafeRepository.findAllByTitleOrContentOrderByLikeCount(keyword, pageable);
+        if(!withTag && !isSortByLikeCount) cafes = cafeRepository.findAllByTitleOrContentOrLocationOrNickName(keyword, pageable);
+        if(!withTag && isSortByLikeCount) cafes = cafeRepository.findAllByTitleOrContentOrLocationOrderByLikeCount(keyword, pageable);
         Page<CafeListResponseDto> responseDtos = cafes.map((cafe) -> new CafeListResponseDto(cafe,userDetails, cafeLikeRepository));
         return responseDtos;
     }
