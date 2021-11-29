@@ -74,10 +74,11 @@ public class Cafe extends BaseEntity {
         this.user = user;
         this.thumbNailImage = thumbNailImage;
     }
-    public Cafe updateCafe(String title, String content, String location) {
+    public Cafe updateCafe(String title, String content, String location,String thumbNailImage) {
         this.title = title;
         this.content = content;
         this.location = location;
+        this.thumbNailImage = thumbNailImage;
 
         return this;
     }
