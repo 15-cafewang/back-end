@@ -27,6 +27,7 @@ public class CafeListResponseDto {
     private int likeCount;
     private String location;
     private boolean likeStatus;
+    private int rankingStatus;
 
 
     public CafeListResponseDto(Cafe cafe, UserDetailsImpl userDetails, CafeLikeRepository cafeLikeRepository){
@@ -42,6 +43,7 @@ public class CafeListResponseDto {
 
         Optional<CafeLike> foundCafeLike = cafeLikeRepository.findByCafeIdAndUserId(cafe.getId(),userDetails.getUser().getId());
         this.likeStatus = foundCafeLike.isPresent();
+        rankingStatus = userDetails.getUser().getRankingStatus();
     }
 //
     public CafeListResponseDto(Cafe cafe, User user, CafeLikeRepository cafeLikeRepository){
@@ -57,6 +59,7 @@ public class CafeListResponseDto {
 
         Optional<CafeLike> foundCafeLike = cafeLikeRepository.findByCafeAndUser(cafe,user);
         this.likeStatus = foundCafeLike.isPresent();
+        rankingStatus = user.getRankingStatus();
     }
 
     public CafeListResponseDto(Optional<Cafe> cafe, User user, CafeLikeRepository likesRepository) {
@@ -72,6 +75,7 @@ public class CafeListResponseDto {
 
         Optional<CafeLike> foundCafeLike = likesRepository.findByCafeIdAndUserId(cafe.get().getId(), user.getId());
         this.likeStatus = foundCafeLike.isPresent();
+        rankingStatus = user.getRankingStatus();
     }
 
     public String getThumbNail(Cafe cafe) {

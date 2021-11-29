@@ -243,6 +243,7 @@ public class CafeService {
         String profile = cafe.getUser().getImage();
         Optional<CafeLike> foundCafeLike = cafeLikeRepository.findByCafeIdAndUserId(cafe.getId(),userDetails.getUser().getId());
         Boolean likeStatus = foundCafeLike.isPresent();
+        int rankingStatus = userDetails.getUser().getRankingStatus();
 
         List<String> tagNames = new ArrayList<>();
         cafe.getTagList().forEach((tag)->tagNames.add(tag.getName()));
@@ -251,7 +252,7 @@ public class CafeService {
         cafe.getCafeImagesList().forEach((cafeImage)->images.add(cafeImage.getImage()));
 
         CafeDetailResponsetDto responsetDto = new CafeDetailResponsetDto(
-                cafeId, nickname, title, content, regDate, likeCount, likeStatus, images, tagNames, location,profile);
+                cafeId, nickname, title, content, regDate, likeCount, likeStatus, images, tagNames, location,profile,rankingStatus);
 
         return responsetDto;
     }
