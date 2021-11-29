@@ -18,8 +18,11 @@ public interface CafeRepository extends JpaRepository<Cafe, Long> {
     @Query("select r from Cafe r join r.tagList t where t.name = :tagName")
     Page<Cafe> findAllByTag(String tagName, Pageable pageable);
 
-    @Query("select r from Cafe r where r.title like concat('%',:keyword,'%') or r.content like concat('%',:keyword,'%')")
-    Page<Cafe> findAllByTitleOrContent(String keyword, Pageable pageable);
+    @Query("select r from Cafe r " +
+            "where r.title like concat('%',:keyword,'%') " +
+            "or r.content like concat('%',:keyword,'%') " +
+            "or r.location like concat('%', :keyword, '%')")
+    Page<Cafe> findAllByTitleOrContentOrLocation(String keyword, Pageable pageable);
 
     //카페 목록조회 좋아요 순
     @Query("select r from Cafe r left join r.cafeLikeList l group by r.id order by count(l.cafe) desc")
@@ -47,34 +50,6 @@ public interface CafeRepository extends JpaRepository<Cafe, Long> {
             nativeQuery = true)
     List<Long> findPopularCafeId2(LocalDateTime startDate, LocalDateTime endDate);
 
-    //한번에 좋아요 순으로 Cafe객체 가져오려는 시도 실패
-//    @Query(value = "select re from Cafe re where re.id in (" +
-//            "select r.id as cafeId " +
-//            "from Cafe r join r.cafeLikesList l " +
-//            "where l.regDate between :startDate and :endDate " +
-//            "group by r.id order by count(l.cafe) desc) " +
-//            "order by field(re.id, " +
-//            "select r.id as cafeId " +
-//            "from Cafe r join r.cafeLikesList l " +
-//            "where l.regDate between :startDate and :endDate " +
-//            "group by r.id order by count(l.cafe) desc) ")
-//    List<Cafe> findPopularCafe2(LocalDateTime startDate, LocalDateTime endDate);
-//
-//    //위와 같은 시도 sql로 하려는 시도 실패
-//    @Query(value = "SELECT * from cafe r2 " +
-//            "where r2.cafe_id " +
-//            "in " +
-//            "(SELECT r.cafe_id " +
-//            "FROM cafe r JOIN cafe_likes l ON r.cafe_id = l.cafe_id " +
-//            "WHERE l.regDate BETWEEN '2021-11-01' AND '2021-11-08' " +
-//            "GROUP BY r.cafe_id order by count(l.cafe_id) desc) " +
-//            "ORDER BY FIELD(r2.cafe_id,(SELECT r.cafe_id " +
-//            "                             FROM cafe r JOIN cafe_likes l ON r.cafe_id = l.cafe_id " +
-//            "                             WHERE l.regDate BETWEEN :startDate AND :endDate " +
-//            "                             GROUP BY r.cafe_id order by count(l.cafe_id) desc))"
-//    ,nativeQuery = true)
-//    List<Cafe> findPopularCafe3(LocalDateTime startDate, LocalDateTime endDdate);
-
     Page<Cafe> findAllByUser(Pageable pageable, User user);
 
     @Query("select r from Cafe r where r.id in (select rl.cafe.id from CafeLike rl where rl.user.id = :userId)")
@@ -88,9 +63,11 @@ public interface CafeRepository extends JpaRepository<Cafe, Long> {
     Page<Cafe> findAllByTagOrderByLikeCount(String keyword, Pageable pageable);
 
     @Query("select r from Cafe r left join r.cafeLikeList rl " +
-            "where r.title like %:keyword% or r.content like %:keyword% " +
+            "where r.title like concat('%',:keyword,'%') " +
+            "or r.content like concat('%',:keyword,'%') " +
+            "or r.location like concat('%', :keyword, '%')" +
             "group by r.id order by count(rl.user) desc ")
-    Page<Cafe> findAllByTitleOrContentOrderByLikeCount(@Param("keyword") String keyword, Pageable pageable);
+    Page<Cafe> findAllByTitleOrContentOrLocationOrderByLikeCount(@Param("keyword") String keyword, Pageable pageable);
 
     @Query(value = "select exists (select * from tag t join cafe_like rl on t.cafe_id = rl.cafe_id " +
             "               where rl.user_id = :userId " +
