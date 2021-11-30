@@ -62,6 +62,7 @@ public class Board extends BaseEntity {
     }
 
     public Board updateBoard(String title, String content) {
+        BoardValidator.boardTitleContentValidator(title, content);
         this.title = title;
         this.content = content;
         return this;

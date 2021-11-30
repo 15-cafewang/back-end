@@ -5,7 +5,6 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.sparta.backend.awsS3.S3Uploader;
 import com.sparta.backend.domain.user.User;
 import com.sparta.backend.domain.user.UserRole;
-import com.sparta.backend.dto.request.user.DeleteUserRequestDto;
 import com.sparta.backend.dto.request.user.SignupRequestDto;
 import com.sparta.backend.dto.request.user.UpdateNicknameRequestDto;
 import com.sparta.backend.dto.request.user.UpdateUserRequestDto;
@@ -154,15 +153,18 @@ public class UserService {
     }
 
     // 회원 탈퇴
-    public void deleteUser(UserDetailsImpl userDetails, DeleteUserRequestDto requestDto) {
+    @Transactional
+    public void deleteUser(UserDetailsImpl userDetails) {
 
-        User user = userDetails.getUser();
+        User user = userRepository.findById(userDetails.getUser().getId()).orElseThrow(
+                () -> new NullPointerException("존재하지 않는 회원입니다")
+        );
 
-        if (!passwordEncoder.matches(requestDto.getPassword(),user.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
-        }
+        String email = UUID.randomUUID().toString();
+        String nickname = UUID.randomUUID().toString();
+        String image = "https://user-images.githubusercontent.com/76515226/143576583-9b0bdb15-5e93-43d4-b328-445374f9f1ee.png";
 
-        userRepository.delete(user);
+        user.deleteUser(email, nickname, image);
     }
 
     // S3 이미지 삭제

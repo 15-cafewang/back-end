@@ -35,6 +35,9 @@ public class Cafe extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Column(length = 600)
+    private String thumbNailImage;
+
     @OneToMany(mappedBy = "cafe",cascade = CascadeType.ALL)
     @JsonBackReference
     private List<Tag> tagList;
@@ -63,10 +66,19 @@ public class Cafe extends BaseEntity {
         this.location = location;
         this.user = user;
     }
-    public Cafe updateCafe(String title, String content, String location) {
+    public Cafe(String title, String content, String location, User user,String thumbNailImage){
+        CafeValidator.validateCafeInput(title,content, location,user);
         this.title = title;
         this.content = content;
         this.location = location;
+        this.user = user;
+        this.thumbNailImage = thumbNailImage;
+    }
+    public Cafe updateCafe(String title, String content, String location,String thumbNailImage) {
+        this.title = title;
+        this.content = content;
+        this.location = location;
+        this.thumbNailImage = thumbNailImage;
 
         return this;
     }

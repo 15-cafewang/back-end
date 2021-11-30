@@ -20,12 +20,14 @@ public class CafeListResponseDto {
     private String nickname;
     private String title;
     private String content;
-    private List<String> images = new ArrayList<>();
+//    private List<String> images = new ArrayList<>();
+    private String image;
     private LocalDateTime regDate;
     private int commentCount;
     private int likeCount;
     private String location;
     private boolean likeStatus;
+    private int rankingStatus;
 
 
     public CafeListResponseDto(Cafe cafe, UserDetailsImpl userDetails, CafeLikeRepository cafeLikeRepository){
@@ -35,12 +37,13 @@ public class CafeListResponseDto {
         this.content = cafe.getContent();
         this.regDate = cafe.getRegDate();
         this.commentCount = cafe.getCafeCommentList().size();
-        cafe.getCafeImagesList().forEach((CafeImage)->this.images.add(CafeImage.getImage()));
+        this.image = getThumbNail(cafe);
         this.likeCount = cafe.getCafeLikeList().size();
         this.location = cafe.getLocation();
 
         Optional<CafeLike> foundCafeLike = cafeLikeRepository.findByCafeIdAndUserId(cafe.getId(),userDetails.getUser().getId());
         this.likeStatus = foundCafeLike.isPresent();
+        rankingStatus = userDetails.getUser().getRankingStatus();
     }
 //
     public CafeListResponseDto(Cafe cafe, User user, CafeLikeRepository cafeLikeRepository){
@@ -50,12 +53,13 @@ public class CafeListResponseDto {
         this.content = cafe.getContent();
         this.regDate = cafe.getRegDate();
         this.commentCount = cafe.getCafeCommentList().size();
-        cafe.getCafeImagesList().forEach((CafeImage)->this.images.add(CafeImage.getImage()));
+        this.image = getThumbNail(cafe);
         this.likeCount = cafe.getCafeLikeList().size();
         this.location = cafe.getLocation();
 
         Optional<CafeLike> foundCafeLike = cafeLikeRepository.findByCafeAndUser(cafe,user);
         this.likeStatus = foundCafeLike.isPresent();
+        rankingStatus = user.getRankingStatus();
     }
 
     public CafeListResponseDto(Optional<Cafe> cafe, User user, CafeLikeRepository likesRepository) {
@@ -65,11 +69,17 @@ public class CafeListResponseDto {
         this.content = cafe.get().getContent();
         this.regDate = cafe.get().getRegDate();
         this.commentCount = cafe.get().getCafeCommentList().size();
-        cafe.get().getCafeImagesList().forEach((CafeImage)->this.images.add(CafeImage.getImage()));
+        this.image = getThumbNail(cafe.get());
         this.likeCount = cafe.get().getCafeLikeList().size();
         this.location = cafe.get().getLocation();
 
         Optional<CafeLike> foundCafeLike = likesRepository.findByCafeIdAndUserId(cafe.get().getId(), user.getId());
         this.likeStatus = foundCafeLike.isPresent();
+        rankingStatus = user.getRankingStatus();
+    }
+
+    public String getThumbNail(Cafe cafe) {
+        if(cafe.getThumbNailImage() == null) return cafe.getCafeImagesList().get(0).getImage();
+        else return cafe.getThumbNailImage();
     }
 }

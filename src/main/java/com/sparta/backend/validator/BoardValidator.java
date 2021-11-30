@@ -19,6 +19,19 @@ public class BoardValidator {
 
 
     public static void boardValidator(String title, String content, User user) {
+        boardTitleContentValidator(title, content);
+
+        //사용자
+        if(user == null || user.getId() == null) {
+            throw new NullPointerException("로그인이 필요합니다.");
+        } else {
+            if(user.getId() <= 0) {
+                throw new IllegalArgumentException("존재하지 않는 사용자입니다.");
+            }
+        }
+    }
+
+    public static void boardTitleContentValidator(String title, String content) {
         //제목
         if(title == null) { //request에서 title 자체가 없을 때
             throw new NullPointerException("제목을 입력해주세요.");
@@ -40,15 +53,6 @@ public class BoardValidator {
             }
             if(content.length() > 1000) {
                 throw new IllegalArgumentException("내용은 최대 1000글자 입력 가능합니다.");
-            }
-        }
-
-        //사용자
-        if(user == null || user.getId() == null) {
-            throw new NullPointerException("로그인이 필요합니다.");
-        } else {
-            if(user.getId() <= 0) {
-                throw new IllegalArgumentException("존재하지 않는 사용자입니다.");
             }
         }
     }

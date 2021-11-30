@@ -24,10 +24,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.List;
@@ -71,9 +74,14 @@ public class CafeService {
     //카페 저장
     public Cafe saveCafe(CafeRequestDto requestDto, User user) throws IOException {
 
+        //사진들을 S3에 저장
         List<String> imageUrlList= requestDto.getImage()[0].getSize() == 0L? null :uploadManyImagesToS3(requestDto, "cafeImage");
-        //사진들 저장
-        Cafe cafe = uploadManyImagesToDB(imageUrlList,requestDto,user);
+
+        //섬네일을 S3에 저장
+        String thumbNailUrl = requestDto.getImage()[0].getSize() == 0L? null:uploadThumbNailImageToS3(requestDto.getImage()[0], "thumbNail");
+
+        //사진들을 db에 저장
+        Cafe cafe = uploadManyImagesToDB(imageUrlList,requestDto,user,thumbNailUrl);
 
         return cafeRepository.save(cafe);
     }
@@ -86,27 +94,22 @@ public class CafeService {
         //이미지 수만큼 S3에서도 삭제
         for(int i = 0; i< foundCafe.getCafeImagesList().size(); i++){
             CafeImage cafeImage = foundCafe.getCafeImagesList().get(i);
-            if(cafeImage != null) deleteS3(cafeImage.getImage());
+            if(cafeImage != null) deleteS3(cafeImage.getImage(), "/cafeImage");
         }
         cafeRepository.deleteById(cafeId);
     }
 
-    //섬네일저장
-    BufferedImage resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight){
-        BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
-        Graphics2D graphics2D = resizedImage.createGraphics();
-        graphics2D.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
-        graphics2D.dispose();
-        return resizedImage;
+
+    private String uploadThumbNailImageToS3(MultipartFile multipartFile, String dirName) throws IOException {
+        String savedImageUrl = s3Uploader.resizeAndUpload(multipartFile, dirName);
+        if(savedImageUrl == null) throw new NullPointerException("이미지를 s3에 업로드하는 과정 실패");
+        return savedImageUrl;
     }
 
     //여러장의 이미지를 s3에 저장하는 기능
     public List<String> uploadManyImagesToS3(CafeRequestDto requestDto, String dirName) throws IOException {
         List<String> savedImages = new ArrayList<>();
-//
-//        todo://섬네일 저장
-//        BufferedImage thumbNailImage = resizeImage(requestDto.getImage()[0],100,100);
-//
+
         //s3에 이미지저장
         for(MultipartFile img : requestDto.getImage()){
             if(img.isEmpty()) return savedImages;
@@ -122,7 +125,6 @@ public class CafeService {
         if(requestDto.getImage() == null) return savedImages;
         //s3에 이미지저장
         for(MultipartFile img : requestDto.getImage()){
-            System.out.println("빈 이미지??:"+img);
             if(img.isEmpty()) return savedImages;
 
             String imageUrl = s3Uploader.upload(img, dirName);
@@ -132,16 +134,14 @@ public class CafeService {
         return savedImages;
     }
     //여러장의 이미지를 db에 저장하는 기능
-    public Cafe uploadManyImagesToDB(List<String> imageUrlList, CafeRequestDto requestDto, User user){
-        Cafe cafe = new Cafe(requestDto.getTitle(),requestDto.getContent(),requestDto.getLocation(),user);
+    public Cafe uploadManyImagesToDB(List<String> imageUrlList, CafeRequestDto requestDto, User user,String thumbNailUrl){
+        Cafe cafe = new Cafe(requestDto.getTitle(),requestDto.getContent(),requestDto.getLocation(),user,thumbNailUrl);
         //디비에 이미지url저장
         if(imageUrlList!=null){
             List<CafeImage> cafeImages = new ArrayList<>();
             imageUrlList.forEach((image)-> cafeImages.add(new CafeImage(image, cafe)));
             cafeImageRepository.saveAll(cafeImages);
         }
-//        System.out.println(cafe.getCafeImagesList());
-//        System.out.println(cafe.getCafeImagesList().get(0).getImage());
         return cafe;
     }
 
@@ -164,7 +164,6 @@ public class CafeService {
         //DB의 cafe_image 기존 row들 삭제(그냥 update하면 더 작은 개수로 image업뎃할때 outOfInedex에러남)
         if(requestDto.getDeleteImage() != null) cafeImageRepository.deleteByImageIn(requestDto.getDeleteImage());
 
-
         //cafe_image db에 저장
         if (imageUrlList.size()>0){
             List<CafeImage> cafeImageList = new ArrayList<>();
@@ -176,17 +175,28 @@ public class CafeService {
         String title = requestDto.getTitle();
         String content = requestDto.getContent();
         String location = requestDto.getLocation();
-
-        Cafe updatedCafe = cafe.updateCafe(title,content,location);
+        String oldThumbNailUrl = cafe.getThumbNailImage();
 
         //사진 다 수정되면 기존 사진 s3삭제 -> 중간에 작업하다가 익셉션 터지면 s3에 작업한 건 롤백이 안되니까 일부러 마지막에서 처리
         if(requestDto.getDeleteImage()!=null){
             for(int i=0; i<requestDto.getDeleteImage().size();i++){
                 String s3Url = requestDto.getDeleteImage().get(i);
-                if(s3Url!= null) deleteS3(s3Url);
+                if(s3Url!= null) deleteS3(s3Url,"/cafeImage");
             }
         }
 
+        //섬네일 이미지 바꾸기
+        CafeImage cafeImage = cafeImageRepository.findTopByCafe(cafe);
+        URL url = new URL(cafeImage.getImage());
+        Image image = ImageIO.read(url);
+        BufferedImage resizedImage = s3Uploader.resizeImage(image, 200, 200);
+
+        File imageFile = new File(cafeImage.getImage());
+        String savedThumbNailUrl = s3Uploader.uploadBufferedImageToS3(resizedImage,"thumbNail",imageFile);
+
+        Cafe updatedCafe = cafe.updateCafe(title,content,location,savedThumbNailUrl);
+        //기존 섬네일도 s3에서 삭제
+        deleteS3(oldThumbNailUrl,"/thumbNail");
 
         return updatedCafe;
     }
@@ -212,7 +222,7 @@ public class CafeService {
     }
 
     //S3 이미지 삭제
-    public void deleteS3(@RequestParam String imageName){
+    public void deleteS3(@RequestParam String imageName,String dir){
         //https://S3 버킷 URL/버킷에 생성한 폴더명/이미지이름
         String keyName = "";
         try {keyName = imageName.split("/")[4]; // 이미지이름만 추출
@@ -220,7 +230,7 @@ public class CafeService {
             throw new IllegalArgumentException("S3 url 형식이 아닙니다");
         }
 
-        try {amazonS3Client.deleteObject(bucket + "/cafeImage", keyName);
+        try {amazonS3Client.deleteObject(bucket + dir, keyName);
         }catch (AmazonServiceException e){
             e.printStackTrace();
             throw new AmazonServiceException(e.getMessage());
@@ -243,6 +253,7 @@ public class CafeService {
         String profile = cafe.getUser().getImage();
         Optional<CafeLike> foundCafeLike = cafeLikeRepository.findByCafeIdAndUserId(cafe.getId(),userDetails.getUser().getId());
         Boolean likeStatus = foundCafeLike.isPresent();
+        int rankingStatus = userDetails.getUser().getRankingStatus();
 
         List<String> tagNames = new ArrayList<>();
         cafe.getTagList().forEach((tag)->tagNames.add(tag.getName()));
@@ -251,7 +262,7 @@ public class CafeService {
         cafe.getCafeImagesList().forEach((cafeImage)->images.add(cafeImage.getImage()));
 
         CafeDetailResponsetDto responsetDto = new CafeDetailResponsetDto(
-                cafeId, nickname, title, content, regDate, likeCount, likeStatus, images, tagNames, location,profile);
+                cafeId, nickname, title, content, regDate, likeCount, likeStatus, images, tagNames, location,profile,rankingStatus);
 
         return responsetDto;
     }

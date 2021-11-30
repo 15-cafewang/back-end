@@ -130,8 +130,11 @@ public class User extends BaseEntity {
         this.nickname = nickname;
     }
 
-    public void deleteUser(String status) {
-        this.status = status;
+    public void deleteUser(String email, String nickname, String image) {
+        this.email = email;
+        this.nickname = nickname;
+        this.image = image;
+        this.status = "N";
     }
 
     public void changeRankingStatus(int rankingStatus) {
