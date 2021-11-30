@@ -280,7 +280,7 @@ public class CafeService {
 
         Page<Cafe> cafes = sortByLike? cafeRepository.findCafesOrderByLikeCountDesc(pageable): cafeRepository.findAll(pageable);
 
-        Page<CafeListResponseDto> responseDtos = cafes.map((cafe)->new CafeListResponseDto(cafe, userDetails, cafeLikeRepository));
+        Page<CafeListResponseDto> responseDtos = cafes.map((cafe)->new CafeListResponseDto(cafe, userDetails, cafeLikeRepository, s3Uploader));
 
         return responseDtos;
     }
@@ -315,7 +315,7 @@ public class CafeService {
 
         Page<Cafe> cafes = cafeRepository.findAllByTag(keyword, pageable);
 //        System.out.println(cafes.getContent().get(0));
-        Page<CafeListResponseDto> responseDtos = cafes.map((cafe) -> new CafeListResponseDto(cafe,userDetails, cafeLikeRepository));
+        Page<CafeListResponseDto> responseDtos = cafes.map((cafe) -> new CafeListResponseDto(cafe,userDetails, cafeLikeRepository,s3Uploader));
         return responseDtos;
     }
 
@@ -326,7 +326,7 @@ public class CafeService {
         Pageable pageable = PageRequest.of(page,size,sort);
 
         Page<Cafe> cafes = cafeRepository.findAllByTitleOrContentOrLocationOrNickName(keyword, pageable);
-        Page<CafeListResponseDto> responseDtos = cafes.map((cafe) -> new CafeListResponseDto(cafe,userDetails, cafeLikeRepository));
+        Page<CafeListResponseDto> responseDtos = cafes.map((cafe) -> new CafeListResponseDto(cafe,userDetails, cafeLikeRepository,s3Uploader));
         return responseDtos;
     }
 
@@ -353,7 +353,7 @@ public class CafeService {
         if(withTag && isSortByLikeCount) cafes = cafeRepository.findAllByTagOrderByLikeCount(keyword,pageable);
         if(!withTag && !isSortByLikeCount) cafes = cafeRepository.findAllByTitleOrContentOrLocationOrNickName(keyword, pageable);
         if(!withTag && isSortByLikeCount) cafes = cafeRepository.findAllByTitleOrContentOrLocationOrderByLikeCount(keyword, pageable);
-        Page<CafeListResponseDto> responseDtos = cafes.map((cafe) -> new CafeListResponseDto(cafe,userDetails, cafeLikeRepository));
+        Page<CafeListResponseDto> responseDtos = cafes.map((cafe) -> new CafeListResponseDto(cafe,userDetails, cafeLikeRepository,s3Uploader));
         return responseDtos;
     }
 
@@ -383,7 +383,7 @@ public class CafeService {
         popularCafeIdList.forEach((cafeId)-> popularCafeList.add(cafeRepository.findById(cafeId)));
 
         List<CafeListResponseDto> responseDtoList = new ArrayList<>();
-        popularCafeList.forEach((cafe -> responseDtoList.add(new CafeListResponseDto(cafe, user, cafeLikeRepository))));
+        popularCafeList.forEach((cafe -> responseDtoList.add(new CafeListResponseDto(cafe, user, cafeLikeRepository, s3Uploader))));
 
         return responseDtoList;
     }
@@ -392,7 +392,7 @@ public class CafeService {
         List<Cafe> popularCafeIdList = cafeRepository.findTop3ByOrderByRegDateDesc();
 
         List<CafeListResponseDto> responseDtoList = new ArrayList<>();
-        popularCafeIdList.forEach((cafe -> responseDtoList.add(new CafeListResponseDto(cafe, user, cafeLikeRepository))));
+        popularCafeIdList.forEach((cafe -> responseDtoList.add(new CafeListResponseDto(cafe, user, cafeLikeRepository, s3Uploader))));
         return responseDtoList;
     }
 

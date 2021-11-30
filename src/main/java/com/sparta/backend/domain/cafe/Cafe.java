@@ -91,4 +91,9 @@ public class Cafe extends BaseEntity {
         this.location = location;
         this.user = user;
     }
+
+    public Cafe updateCafeNullThumbNail(String savedThumbNailUrl) {
+        this.thumbNailImage = savedThumbNailUrl;
+        return this;
+    }
 }
