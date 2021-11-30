@@ -41,11 +41,19 @@ public class S3Uploader {
     }
 
     //섬네일 resize하기
-    BufferedImage resizeImage(File originalImage, int targetWidth, int targetHeight) throws IOException {
+    public BufferedImage resizeImage(File originalImage, int targetWidth, int targetHeight) throws IOException {
         BufferedImage in = ImageIO.read(originalImage);
         BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics2D = resizedImage.createGraphics();
         graphics2D.drawImage(in, 0, 0, targetWidth, targetHeight, null);
+        graphics2D.dispose();
+        return resizedImage;
+    }
+
+    public BufferedImage resizeImage(Image originalImage, int targetWidth, int targetHeight) throws IOException {
+        BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
+        Graphics2D graphics2D = resizedImage.createGraphics();
+        graphics2D.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
         graphics2D.dispose();
         return resizedImage;
     }
@@ -79,7 +87,7 @@ public class S3Uploader {
     }
 
     //BufferedImage를 S3로 업로드하기
-    private String uploadBufferedImageToS3(BufferedImage resizedImage,String dirName, File uploadedFile) throws IOException {
+    public String uploadBufferedImageToS3(BufferedImage resizedImage, String dirName, File uploadedFile) throws IOException {
 
         //BufferedImage -> InputStream으로 변환
         ByteArrayOutputStream os = new ByteArrayOutputStream();

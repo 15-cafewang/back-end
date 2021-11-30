@@ -24,10 +24,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.List;
@@ -91,7 +94,7 @@ public class CafeService {
         //이미지 수만큼 S3에서도 삭제
         for(int i = 0; i< foundCafe.getCafeImagesList().size(); i++){
             CafeImage cafeImage = foundCafe.getCafeImagesList().get(i);
-            if(cafeImage != null) deleteS3(cafeImage.getImage());
+            if(cafeImage != null) deleteS3(cafeImage.getImage(), "/cafeImage");
         }
         cafeRepository.deleteById(cafeId);
     }
@@ -122,7 +125,6 @@ public class CafeService {
         if(requestDto.getImage() == null) return savedImages;
         //s3에 이미지저장
         for(MultipartFile img : requestDto.getImage()){
-            System.out.println("빈 이미지??:"+img);
             if(img.isEmpty()) return savedImages;
 
             String imageUrl = s3Uploader.upload(img, dirName);
@@ -140,8 +142,6 @@ public class CafeService {
             imageUrlList.forEach((image)-> cafeImages.add(new CafeImage(image, cafe)));
             cafeImageRepository.saveAll(cafeImages);
         }
-//        System.out.println(cafe.getCafeImagesList());
-//        System.out.println(cafe.getCafeImagesList().get(0).getImage());
         return cafe;
     }
 
@@ -164,7 +164,6 @@ public class CafeService {
         //DB의 cafe_image 기존 row들 삭제(그냥 update하면 더 작은 개수로 image업뎃할때 outOfInedex에러남)
         if(requestDto.getDeleteImage() != null) cafeImageRepository.deleteByImageIn(requestDto.getDeleteImage());
 
-
         //cafe_image db에 저장
         if (imageUrlList.size()>0){
             List<CafeImage> cafeImageList = new ArrayList<>();
@@ -176,17 +175,28 @@ public class CafeService {
         String title = requestDto.getTitle();
         String content = requestDto.getContent();
         String location = requestDto.getLocation();
-
-        Cafe updatedCafe = cafe.updateCafe(title,content,location);
+        String oldThumbNailUrl = cafe.getThumbNailImage();
 
         //사진 다 수정되면 기존 사진 s3삭제 -> 중간에 작업하다가 익셉션 터지면 s3에 작업한 건 롤백이 안되니까 일부러 마지막에서 처리
         if(requestDto.getDeleteImage()!=null){
             for(int i=0; i<requestDto.getDeleteImage().size();i++){
                 String s3Url = requestDto.getDeleteImage().get(i);
-                if(s3Url!= null) deleteS3(s3Url);
+                if(s3Url!= null) deleteS3(s3Url,"/cafeImage");
             }
         }
 
+        //섬네일 이미지 바꾸기
+        CafeImage cafeImage = cafeImageRepository.findTopByCafe(cafe);
+        URL url = new URL(cafeImage.getImage());
+        Image image = ImageIO.read(url);
+        BufferedImage resizedImage = s3Uploader.resizeImage(image, 200, 200);
+
+        File imageFile = new File(cafeImage.getImage());
+        String savedThumbNailUrl = s3Uploader.uploadBufferedImageToS3(resizedImage,"thumbNail",imageFile);
+
+        Cafe updatedCafe = cafe.updateCafe(title,content,location,savedThumbNailUrl);
+        //기존 섬네일도 s3에서 삭제
+        deleteS3(oldThumbNailUrl,"/thumbNail");
 
         return updatedCafe;
     }
@@ -212,7 +222,7 @@ public class CafeService {
     }
 
     //S3 이미지 삭제
-    public void deleteS3(@RequestParam String imageName){
+    public void deleteS3(@RequestParam String imageName,String dir){
         //https://S3 버킷 URL/버킷에 생성한 폴더명/이미지이름
         String keyName = "";
         try {keyName = imageName.split("/")[4]; // 이미지이름만 추출
@@ -220,7 +230,7 @@ public class CafeService {
             throw new IllegalArgumentException("S3 url 형식이 아닙니다");
         }
 
-        try {amazonS3Client.deleteObject(bucket + "/cafeImage", keyName);
+        try {amazonS3Client.deleteObject(bucket + dir, keyName);
         }catch (AmazonServiceException e){
             e.printStackTrace();
             throw new AmazonServiceException(e.getMessage());

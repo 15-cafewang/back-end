@@ -1,5 +1,6 @@
 package com.sparta.backend.repository.cafe;
 
+import com.sparta.backend.domain.cafe.Cafe;
 import com.sparta.backend.domain.cafe.CafeImage;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -10,4 +11,6 @@ public interface CafeImageRepository extends JpaRepository<CafeImage,Long> {
     void deleteByImageIn(List<String> imageUrls);
 
     List<CafeImage> findByImageIn(List<String> imageUrls);
+
+    CafeImage findTopByCafe(Cafe cafe);
 }
