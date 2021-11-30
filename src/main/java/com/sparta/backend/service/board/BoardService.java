@@ -7,13 +7,14 @@ import com.sparta.backend.domain.board.Board;
 import com.sparta.backend.domain.board.BoardImage;
 import com.sparta.backend.domain.board.BoardLike;
 import com.sparta.backend.domain.user.User;
+import com.sparta.backend.domain.user.UserRole;
 import com.sparta.backend.dto.request.board.PostBoardRequestDto;
 import com.sparta.backend.dto.request.board.PutBoardRequestDto;
 import com.sparta.backend.dto.response.board.GetBoardDetailResponseDto;
 import com.sparta.backend.dto.response.board.GetBoardResponseDto;
 import com.sparta.backend.exception.CustomErrorException;
 import com.sparta.backend.repository.board.BoardImageRepository;
-import com.sparta.backend.repository.board.BoardLikesRepository;
+import com.sparta.backend.repository.board.BoardLikeRepository;
 import com.sparta.backend.repository.board.BoardRepository;
 import com.sparta.backend.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,7 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
     private final BoardImageRepository boardImageRepository;
-    private final BoardLikesRepository boardLikesRepository;
+    private final BoardLikeRepository boardLikeRepository;
     private final S3Uploader s3Uploader;
     private final AmazonS3Client amazonS3Client;
     private final String bucket = "99final";
@@ -106,7 +107,7 @@ public class BoardService {
 
         // Page<Board> -> Page<Dto> 로 변환
         Page<GetBoardResponseDto> responseDtoList = boardList.map(board ->
-                new GetBoardResponseDto(board, currentLoginUser, boardLikesRepository));
+                new GetBoardResponseDto(board, currentLoginUser, boardLikeRepository));
 
         return responseDtoList;
     }
@@ -136,7 +137,7 @@ public class BoardService {
                 }
             }
             int likeCount = board.getBoardLikeList().size();
-            BoardLike boardLike = boardLikesRepository.findByBoardAndUser(board, currentLoginUser);
+            BoardLike boardLike = boardLikeRepository.findByBoardAndUser(board, currentLoginUser);
             boolean likeStatus = boardLike != null;
 
             responseDto = new GetBoardDetailResponseDto(boardId, title, nickname, profile, regDate,
@@ -159,7 +160,7 @@ public class BoardService {
 
         String currentLoginEmail = userDetails.getUser().getEmail();
         String writterEmail = board.getUser().getEmail();   //게시물을 작성한 계정 아이디: 이메일
-        writterCheck(currentLoginEmail, writterEmail); //로그인한 계정이 게시물 작성자인지 확인
+        writterCheck(currentLoginEmail, writterEmail, userDetails); //로그인한 계정이 게시물 작성자인지 확인
 
         /* 로그인한 상태 && 로그인 계정이 게시물 작성자일 때 아래 로직 수행 */
 
@@ -192,7 +193,7 @@ public class BoardService {
 
         String writerEmail = board.getUser().getEmail();
 
-        writterCheck(currentLoginEmail, writerEmail);
+        writterCheck(currentLoginEmail, writerEmail, userDetails);
         List<BoardImage> boardImageList = boardImageRepository.findAllByBoard(board);
         for(BoardImage bi : boardImageList) {
             String image = bi.getImage();
@@ -233,12 +234,12 @@ public class BoardService {
                     boardRepository.findBoardsByTitleContainingOrContentContainingOrderByLikeCountDesc(keyword, pageable);
         } else {
             //키워드가 제목 또는 내용에 포함되어있어야 검색 결과에 나타남
-            boardList = boardRepository.findAllByTitleContainingOrContentContaining(keyword, keyword, pageable);
+            boardList = boardRepository.findAllByTitleContainingOrContentContainingOrNicknameContaining(keyword, pageable);
         }
 
         //Page<Board> -> Page<Dto> 로 변환
         Page<GetBoardResponseDto> responseDtoList = boardList.map(board ->
-                new GetBoardResponseDto(board, currentLoginUser, boardLikesRepository));
+                new GetBoardResponseDto(board, currentLoginUser, boardLikeRepository));
 
         return responseDtoList;
     }
@@ -332,8 +333,8 @@ public class BoardService {
     }
 
     //로그인한 계정이 작성자가 맞는지 확인하기
-    private void writterCheck(String currentLoginEmail, String writerEmail) {
-        if (!currentLoginEmail.equals(writerEmail)) {  //로그인한 계정이 작성자가 아닐 때
+    private void writterCheck(String currentLoginEmail, String writerEmail, UserDetailsImpl userDetails) {
+        if (!currentLoginEmail.equals(writerEmail) && userDetails.getUser().getRole() != UserRole.ADMIN) {  //로그인한 계정이 작성자가 아닐 때
             throw new CustomErrorException("본인의 게시물만 수정,삭제 가능합니다.");
         }
     }

@@ -14,11 +14,11 @@ import static com.sparta.backend.validator.BoardImageValidator.boardImageValidat
 @Entity
 public class BoardImage extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "image_id")
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "board_image_id")
     private Long id;
 
+    @Column(length = 600)
     private String image;
 
     @ManyToOne(fetch = FetchType.LAZY)

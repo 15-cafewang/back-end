@@ -5,9 +5,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.sparta.backend.awsS3.S3Uploader;
 import com.sparta.backend.domain.user.User;
 import com.sparta.backend.domain.user.UserRole;
-import com.sparta.backend.dto.request.user.DeleteUserRequestDto;
 import com.sparta.backend.dto.request.user.SignupRequestDto;
-import com.sparta.backend.dto.request.user.UpdateNicknameRequestDto;
 import com.sparta.backend.dto.request.user.UpdateUserRequestDto;
 import com.sparta.backend.dto.response.user.GetUserInfoResponseDto;
 import com.sparta.backend.repository.user.UserRepository;
@@ -69,7 +67,7 @@ public class UserService {
 
         String nickname = requestDto.getNickname();
 
-        String image = "https://user-images.githubusercontent.com/76515226/140890775-30641b72-226a-4068-8a0a-9a306e8c68b4.png";
+        String image = "https://user-images.githubusercontent.com/76515226/143576583-9b0bdb15-5e93-43d4-b328-445374f9f1ee.png";
 
         User user = new User(email, password, nickname, image, UserRole.USER, "Y");
 
@@ -79,7 +77,7 @@ public class UserService {
     public GetUserInfoResponseDto login(SignupRequestDto requestDto) {
 
         User user = userRepository.findByEmail(requestDto.getEmail()).orElseThrow(
-                () -> new NullPointerException("아이디를 찾을수 없습니다")
+                () -> new NullPointerException("이메일을 찾을 수 없습니다")
         );
 
         if (user.getStatus().equals("N")) throw new NullPointerException("존재하지 않는 회원입니다");
@@ -123,15 +121,19 @@ public class UserService {
         user.changeProfile(requestDto.getNickname(), imageUrl);
     }
 
-    public void deleteUser(UserDetailsImpl userDetails, DeleteUserRequestDto requestDto) {
+    // 회원 탈퇴
+    @Transactional
+    public void deleteUser(UserDetailsImpl userDetails) {
 
-        User user = userDetails.getUser();
+        User user = userRepository.findById(userDetails.getUser().getId()).orElseThrow(
+                () -> new NullPointerException("존재하지 않는 회원입니다")
+        );
 
-        if (!passwordEncoder.matches(requestDto.getPassword(),user.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
-        }
+        String email = UUID.randomUUID().toString();
+        String nickname = UUID.randomUUID().toString();
+        String image = "https://user-images.githubusercontent.com/76515226/143576583-9b0bdb15-5e93-43d4-b328-445374f9f1ee.png";
 
-        user.deleteUser("N");
+        user.deleteUser(email, nickname, image);
     }
 
     public void deleteS3(@RequestParam String imageName){

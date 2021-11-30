@@ -19,8 +19,7 @@ import java.util.List;
 @Entity
 public class Board extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "board_id")
     private Long id;
 
@@ -54,7 +53,6 @@ public class Board extends BaseEntity {
         this.user = user;
     }
 
-    //test용 constructor
     public Board(Long id, PostBoardRequestDto requestDto, User user) {
         BoardValidator.boardValidatorBoardId(id, requestDto, user);
         this.id = id;
@@ -64,9 +62,9 @@ public class Board extends BaseEntity {
     }
 
     public Board updateBoard(String title, String content) {
+        BoardValidator.boardTitleContentValidator(title, content);
         this.title = title;
         this.content = content;
-
         return this;
     }
 }

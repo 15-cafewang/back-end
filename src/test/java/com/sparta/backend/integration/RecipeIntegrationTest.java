@@ -45,18 +45,18 @@
 //
 //    @Test
 //    @Order(1)
-//    @DisplayName("회원가입 없이 레시피 저장하면 에러발생")
+//    @DisplayName("회원가입 없이 카페 저장하면 에러발생")
 //    void test1() throws IOException {
 //        //given
-//        String title = "이것이 레시피다";
+//        String title = "이것이 카페다";
 //        String content = "내용입니다. 맛있다 냠냠냠";
-//        Integer price = 5000;
+//        Integer location = 5000;
 //        List<String> tag = Arrays.asList("가가,나나,다다");
 //        MockMultipartFile image1 = new MockMultipartFile("image", "imagefile.jpeg", "image/jpg", new FileInputStream("src/test/java/com/sparta/backend/images/puppy1.jpg"));
 //        MockMultipartFile[] image = {image1};
 //
 //        PostRecipeRequestDto requestDto = new PostRecipeRequestDto(
-//                title, content, price,tag, image
+//                title, content, location,tag, image
 //        );
 //
 //        //when
@@ -93,18 +93,18 @@
 //
 //    @Test
 //    @Order(3)
-//    @DisplayName("가입한 회원 Id 로 레시피 등록")
+//    @DisplayName("가입한 회원 Id 로 카페 등록")
 //    void test3() throws IOException {
 //        //given
-//        String title = "이것이 레시피다";
+//        String title = "이것이 카페다";
 //        String content = "내용입니다. 맛있다 냠냠냠";
-//        Integer price = 5000;
+//        Integer location = 5000;
 //        List<String> tag = Arrays.asList("가가,나나,다다");
 //        MockMultipartFile image1 = new MockMultipartFile("image", "imagefile.jpeg", "image/jpg", new FileInputStream("src/test/java/com/sparta/backend/images/puppy1.jpg"));
 //        MockMultipartFile[] image = {image1};
 //
 //        PostRecipeRequestDto requestDto = new PostRecipeRequestDto(
-//                title, content, price,tag, image
+//                title, content, location,tag, image
 //        );
 //
 //        //when
@@ -120,7 +120,7 @@
 ////        assertEquals(tag,stringTags);
 ////        System.out.println(recipe.getRecipeImagesList());
 ////        assertEquals(1, recipe.getRecipeImagesList().size());
-//        assertEquals(price, recipe.getPrice());
+//        assertEquals(location, recipe.getlocation());
 //
 ////        recipeService.deleteRecipe(recipe.getId());
 //
@@ -129,19 +129,19 @@
 //
 //    @Test
 //    @Order(4)
-//    @DisplayName("방금 등록한 레시피 수정업로드")
+//    @DisplayName("방금 등록한 카페 수정업로드")
 //    void test4() throws IOException {
 //        //given
 //        String title = "수정한 제목입니다";
 //        String content = "수정한 내용입니다. 맛있다 냠냠냠";
-//        Integer price = 5000;
+//        Integer location = 5000;
 //        List<String> tag = Arrays.asList("가가,나나,다다");
 //        MockMultipartFile image1 = new MockMultipartFile("image", "imagefile.jpeg", "image/jpg", new FileInputStream("src/test/java/com/sparta/backend/images/puppy1.jpg"));
 //        MockMultipartFile[] image = {image1};
 //        List<String> deleteimage = Arrays.asList("url1,url2");
 //
 //        PutRecipeRequestDto requestDto = new PutRecipeRequestDto(
-//                title, content, price,tag, image,deleteimage
+//                title, content, location,tag, image,deleteimage
 //        );
 //
 //        //when

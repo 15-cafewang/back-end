@@ -39,4 +39,11 @@ public class GlobalControllerAdvice {
 
         return new ResponseEntity<>(new CustomResponseDto<>(-1, e.getMessage(),""), HttpStatus.BAD_REQUEST);
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ImageNameTooLongException.class)
+    public ResponseEntity<?> imageNameTooLongException(ImageNameTooLongException e) {
+
+        return new ResponseEntity<>(new CustomResponseDto<>(-1, e.getMessage(),""), HttpStatus.BAD_REQUEST);
+    }
 }

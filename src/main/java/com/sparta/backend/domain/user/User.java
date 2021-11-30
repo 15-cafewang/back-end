@@ -5,9 +5,9 @@ import com.sparta.backend.domain.BaseEntity;
 import com.sparta.backend.domain.board.Board;
 import com.sparta.backend.domain.board.BoardComment;
 import com.sparta.backend.domain.board.BoardLike;
-import com.sparta.backend.domain.recipe.Recipe;
-import com.sparta.backend.domain.recipe.RecipeComment;
-import com.sparta.backend.domain.recipe.RecipeLike;
+import com.sparta.backend.domain.cafe.Cafe;
+import com.sparta.backend.domain.cafe.CafeComment;
+import com.sparta.backend.domain.cafe.CafeLike;
 
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,7 +17,6 @@ import java.util.List;
 
 import static com.sparta.backend.validator.UserValidator.*;
 
-//@ToString
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -43,22 +42,26 @@ public class User extends BaseEntity {
     @Column(unique = true)
     private Long kakaoId;
 
+    @Column(length = 600)
     private String image;
 
     @Column(nullable = false)
     private String status;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonBackReference
-    private List<Recipe> recipeList;
+    @Column(columnDefinition = "int default 0")
+    private int rankingStatus;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonBackReference
-    private List<RecipeComment> recipeCommentList;
+    private List<Cafe> cafeList;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonBackReference
-    private List<RecipeLike> recipeLikeList;
+    private List<CafeComment> cafeCommentList;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonBackReference
+    private List<CafeLike> cafeLikeList;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonBackReference
@@ -96,7 +99,6 @@ public class User extends BaseEntity {
         this.status = status;
     }
 
-    //test용- id주입받기 위해
     public User(Long id, String email, String password, String nickname, String image, UserRole role, String status) {
         this.id = id;
         this.email = email;
@@ -117,21 +119,25 @@ public class User extends BaseEntity {
         this.status = status;
     }
 
-    // 정보 수정
     public void changeProfile(String nickname, String image) {
         validateNickname(nickname);
         this.nickname = nickname;
         this.image = image;
     }
 
-    // 닉네임 수정
     public void changeNickname(String nickname) {
         validateNickname(nickname);
         this.nickname = nickname;
     }
 
-    // 회원 삭제
-    public void deleteUser(String status) {
-        this.status = status;
+    public void deleteUser(String email, String nickname, String image) {
+        this.email = email;
+        this.nickname = nickname;
+        this.image = image;
+        this.status = "N";
+    }
+
+    public void changeRankingStatus(int rankingStatus) {
+        this.rankingStatus = rankingStatus;
     }
 }

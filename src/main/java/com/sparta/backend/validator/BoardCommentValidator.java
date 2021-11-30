@@ -20,16 +20,7 @@ public class BoardCommentValidator {
     }
 
     public static void boardCommentValidator(String content, Board board, User user) {
-        //내용
-        if(content == null) {
-            throw new NullPointerException("내용을 입력하세요");
-        } else {
-            if(content.length() <= 0) {
-                throw new NullPointerException("내용을 입력하세요");
-            } else if(content.length() > 1000) {
-                throw new IllegalArgumentException("내용은 최대 1000글자 입력 가능합니다.");
-            }
-        }
+        boardCommentContentValidator(content);
 
         //게시물
         if(board == null) {
@@ -55,5 +46,18 @@ public class BoardCommentValidator {
             }
         }
 
+    }
+
+    public static void boardCommentContentValidator(String content) {
+        //내용
+        if(content == null) {
+            throw new NullPointerException("내용을 입력하세요");
+        } else {
+            if(content.length() <= 0) {
+                throw new NullPointerException("내용을 입력하세요");
+            } else if(content.length() > 200) {
+                throw new IllegalArgumentException("내용은 최대 200글자 입력 가능합니다.");
+            }
+        }
     }
 }

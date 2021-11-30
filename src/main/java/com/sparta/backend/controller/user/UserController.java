@@ -75,7 +75,7 @@ public class UserController {
         GetUserInfoResponseDto responseDto = userService.login(requestDto);
 
         return new ResponseEntity<>(
-                new CustomResponseDto<>(1, "로그인 성공", responseDto), HttpStatus.OK);
+                new CustomResponseDto<>(1, "환영합니다", responseDto), HttpStatus.OK);
     }
 
     @GetMapping("/user/kakao/callback")
@@ -90,7 +90,7 @@ public class UserController {
         GetUserInfoResponseDto responseDto = new GetUserInfoResponseDto(token, nickname, image);
 
         return new ResponseEntity<>(
-                new CustomResponseDto<>(1, "로그인 성공", responseDto), HttpStatus.OK);
+                new CustomResponseDto<>(1, "환영합니다", responseDto), HttpStatus.OK);
     }
 
     @GetMapping("/user/info")
@@ -118,12 +118,11 @@ public class UserController {
     }
 
     @PutMapping("/user/delete")
-    public ResponseEntity<?> deleteUser(@RequestBody DeleteUserRequestDto requestDto,
-                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<?> deleteUser(@AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         checkLogin(userDetails);
 
-        userService.deleteUser(userDetails, requestDto);
+        userService.deleteUser(userDetails);
 
         return new ResponseEntity<>(
                 new CustomResponseDto<>(1, "회원 탈퇴 성공", ""), HttpStatus.OK);

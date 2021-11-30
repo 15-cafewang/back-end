@@ -3,11 +3,12 @@ package com.sparta.backend.service.board;
 import com.sparta.backend.domain.board.Board;
 import com.sparta.backend.domain.board.BoardComment;
 import com.sparta.backend.domain.user.User;
+import com.sparta.backend.domain.user.UserRole;
 import com.sparta.backend.dto.response.board.GetBoardCommentResponseDto;
 import com.sparta.backend.dto.request.board.PostBoardCommentRequestDto;
 import com.sparta.backend.dto.request.board.PutBoardCommentRequestDto;
 import com.sparta.backend.exception.CustomErrorException;
-import com.sparta.backend.repository.board.BoardCommentLikesRepository;
+import com.sparta.backend.repository.board.BoardCommentLikeRepository;
 import com.sparta.backend.repository.board.BoardCommentRepository;
 import com.sparta.backend.repository.board.BoardRepository;
 import com.sparta.backend.security.UserDetailsImpl;
@@ -26,7 +27,7 @@ public class BoardCommentService {
 
     private final BoardCommentRepository boardCommentRepository;
     private final BoardRepository boardRepository;
-    private final BoardCommentLikesRepository boardCommentLikesRepository;
+    private final BoardCommentLikeRepository boardCommentLikeRepository;
 
     //댓글 작성
     @Transactional
@@ -44,7 +45,7 @@ public class BoardCommentService {
             BoardComment boardComment = new BoardComment(requestDto, board, currentLoginUser);
             BoardComment saveBoardComment = boardCommentRepository.save(boardComment);
             responseDto =
-                    new GetBoardCommentResponseDto(saveBoardComment, boardCommentLikesRepository, userDetails);
+                    new GetBoardCommentResponseDto(saveBoardComment, boardCommentLikeRepository, userDetails);
         }
 
         return responseDto;
@@ -69,7 +70,7 @@ public class BoardCommentService {
         Page<BoardComment> boardCommentList = boardCommentRepository.findAllByBoard(board, pageable);
 
         Page<GetBoardCommentResponseDto> responseDtoList = boardCommentList.map(comment ->
-                new GetBoardCommentResponseDto(comment, boardCommentLikesRepository, userDetails)
+                new GetBoardCommentResponseDto(comment, boardCommentLikeRepository, userDetails)
         );
 
         return responseDtoList;
@@ -88,10 +89,10 @@ public class BoardCommentService {
         if(boardComment != null) {
             Long writeUser = boardComment.getUser().getId();
 
-            writterCheck(currentLoginUser, writeUser);  //작성자가 맞는지 확인
+            writterCheck(currentLoginUser, writeUser, userDetails);  //작성자가 맞는지 확인
             BoardComment updateBoardComment = boardComment.updateComment(requestDto);
             responseDto =
-                    new GetBoardCommentResponseDto(updateBoardComment, boardCommentLikesRepository, userDetails);
+                    new GetBoardCommentResponseDto(updateBoardComment, boardCommentLikeRepository, userDetails);
         }
 
         return responseDto;
@@ -107,15 +108,15 @@ public class BoardCommentService {
         );
         Long writeUser = boardComment.getUser().getId();
 
-        writterCheck(currentLoginUser, writeUser);  //작성자가 맞는지 확인
+        writterCheck(currentLoginUser, writeUser, userDetails);  //작성자가 맞는지 확인
         boardCommentRepository.deleteById(id);
 
         return id;
     }
 
     //로그인한 계정이 작성자가 맞는지 확인하기
-    private void writterCheck(Long currentLoginUserId, Long writeUserId) {
-        if (!currentLoginUserId.equals(writeUserId)) {  //로그인한 계정이 작성자가 아닐 때
+    private void writterCheck(Long currentLoginUserId, Long writeUserId, UserDetailsImpl userDetails) {
+        if (!currentLoginUserId.equals(writeUserId) && userDetails.getUser().getRole() != UserRole.ADMIN) {  //로그인한 계정이 작성자가 아닐 때
             throw new CustomErrorException("본인의 게시물만 수정,삭제 가능합니다.");
         }
     }
