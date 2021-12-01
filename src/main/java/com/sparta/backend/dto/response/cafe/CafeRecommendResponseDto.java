@@ -20,7 +20,7 @@ public class CafeRecommendResponseDto {
     private String nickname;
     private String title;
     private String content;
-    private List<String> images = new ArrayList<>();
+    private String image;
     private LocalDateTime regDate;
     private int commentCount;
     private int likeCount;
@@ -36,7 +36,7 @@ public class CafeRecommendResponseDto {
         this.content = cafe.getContent();
         this.regDate = cafe.getRegDate();
         this.commentCount = cafe.getCafeCommentList().size();
-        cafe.getCafeImagesList().forEach((CafeImage)->this.images.add(CafeImage.getImage()));
+        this.image = cafe.getThumbNailImage();
         this.likeCount = cafe.getCafeLikeList().size();
         this.location = cafe.getLocation();
 
@@ -51,7 +51,7 @@ public class CafeRecommendResponseDto {
         this.content = cafe.getContent();
         this.regDate = cafe.getRegDate();
         this.commentCount = cafe.getCafeCommentList().size();
-        cafe.getCafeImagesList().forEach((CafeImage)->this.images.add(CafeImage.getImage()));
+        this.image = cafe.getThumbNailImage();
         this.likeCount = cafe.getCafeLikeList().size();
         this.location = cafe.getLocation();
 
@@ -67,7 +67,7 @@ public class CafeRecommendResponseDto {
         this.content = cafe.get().getContent();
         this.regDate = cafe.get().getRegDate();
         this.commentCount = cafe.get().getCafeCommentList().size();
-        cafe.get().getCafeImagesList().forEach((CafeImage)->this.images.add(CafeImage.getImage()));
+        this.image = cafe.get().getThumbNailImage();
         this.likeCount = cafe.get().getCafeLikeList().size();
         this.location = cafe.get().getLocation();
 
