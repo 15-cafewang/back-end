@@ -253,7 +253,7 @@ public class CafeService {
         String profile = cafe.getUser().getImage();
         Optional<CafeLike> foundCafeLike = cafeLikeRepository.findByCafeIdAndUserId(cafe.getId(),userDetails.getUser().getId());
         Boolean likeStatus = foundCafeLike.isPresent();
-        int rankingStatus = userDetails.getUser().getRankingStatus();
+        int rankingStatus = cafe.getUser().getRankingStatus();
 
         List<String> tagNames = new ArrayList<>();
         cafe.getTagList().forEach((tag)->tagNames.add(tag.getName()));

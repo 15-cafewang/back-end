@@ -21,10 +21,11 @@ public class GetCafeListResponseDto {
     private String title;
     private String nickname;
     private String location;
-    private List<String> imageList = new ArrayList<>();
+    private String image;
     private int likeCount;
     private boolean likeStatus;
     private int commentCount;
+    private int rankingStatus;
 
     public GetCafeListResponseDto(Cafe cafe,
                                   UserDetailsImpl userDetails,
@@ -34,13 +35,19 @@ public class GetCafeListResponseDto {
         this.title = cafe.getTitle();
         this.nickname = cafe.getUser().getNickname();
         this.location = cafe.getLocation();
-        cafe.getCafeImagesList().forEach(RecipeImage -> this.imageList.add(RecipeImage.getImage()));
+        this.image = getThumbNail(cafe);
         this.likeCount = cafe.getCafeLikeList().size();
         this.commentCount = cafe.getCafeCommentList().size();
 
         Optional<CafeLike> foundRecipeLike = cafeLikeRepository
                 .findByCafeIdAndUserId(cafe.getId(), userDetails.getUser().getId());
         this.likeStatus = foundRecipeLike.isPresent();
+        this.rankingStatus = cafe.getUser().getRankingStatus();
+    }
+
+    public String getThumbNail(Cafe cafe) {
+        if(cafe.getThumbNailImage() == null) return cafe.getCafeImagesList().get(0).getImage();
+        else return cafe.getThumbNailImage();
     }
 
 }
