@@ -15,6 +15,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.URL;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -43,14 +44,30 @@ public class S3Uploader {
     //섬네일 resize하기
     public BufferedImage resizeImage(File originalImage, int targetWidth, int targetHeight) throws IOException {
         BufferedImage in = ImageIO.read(originalImage);
-        BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
+
+        double ratio; // 이미지 축소 비율
+
+        int getWidth = in.getWidth();
+        int getHeight = in.getHeight();
+
+        if(getWidth < 250) ratio = 1;
+        else if(getWidth < 700) ratio = 2;
+        else if(getWidth < 1400) ratio = 5;
+        else ratio = 10;
+
+        int tWidth = (int) (getWidth / ratio); // 생성할 썸네일이미지의 너비
+        int tHeight = (int) (getHeight / ratio); // 생성할 썸네일이미지의 높이
+
+        BufferedImage resizedImage = new BufferedImage(tWidth, tHeight, BufferedImage.TYPE_3BYTE_BGR); // 썸네일이미지
+        //BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics2D = resizedImage.createGraphics();
-        graphics2D.drawImage(in, 0, 0, targetWidth, targetHeight, null);
+        graphics2D.drawImage(in, 0, 0, tWidth, tHeight, null);
         graphics2D.dispose();
         return resizedImage;
     }
 
     public BufferedImage resizeImage(Image originalImage, int targetWidth, int targetHeight) throws IOException {
+
         BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics2D = resizedImage.createGraphics();
         graphics2D.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
@@ -58,6 +75,32 @@ public class S3Uploader {
         return resizedImage;
     }
 
+    //비율 유지하면서 썸네일 만들기
+    public BufferedImage resizeImage(String originalImageUrl) throws IOException {
+        URL url = new URL(originalImageUrl);
+        BufferedImage bufferedImage = ImageIO.read(url);
+
+        double ratio; // 이미지 축소 비율
+
+        int getWidth = bufferedImage.getWidth();
+        int getHeight = bufferedImage.getHeight();
+
+        if(getWidth < 250) ratio = 1;
+        else if(getWidth < 700) ratio = 2;
+        else if(getWidth < 1400) ratio = 5;
+        else ratio = 10;
+
+        int tWidth = (int) (getWidth / ratio); // 생성할 썸네일이미지의 너비
+        int tHeight = (int) (getHeight / ratio); // 생성할 썸네일이미지의 높이
+
+        BufferedImage tImage = new BufferedImage(tWidth, tHeight, BufferedImage.TYPE_3BYTE_BGR); // 썸네일이미지
+        Graphics2D graphic = tImage.createGraphics();
+        Image image = bufferedImage.getScaledInstance(tWidth, tHeight, Image.SCALE_SMOOTH);
+        graphic.drawImage(image, 0, 0, tWidth, tHeight, null);
+        graphic.dispose(); // 리소스를 모두 해제);
+
+        return tImage;
+    }
 
     //resize한 후 s3에 업로드하기
     public String resizeAndUpload(MultipartFile multipartFile, String dirName) throws IOException {
@@ -127,6 +170,4 @@ public class S3Uploader {
         }
         log.info("File delete fail");
     }
-
-
 }
