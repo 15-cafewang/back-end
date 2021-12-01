@@ -4,12 +4,9 @@ import com.sparta.backend.awsS3.S3Uploader;
 import com.sparta.backend.domain.cafe.Cafe;
 import lombok.RequiredArgsConstructor;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 
 @RequiredArgsConstructor
 public class NullThumbNailChecker {
@@ -24,9 +21,7 @@ public class NullThumbNailChecker {
         String originalImageUrl = cafe.getCafeImagesList().get(0).getImage();
 
         //가져온 사진을 리사이징
-        URL url = new URL(originalImageUrl);
-        Image image = ImageIO.read(url);
-        BufferedImage resizedImage = s3Uploader.resizeImage(image, 200, 200);
+        BufferedImage resizedImage = s3Uploader.resizeImage(originalImageUrl);
 
         //리사이징한 이미지를 S3섬네일 폴더에 업로드
         File imageFile = new File(originalImageUrl);
