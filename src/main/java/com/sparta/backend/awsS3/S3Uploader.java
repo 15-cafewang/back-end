@@ -4,18 +4,26 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.ImageProcessingException;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataException;
+import com.drew.metadata.exif.ExifIFD0Directory;
 import com.sparta.backend.exception.CustomErrorException;
 import com.sparta.backend.exception.ImageNameTooLongException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.imgscalr.Scalr;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
 import java.io.*;
 import java.net.URL;
+import java.util.Base64;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -42,43 +50,48 @@ public class S3Uploader {
     }
 
     //섬네일 resize하기
-    public BufferedImage resizeImage(File originalImage, int targetWidth, int targetHeight) throws IOException {
-        BufferedImage in = ImageIO.read(originalImage);
+    public BufferedImage resizeImage(File originalImage) throws IOException {
+        int orientation = getOrientation(originalImage);
+        BufferedImage in = rotateImage(originalImage, orientation);
 
-        double ratio; // 이미지 축소 비율
+        //imageLength[0] : 가로, imageLength[1] : 세로
+        int[] imageLength = setImageRatio(in);
 
-        int getWidth = in.getWidth();
-        int getHeight = in.getHeight();
-
-        if(getWidth < 250) ratio = 1;
-        else if(getWidth < 700) ratio = 2;
-        else if(getWidth < 1400) ratio = 5;
-        else ratio = 10;
-
-        int tWidth = (int) (getWidth / ratio); // 생성할 썸네일이미지의 너비
-        int tHeight = (int) (getHeight / ratio); // 생성할 썸네일이미지의 높이
-
-        BufferedImage resizedImage = new BufferedImage(tWidth, tHeight, BufferedImage.TYPE_3BYTE_BGR); // 썸네일이미지
-        //BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
+        BufferedImage resizedImage =
+                new BufferedImage(imageLength[0], imageLength[1], BufferedImage.TYPE_3BYTE_BGR); // 썸네일이미지
         Graphics2D graphics2D = resizedImage.createGraphics();
-        graphics2D.drawImage(in, 0, 0, tWidth, tHeight, null);
-        graphics2D.dispose();
-        return resizedImage;
-    }
-
-    public BufferedImage resizeImage(Image originalImage, int targetWidth, int targetHeight) throws IOException {
-
-        BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
-        Graphics2D graphics2D = resizedImage.createGraphics();
-        graphics2D.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
+        graphics2D.drawImage(in, 0, 0, imageLength[0], imageLength[1], null);
         graphics2D.dispose();
         return resizedImage;
     }
 
     //비율 유지하면서 썸네일 만들기
     public BufferedImage resizeImage(String originalImageUrl) throws IOException {
-        URL url = new URL(originalImageUrl);
-        BufferedImage bufferedImage = ImageIO.read(url);
+        Optional<File> optionalFile = convert(originalImageUrl);
+        if(optionalFile.isEmpty()) {
+            throw new CustomErrorException("섬네일 생성과정 실패");
+        }
+        File convertFile = optionalFile.get();
+        int orientation = getOrientation(convertFile);
+        BufferedImage in = rotateImage(convertFile, orientation);
+
+        //imageLength[0] : 가로, imageLength[1] : 세로
+        int[] imageLength = setImageRatio(in);
+
+        BufferedImage tImage = new BufferedImage(imageLength[0], imageLength[1], BufferedImage.TYPE_3BYTE_BGR); // 썸네일이미지
+        Graphics2D graphic = tImage.createGraphics();
+        Image image = in.getScaledInstance(imageLength[0], imageLength[1], Image.SCALE_SMOOTH);
+        graphic.drawImage(image, 0, 0, imageLength[0], imageLength[1], null);
+        graphic.dispose(); // 리소스를 모두 해제;
+
+        return tImage;
+    }
+
+
+    //썸네일 축소 비율 정하기
+    //imageLength[0] : 가로, imageLength[1] : 세로
+    public int[] setImageRatio(BufferedImage bufferedImage) {
+        int[] imageLength = new int[2];
 
         double ratio; // 이미지 축소 비율
 
@@ -93,13 +106,51 @@ public class S3Uploader {
         int tWidth = (int) (getWidth / ratio); // 생성할 썸네일이미지의 너비
         int tHeight = (int) (getHeight / ratio); // 생성할 썸네일이미지의 높이
 
-        BufferedImage tImage = new BufferedImage(tWidth, tHeight, BufferedImage.TYPE_3BYTE_BGR); // 썸네일이미지
-        Graphics2D graphic = tImage.createGraphics();
-        Image image = bufferedImage.getScaledInstance(tWidth, tHeight, Image.SCALE_SMOOTH);
-        graphic.drawImage(image, 0, 0, tWidth, tHeight, null);
-        graphic.dispose(); // 리소스를 모두 해제);
+        imageLength[0] = tWidth; imageLength[1] = tHeight;
 
-        return tImage;
+        return imageLength;
+    }
+
+    //이미지 회전 현상 방지
+    public int getOrientation(File imageFile) throws IOException {
+        int orientation = 1;    //사진 각도
+        try {
+            Metadata metadata = ImageMetadataReader.readMetadata(imageFile);
+            ExifIFD0Directory directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+            try {
+                if(directory != null){
+                    orientation = directory.getInt(ExifIFD0Directory.TAG_ORIENTATION); // 회전정보
+                }
+            } catch (MetadataException me) {
+                System.out.println("Could not get orientation" );
+                orientation = 1;
+                //removeNewFile(uploadedFile);
+            }
+        } catch (ImageProcessingException e) {
+            e.printStackTrace();
+        }
+        return orientation;
+    }
+
+    public BufferedImage rotateImage(File imageFile, int orientation) throws IOException {
+        BufferedImage srcImg = ImageIO.read(imageFile);
+        // 회전 시킨다.
+        switch (orientation) {
+            case 6:
+                srcImg = Scalr.rotate(srcImg, Scalr.Rotation.CW_90, (BufferedImageOp) null);
+                break;
+            case 1:
+                break;
+            case 3:
+                srcImg = Scalr.rotate(srcImg, Scalr.Rotation.CW_180, (BufferedImageOp) null);
+                break;
+            case 8:
+                srcImg = Scalr.rotate(srcImg, Scalr.Rotation.CW_270, (BufferedImageOp) null);
+                break;
+            default:
+                break;
+        }
+        return srcImg;
     }
 
     //resize한 후 s3에 업로드하기
@@ -111,14 +162,13 @@ public class S3Uploader {
                 .orElseThrow(() -> new CustomErrorException("error: MultipartFile -> File convert fail")); //반환된 uploadFile은 로컬에 있는 사진위치임
 
         //파일 resize하기
-        BufferedImage resizedImage = resizeImage(uploadedFile, 200, 200);
+        BufferedImage resizedImage = resizeImage(uploadedFile);
         return uploadBufferedImageToS3(resizedImage, dirName,uploadedFile);
     }
 
     // 로컬에 파일 업로드 하기
     private Optional<File> convert(MultipartFile file) throws IOException {
-//        File convertFile = new File( "/home/ubuntu/images"+ "/" + file.getOriginalFilename()); // EC2용
-        File convertFile = new File( "D:\\14_HangHae99\\Teamplay\\hh99-finalProject\\imageupload"+ "\\" + file.getOriginalFilename()); // 로컬용
+        File convertFile = getConvertFile(file.getOriginalFilename());
         if (convertFile.createNewFile()) { // 바로 위에서 지정한 경로에 File이 생성됨 (경로가 잘못되었다면 생성 불가능)
             try (FileOutputStream fos = new FileOutputStream(convertFile)) { // FileOutputStream 데이터를 파일에 바이트 스트림으로 저장하기 위함
                 fos.write(file.getBytes());
@@ -127,6 +177,33 @@ public class S3Uploader {
         }
 
         return Optional.empty();
+    }
+
+    // 로컬에 이미지 URL 파일 업로드 하기
+    private Optional<File> convert(String originalImageUrl) throws IOException {
+        URL url = new URL(originalImageUrl);
+        BufferedImage bufferedImage = ImageIO.read(url);
+        String fileName = originalImageUrl.substring(originalImageUrl.lastIndexOf("/") + 1);
+
+        File convertFile = getConvertFile(fileName);
+        if (convertFile.createNewFile()) { // 바로 위에서 지정한 경로에 File이 생성됨 (경로가 잘못되었다면 생성 불가능)
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ImageIO.write(bufferedImage, "jpg", bos);
+            try (
+                    FileOutputStream fos = new FileOutputStream(convertFile)) { // FileOutputStream 데이터를 파일에 바이트 스트림으로 저장하기 위함
+                    fos.write(bos.toByteArray());
+            }
+            return Optional.of(convertFile);
+        }
+
+        return Optional.empty();
+    }
+
+    public File getConvertFile(String fileName) {
+//        File convertFile = new File( "/home/ubuntu/images"+ "/" + fileName); // EC2용
+        File convertFile = new File( "E:\\workspaces\\hanghae99\\06.mycipe\\imageupload"+ "\\" + fileName); // 로컬용
+
+        return convertFile;
     }
 
     //BufferedImage를 S3로 업로드하기

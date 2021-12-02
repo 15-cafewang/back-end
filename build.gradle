@@ -43,7 +43,7 @@ dependencies {
     //쿼리에 ?내용 보여주기
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.7'
 
-    //스프링mvc테스트 시, 관심상품등록하려면 로그인이 필요한데, 가짜로그인을 해주기 위해 필요.
+    //Spring security
     testImplementation 'org.springframework.security:spring-security-test'
 
     //로그 파일 남기기
@@ -51,6 +51,12 @@ dependencies {
             'ch.qos.logback:logback-classic:1.2.3',
             'ch.qos.logback:logback-core:1.2.3',
     )
+
+    //메타데이터 정보 추출
+    implementation 'com.drewnoakes:metadata-extractor:2.9.1'
+    //사진 회전
+    implementation 'org.imgscalr:imgscalr-lib:4.2'
+
 }
 
 test {
