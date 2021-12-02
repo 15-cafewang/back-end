@@ -83,7 +83,7 @@ public interface CafeRepository extends JpaRepository<Cafe, Long> {
             "               where dc.user_id = :userId " +
             "               and dc.reg_date between :start and :end " +
             "               group by t.name) as exsit_detail;", nativeQuery = true)
-    List<Object[]> checkUserHasData(Long userId, LocalDateTime start, LocalDateTime end);
+    List<Object[]> checkUserHasData(@Param("userId") Long userId, @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
     @Query(value = "select cafe_id from( " +
             "                 select rdc.cafe_id cafe_id, count(rdc.cafe_id) cnt from cafe_detail_count rdc join tag t on rdc.cafe_id = t.cafe_id " +
@@ -192,7 +192,7 @@ public interface CafeRepository extends JpaRepository<Cafe, Long> {
                     "group by list.name " +
                     "order by sum(list.cnt) desc limit 1;"
             , nativeQuery = true)
-    String findRecommendingTagNameBasedAll(LocalDateTime start, LocalDateTime end);
+    String findRecommendingTagNameBasedAll(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
     @Query(value ="select list.cafe_id from( " +
             "                 select rdc.cafe_id cafe_id, count(rdc.cafe_id) cnt from cafe_detail_count rdc join tag t on rdc.cafe_id = t.cafe_id " +
@@ -204,7 +204,7 @@ public interface CafeRepository extends JpaRepository<Cafe, Long> {
             "                 group by t.name) list " +
             "                 join tag t on list.cafe_id= t.cafe_id " +
             "order by cnt desc limit 1;", nativeQuery = true)
-    Long findRecommendingCafeIdByTagName(String foundTagName);
+    Long findRecommendingCafeIdByTagName(@Param("foundTagName") String foundTagName);
 
     @Query(value = "select * from cafe order by rand() limit 1"
     ,nativeQuery = true)
