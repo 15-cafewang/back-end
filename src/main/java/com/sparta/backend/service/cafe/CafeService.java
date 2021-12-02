@@ -24,13 +24,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.List;
@@ -187,9 +184,7 @@ public class CafeService {
 
         //섬네일 이미지 바꾸기
         CafeImage cafeImage = cafeImageRepository.findTopByCafe(cafe);
-        URL url = new URL(cafeImage.getImage());
-        Image image = ImageIO.read(url);
-        BufferedImage resizedImage = s3Uploader.resizeImage(image, 200, 200);
+        BufferedImage resizedImage = s3Uploader.resizeImage(cafeImage.getImage());
 
         File imageFile = new File(cafeImage.getImage());
         String savedThumbNailUrl = s3Uploader.uploadBufferedImageToS3(resizedImage,"thumbNail",imageFile);
