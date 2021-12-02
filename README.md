@@ -56,11 +56,11 @@
 
 ## 배포버전
 
-![Untitled](README/Untitled 1.png)
+![Untitled](README/Untitled1.png)
 
 # ERD
 
-![Untitled](README/Untitled 2.png)
+![Untitled](README/Untitled2.png)
 
 # 기술적 고민들
 
@@ -147,9 +147,9 @@
           
             기존 코드를 테스트하기 좋은 코드로 개선 후(메소드에 인자 받도록 변형), 테스트코드에서 시간대별로 메소드가 잘 작동하는지 검사
             
-            ![Untitled](README/Untitled 3.png)
+            ![Untitled](README/Untitled3.png)
             
-            ![Untitled](README/Untitled 4.png)
+            ![Untitled](README/Untitled4.png)
             
         - 
 
@@ -183,7 +183,7 @@
 
 - 문제 상황: 화면 렌더링 시간이 너무 오래 걸림
   
-    ![Untitled](README/Untitled 5.png)
+    <img src="README/Untitled5.png" width="40%">
     
 - 원인: 게시물 목록 조회 시 각 게시물마다 용량이 큰 원본 이미지를 불러옴
 - 해결: 목록 조회 시 원본 이미지가 아닌 썸네일을 만들어 응답
@@ -195,9 +195,9 @@
 - 문제 상황: 게시물마다 한 장의 이미지만 첨부할 수 있었던 로직에서 여러 장의 이미지를 첨부할 수 있도록 변경해야 함
 - 해결: requestDto에서 사진 한 장을 요청 받는 변수에서 여러 장을 요청 받을 수 있도록 MultipartFile 배열로 변경
 
-![Untitled](README/Untitled 6.png)
+![Untitled](README/Untitled6.png)
 
-![Untitled](README/Untitled 7.png)
+![Untitled](README/Untitled7.png)
 
 ## 10. 프론트에서 form-data 형식으로 API를 사용하는 방법
 
