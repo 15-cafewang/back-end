@@ -27,6 +27,7 @@ public class CafeRecommendResponseDto {
     private String location;
     private boolean likeStatus;
     private String tagName;
+    private int rankingStatus;
 
 
     public CafeRecommendResponseDto(Cafe cafe, UserDetailsImpl userDetails, CafeLikeRepository cafeLikeRepository){
@@ -58,6 +59,7 @@ public class CafeRecommendResponseDto {
         Optional<CafeLike> foundCafeLike = cafeLikeRepository.findByCafeAndUser(cafe,user);
         this.likeStatus = foundCafeLike.isPresent();
         this.tagName = tagName;
+        this.rankingStatus = cafe.getUser().getRankingStatus();
     }
 
     public CafeRecommendResponseDto(Optional<Cafe> cafe, User user, CafeLikeRepository likesRepository) {
