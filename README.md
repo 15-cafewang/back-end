@@ -157,7 +157,7 @@
 
 - HTTPS적용하기 위한 개념공부
   
-    희준님 블로그 정리: [https://lovenewthing.tistory.com/42](https://lovenewthing.tistory.com/42)
+    희준님 블로그 정리: [https://lovenewthing.tistory.com/42](https://lovenewthing.tistory.com/42), [https://lovenewthing.tistory.com/44?category=877529](https://lovenewthing.tistory.com/44?category=877529)
     
     재환님 깃허브 정리: [https://github.com/jhhong0930/TIL/blob/master/Network/HTTPS.md](https://github.com/jhhong0930/TIL/blob/master/Network/HTTPS.md)
     
