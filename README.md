@@ -66,7 +66,7 @@
 
 ## 1. 양방향 연관관계와 cascade 옵션 관련
 
-희준님 블로그 정리: [https://lovenewthing.tistory.com/37](https://lovenewthing.tistory.com/37)
+_**희준님 블로그 정리: 영속성 상태관리와 JPA(https://lovenewthing.tistory.com/37)**_
 
 - 문제 상황 및 원인
   
@@ -80,11 +80,12 @@
     1. Recipe삭제 시 RecipeDetailCount에서도 삭제하는 쿼리를 날리기
     2. 영속성 상태관리를 동일하게 유지
     
-    중 2번째 방법 선택함.(관련 커밋: https://github.com/15-cafewang/back-end/pull/66/commits/3e5ef2572c2ac917fd8c11df05835e1c7769e0e4)
+    중 2번째 방법 선택함.                
+    (관련 커밋: https://github.com/15-cafewang/back-end/pull/66/commits/3e5ef2572c2ac917fd8c11df05835e1c7769e0e4)
 
 ## 2. 확장 가능성, 유지보수를 고려한 DB 모델링
 
-희준님 블로그 정리: [https://lovenewthing.tistory.com/25](https://lovenewthing.tistory.com/25)
+_**희준님 블로그 정리: 미래를 고려한 디비 모델링 (https://lovenewthing.tistory.com/25)**_
 
 1. 카페테이블과 게시물테이블의 내용이 비슷하니까 그냥 '게시물'이란 테이블 하나에다가 넣어서 관리하는게 나을지
     - 고민과 해결:
@@ -101,9 +102,9 @@
 
 ## 3. 게시물 다중 사진 수정로직 변경로직
 
-희준님 블로그 정리: [https://lovenewthing.tistory.com/32?category=877529](https://lovenewthing.tistory.com/32?category=877529), 
+_**희준님 블로그 정리: [https://lovenewthing.tistory.com/32?category=877529](https://lovenewthing.tistory.com/32?category=877529)**_ , 
 
-나영님 블로그 정리: [https://nazero.tistory.com/129](https://nazero.tistory.com/129)
+_**나영님 블로그 정리: [https://nazero.tistory.com/129](https://nazero.tistory.com/129)**_
 
 - 기존 문제점
   
@@ -114,7 +115,12 @@
 
 ## 4. 사용자 활동 추적하여 카페 추천하기
 
-희준님 블로그 정리: [https://lovenewthing.tistory.com/41](https://lovenewthing.tistory.com/41)
+_**희준님 블로그 정리:                 
+추천로직 구성하기(https://lovenewthing.tistory.com/36?category=877529)**_   
+
+_**추천로직 트러블슈팅(https://lovenewthing.tistory.com/37?category=877529)**_            
+
+_**시간대 나누기 트러블 슈팅 with 테스트코드(https://lovenewthing.tistory.com/41)**_                
 
 - 상황:
   
@@ -122,11 +128,11 @@
     
 - 목표 로직
     1. 사용자 접속 시간대 분류(아침,점심,저녁,밤,새벽)
-    2. 사용자 활동기록 디비에 저장
-    3. 관심있어한 게시물의 태그와 시간대를 바탕으로 게시물 추천
+    2. 사용자 활동기록 디비에 저장(어떤 게시물을 언제 몇번 조회했는지, 어떤 태그를 언제 몇번 검색했는지, 어떤 게시물을 좋아요를 언제 했는지)
+    3. 현재 접속한 시간대에 사용자가 가장 관심을 표한 태그(조회, 검색, 좋아요 기준)를 가지고 있는 게시물들 중 가장 인기있는(= 현재 시간대에 다른 사람들이 가장 많이 조회한) 게시물 추천
 - 해결과제: 추천하기 위한 데이터가 필요함
     - 필요한 정보를 쌓기 위한 디비 생성
-        - **어떤 사용자**가**, 언제, 어떤 태그로 검색**했는지 알기 위한 디비
+        - **어떤 사용자**가, **언제**, **어떤 태그로 검색**했는지 알기 위한 디비
           
             → 검색 api 호출시마다 작동
             
@@ -157,21 +163,24 @@
 
 - HTTPS적용하기 위한 개념공부
   
-    희준님 블로그 정리: [https://lovenewthing.tistory.com/42](https://lovenewthing.tistory.com/42), [https://lovenewthing.tistory.com/44?category=877529](https://lovenewthing.tistory.com/44?category=877529)
+    _**희준님 블로그 정리: https개념정리(https://lovenewthing.tistory.com/42)**_           
     
-    재환님 깃허브 정리: [https://github.com/jhhong0930/TIL/blob/master/Network/HTTPS.md](https://github.com/jhhong0930/TIL/blob/master/Network/HTTPS.md)
+    _**재환님 깃허브 정리: [https://github.com/jhhong0930/TIL/blob/master/Network/HTTPS.md](https://github.com/jhhong0930/TIL/blob/master/Network/HTTPS.md)**_            
     
     - 암호화, 복호화 개념
     - 대칭키, 공개키 개념
     - SSL 인증서와 CA개념
     - SSL 동작방법- 3way handshake
-- HTTPS를 카페왕 프로젝트에 적용하기 - 나영님 블로그 정리: [https://nazero.tistory.com/140](https://nazero.tistory.com/140)
+- HTTPS를 카페왕 프로젝트에 적용하기             
+     
+_**나영님 블로그 정리: [https://nazero.tistory.com/140](https://nazero.tistory.com/140)**_  
+
+_**희준님 블로그 정리: https 프로젝트 적용성공(https://lovenewthing.tistory.com/44?category=877529)**_            
 
 ## 6. 실시간 랭킹 업데이트 기능
 
-재환님 깃허브정리: 
-
-[https://github.com/jhhong0930/TIL/blob/master/문제해결/localDateTime을 활용한 실시간 랭킹 조회 기능.md](https://github.com/jhhong0930/TIL/blob/master/%EB%AC%B8%EC%A0%9C%ED%95%B4%EA%B2%B0/localDateTime%EC%9D%84%20%ED%99%9C%EC%9A%A9%ED%95%9C%20%EC%8B%A4%EC%8B%9C%EA%B0%84%20%EB%9E%AD%ED%82%B9%20%EC%A1%B0%ED%9A%8C%20%EA%B8%B0%EB%8A%A5.md)
+_**재환님 깃허브정리: 
+[https://github.com/jhhong0930/TIL/blob/master/문제해결/localDateTime을 활용한 실시간 랭킹 조회 기능.md](https://github.com/jhhong0930/TIL/blob/master/%EB%AC%B8%EC%A0%9C%ED%95%B4%EA%B2%B0/localDateTime%EC%9D%84%20%ED%99%9C%EC%9A%A9%ED%95%9C%20%EC%8B%A4%EC%8B%9C%EA%B0%84%20%EB%9E%AD%ED%82%B9%20%EC%A1%B0%ED%9A%8C%20%EA%B8%B0%EB%8A%A5.md)**_
 
 - 문제: 삭제한 게시글, 좋아요, 팔로우는 실시간으로 반영이 잘 되는 반면 새로 추가되는 데이터들은 집계가 안되는 문제 발생
 - 원인: now()를 이용하여 지금까지의 데이터들을 집계를 하게 되는데, LocalDateTime을 전역변수에 선언하여 서버 실행시 Bean에 등록이 되면서 현재시간이 아닌 서버 실행 시간으로 고정
@@ -179,7 +188,7 @@
 
 ## 7. 사진 썸네일 리사이징
 
-나영님 블로그 정리: [https://nazero.tistory.com/146](https://nazero.tistory.com/146)
+_**나영님 블로그 정리: [https://nazero.tistory.com/146](https://nazero.tistory.com/146)**_
 
 - 문제 상황: 화면 렌더링 시간이 너무 오래 걸림
   
@@ -190,7 +199,7 @@
 
 ## 9. 여러 장의 이미지 파일 다루기
 
-나영님 블로그 정리: [https://nazero.tistory.com/122](https://nazero.tistory.com/122)
+_**나영님 블로그 정리: [https://nazero.tistory.com/122](https://nazero.tistory.com/122)**_
 
 - 문제 상황: 게시물마다 한 장의 이미지만 첨부할 수 있었던 로직에서 여러 장의 이미지를 첨부할 수 있도록 변경해야 함
 - 해결: requestDto에서 사진 한 장을 요청 받는 변수에서 여러 장을 요청 받을 수 있도록 MultipartFile 배열로 변경
@@ -201,7 +210,7 @@
 
 ## 10. 프론트에서 form-data 형식으로 API를 사용하는 방법
 
-나영님 블로그 정리: [https://nazero.tistory.com/125](https://nazero.tistory.com/125)
+_**나영님 블로그 정리: [https://nazero.tistory.com/125](https://nazero.tistory.com/125)**_
 
 - 문제 상황: 프론트에서 문자열을 request할 때는 별 다른 어려움이 없었지만, 이미지 파일을 포함한 form-data 형식으로 request하는 방법을 알고 있지 않아 요청을 보내지 못함
 - 해결:
